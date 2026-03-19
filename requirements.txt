@@ -1,0 +1,30 @@
+# Pathfinder Robot Requirements
+
+# Core dependencies
+numpy>=1.24.0
+pyyaml>=6.0
+
+# Computer Vision
+opencv-python>=4.8.0
+opencv-contrib-python>=4.8.0
+
+# YOLO Object Detection
+ultralytics>=8.0.0  # YOLOv11 support
+
+# AprilTag Detection  
+dt-apriltags>=3.3.0
+pupil-apriltags>=1.0.4
+
+# Web Server & API
+flask>=3.0.0
+flask-cors>=4.0.0
+
+# Gamepad Support
+pygame>=2.5.0
+inputs>=0.5
+
+# Serial Communication
+pyserial>=3.5
+
+# Utilities
+pillow>=10.0.0
