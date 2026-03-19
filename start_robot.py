@@ -6,11 +6,16 @@ Similar to PathfinderBot's pf_start_robot.py
 
 import sys
 import time
+import yaml
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 
 from hardware import Board, Arm
+
+# Load config
+with open(Path(__file__).parent / 'config.yaml', 'r') as f:
+    config = yaml.safe_load(f)
 
 
 def main():
@@ -22,7 +27,11 @@ def main():
     try:
         # Initialize board
         print("\n1. Connecting to board...")
-        board = Board()
+        hw_config = config['hardware']
+        board = Board(
+            device=hw_config['board']['serial_port'],
+            baudrate=hw_config['board']['baud_rate']
+        )
         print("   ✓ Board connected")
         
         # Check battery
