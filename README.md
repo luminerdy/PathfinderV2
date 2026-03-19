@@ -72,6 +72,12 @@ with Pathfinder() as robot:
 ### Command Line
 
 ```bash
+# Initialize robot (startup sequence)
+python3 start_robot.py
+
+# Test all hardware
+python3 test_hardware.py
+
 # Run interactive mode
 python3 pathfinder.py
 
@@ -134,6 +140,8 @@ pathfinder/
 │   └── e2_apriltag.py
 │
 ├── pathfinder.py         # Main entry point
+├── start_robot.py        # Startup initialization
+├── test_hardware.py      # Hardware test suite
 ├── config.yaml           # Robot configuration
 ├── Deviation.yaml        # Servo calibration
 └── requirements.txt      # Python dependencies

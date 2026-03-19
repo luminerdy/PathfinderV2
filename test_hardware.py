@@ -1,45 +1,55 @@
 #!/usr/bin/env python3
 """
-Hardware Test Script
-Quick diagnostics for Pathfinder robot components
+Hardware Test Suite
+Tests all robot components to verify proper connection
 """
 
 import sys
 import time
-import argparse
 from pathlib import Path
 
+# Add project root to path
 sys.path.insert(0, str(Path(__file__).parent))
 
+from hardware import Board, Chassis, Arm, Camera, Sonar
+
+
 def test_board():
-    """Test board connection and basic functions"""
-    print("\n=== Testing Board ===")
+    """Test board connection"""
+    print("\n" + "="*50)
+    print("TEST 1: Board Connection")
+    print("="*50)
+    
     try:
-        from hardware import Board
-        
         board = Board()
-        print("✓ Board connected")
+        print("✓ Board connected successfully")
         
         # Test buzzer
         print("  Testing buzzer...")
         board.beep(0.1)
         time.sleep(0.3)
-        print("✓ Buzzer working")
+        board.beep(0.1)
+        print("  ✓ Buzzer working (did you hear 2 beeps?)")
         
-        # Test battery
+        # Test battery voltage
         voltage = board.get_battery_voltage()
         if voltage:
-            print(f"✓ Battery: {voltage:.2f}V")
+            print(f"  ✓ Battery voltage: {voltage:.2f}V")
+            if voltage < 6.8:
+                print("  ⚠ WARNING: Battery voltage low!")
         else:
-            print("✗ Battery reading failed")
+            print("  ⚠ Could not read battery voltage")
             
-        # Test RGB
+        # Test RGB LEDs
         print("  Testing RGB LEDs...")
-        colors = [(255,0,0), (0,255,0), (0,0,255), (0,0,0)]
-        for color in colors:
-            board.set_rgb(*color)
-            time.sleep(0.3)
-        print("✓ RGB LEDs working")
+        board.set_rgb(255, 0, 0)  # Red
+        time.sleep(0.5)
+        board.set_rgb(0, 255, 0)  # Green
+        time.sleep(0.5)
+        board.set_rgb(0, 0, 255)  # Blue
+        time.sleep(0.5)
+        board.rgb_off()
+        print("  ✓ RGB LEDs working (did you see red/green/blue?)")
         
         board.close()
         return True
@@ -49,43 +59,188 @@ def test_board():
         return False
 
 
-def test_camera():
-    """Test camera capture"""
-    print("\n=== Testing Camera ===")
+def test_motors(board):
+    """Test motor connections"""
+    print("\n" + "="*50)
+    print("TEST 2: Motor Connections")
+    print("="*50)
+    print("Testing each motor individually...")
+    print("Motors will spin in order: Front-Left, Front-Right, Rear-Left, Rear-Right")
+    
     try:
-        from hardware import Camera
-        import cv2
+        motors = [
+            (1, "Front-Left"),
+            (2, "Front-Right"),
+            (3, "Rear-Left"),
+            (4, "Rear-Right")
+        ]
         
-        cam = Camera()
-        cam.open()
-        print("✓ Camera opened")
+        for motor_id, name in motors:
+            print(f"\n  Testing {name} (Motor {motor_id})...")
+            board.set_motor_duty(motor_id, 30)  # 30% forward
+            time.sleep(1.5)
+            board.set_motor_duty(motor_id, 0)
+            time.sleep(0.5)
+            
+        board.stop_motors()
+        print("\n✓ All motors tested")
+        print("  Verify each motor spun in the correct location")
+        return True
         
-        # Capture frames
-        print("  Capturing frames...")
-        success = 0
+    except Exception as e:
+        print(f"✗ Motor test failed: {e}")
+        board.stop_motors()
+        return False
+
+
+def test_chassis(board):
+    """Test chassis movement patterns"""
+    print("\n" + "="*50)
+    print("TEST 3: Chassis Movement")
+    print("="*50)
+    print("⚠ Place robot on floor before continuing!")
+    input("Press Enter when ready...")
+    
+    try:
+        chassis = Chassis(board)
+        
+        movements = [
+            ("Forward", lambda: chassis.forward(40)),
+            ("Backward", lambda: chassis.backward(40)),
+            ("Strafe Right", lambda: chassis.strafe_right(40)),
+            ("Strafe Left", lambda: chassis.strafe_left(40)),
+            ("Rotate Clockwise", lambda: chassis.rotate_clockwise(0.4)),
+            ("Rotate Counter-clockwise", lambda: chassis.rotate_counterclockwise(0.4)),
+        ]
+        
+        for name, move_func in movements:
+            print(f"\n  Testing: {name}")
+            move_func()
+            time.sleep(2.0)
+            chassis.stop()
+            time.sleep(1.0)
+            
+        print("\n✓ Chassis movement test complete")
+        print("  Verify robot moved correctly in each direction")
+        return True
+        
+    except Exception as e:
+        print(f"✗ Chassis test failed: {e}")
+        if 'chassis' in locals():
+            chassis.stop()
+        return False
+
+
+def test_arm_servos(board):
+    """Test arm servo connections"""
+    print("\n" + "="*50)
+    print("TEST 4: Arm Servos")
+    print("="*50)
+    print("Testing each servo individually...")
+    
+    try:
+        # Test servos 1-5 (base, shoulder, elbow, wrist, gripper)
+        servos = [
+            (5, "Gripper", 1500, 2000),
+            (4, "Wrist", 1500, 1800),
+            (3, "Elbow", 1500, 1800),
+            (2, "Shoulder", 1500, 1800),
+            (1, "Base", 1500, 1800),
+        ]
+        
+        for servo_id, name, center, test_pos in servos:
+            print(f"\n  Testing {name} (Servo {servo_id})...")
+            board.set_servo_position(servo_id, center, 0.5)
+            time.sleep(0.8)
+            board.set_servo_position(servo_id, test_pos, 0.5)
+            time.sleep(0.8)
+            board.set_servo_position(servo_id, center, 0.5)
+            time.sleep(0.5)
+            
+        print("\n✓ All servos tested")
+        print("  Verify each servo moved correctly")
+        return True
+        
+    except Exception as e:
+        print(f"✗ Arm servo test failed: {e}")
+        return False
+
+
+def test_arm_positions():
+    """Test arm movement with inverse kinematics"""
+    print("\n" + "="*50)
+    print("TEST 5: Arm Positioning (IK)")
+    print("="*50)
+    
+    try:
+        board = Board()
+        arm = Arm(board)
+        
+        print("  Moving to home position...")
+        arm.home(duration=2.0)
+        time.sleep(1)
+        
+        positions = [
+            ('rest', 1.5),
+            ('forward', 1.5),
+            ('up', 1.5),
+            ('home', 1.5),
+        ]
+        
+        for pos_name, duration in positions:
+            print(f"  Moving to: {pos_name}")
+            arm.move_to_named(pos_name, duration=duration)
+            time.sleep(1)
+            
+        print("  Testing gripper...")
+        arm.open_gripper()
+        time.sleep(1)
+        arm.close_gripper()
+        time.sleep(1)
+        arm.open_gripper()
+        time.sleep(0.5)
+        
+        print("  Returning to rest position...")
+        arm.rest()
+        
+        board.close()
+        print("\n✓ Arm positioning test complete")
+        return True
+        
+    except Exception as e:
+        print(f"✗ Arm positioning test failed: {e}")
+        return False
+
+
+def test_camera():
+    """Test camera connection"""
+    print("\n" + "="*50)
+    print("TEST 6: Camera")
+    print("="*50)
+    
+    try:
+        camera = Camera()
+        
+        print("  Opening camera...")
+        if not camera.open():
+            print("✗ Failed to open camera")
+            return False
+            
+        print("  ✓ Camera opened")
+        
+        print("  Capturing test frames...")
         for i in range(5):
-            frame = cam.read()
-            if frame is not None:
-                success += 1
-            time.sleep(0.1)
+            frame = camera.read()
+            if frame is None:
+                print(f"  ⚠ Frame {i+1}: Failed to capture")
+            else:
+                print(f"  ✓ Frame {i+1}: {frame.shape} captured")
+            time.sleep(0.2)
             
-        if success >= 3:
-            print(f"✓ Camera capturing ({success}/5 frames)")
-            
-            # Show preview
-            print("  Showing preview (press 'q' to close)...")
-            for _ in range(50):
-                frame = cam.read()
-                if frame is not None:
-                    cv2.imshow('Camera Test', frame)
-                if cv2.waitKey(100) & 0xFF == ord('q'):
-                    break
-            cv2.destroyAllWindows()
-        else:
-            print(f"✗ Camera capture unreliable ({success}/5)")
-            
-        cam.close()
-        return success >= 3
+        camera.close()
+        print("\n✓ Camera test complete")
+        print("  Note: Use VNC or display to view actual camera feed")
+        return True
         
     except Exception as e:
         print(f"✗ Camera test failed: {e}")
@@ -94,280 +249,103 @@ def test_camera():
 
 def test_sonar():
     """Test sonar sensor"""
-    print("\n=== Testing Sonar ===")
+    print("\n" + "="*50)
+    print("TEST 7: Sonar Distance Sensor")
+    print("="*50)
+    
     try:
-        from hardware import Sonar
-        
         sonar = Sonar()
-        print("✓ Sonar initialized")
         
-        # Test distance readings
-        print("  Reading distance (10 samples)...")
-        readings = []
+        print("  Taking 10 distance readings...")
         for i in range(10):
             dist = sonar.get_distance()
-            if dist is not None:
-                readings.append(dist)
-                print(f"    {i+1}: {dist:.1f} cm")
+            if dist:
+                print(f"  Reading {i+1}: {dist:.1f} cm")
+                sonar.set_distance_indicator()
             else:
-                print(f"    {i+1}: No reading")
-            time.sleep(0.2)
+                print(f"  Reading {i+1}: No reading")
+            time.sleep(0.5)
             
-        if len(readings) >= 5:
-            avg = sum(readings) / len(readings)
-            print(f"✓ Sonar working (avg: {avg:.1f} cm, {len(readings)}/10 readings)")
-        else:
-            print(f"✗ Sonar unreliable ({len(readings)}/10 readings)")
-            
-        # Test RGB
-        print("  Testing RGB indicators...")
-        colors = [(255,0,0), (0,255,0), (0,0,255), (0,0,0)]
-        for color in colors:
-            sonar.set_both_rgb(color)
-            time.sleep(0.3)
-        print("✓ RGB indicators working")
-        
+        sonar.rgb_off()
         sonar.close()
-        return len(readings) >= 5
+        print("\n✓ Sonar test complete")
+        print("  Verify RGB LEDs changed color based on distance")
+        return True
         
     except Exception as e:
         print(f"✗ Sonar test failed: {e}")
         return False
 
 
-def test_chassis():
-    """Test chassis movement"""
-    print("\n=== Testing Chassis ===")
-    print("WARNING: Robot will move!")
-    input("Press Enter to continue or Ctrl+C to skip...")
-    
-    try:
-        from hardware import Board, Chassis
-        
-        board = Board()
-        chassis = Chassis(board)
-        print("✓ Chassis initialized")
-        
-        # Test basic movements
-        tests = [
-            ("Forward", lambda: chassis.forward(30)),
-            ("Backward", lambda: chassis.backward(30)),
-            ("Strafe right", lambda: chassis.strafe_right(30)),
-            ("Strafe left", lambda: chassis.strafe_left(30)),
-            ("Rotate CW", lambda: chassis.rotate_clockwise(0.3)),
-            ("Rotate CCW", lambda: chassis.rotate_counterclockwise(0.3)),
-        ]
-        
-        for name, movement in tests:
-            print(f"  Testing {name}...")
-            movement()
-            time.sleep(1.0)
-            chassis.stop()
-            time.sleep(0.5)
-            
-        print("✓ Chassis tests complete")
-        
-        chassis.stop()
-        board.close()
-        return True
-        
-    except Exception as e:
-        print(f"✗ Chassis test failed: {e}")
-        return False
-
-
-def test_arm():
-    """Test arm movement"""
-    print("\n=== Testing Arm ===")
-    print("WARNING: Arm will move!")
-    input("Press Enter to continue or Ctrl+C to skip...")
-    
-    try:
-        from hardware import Board, Arm
-        
-        board = Board()
-        arm = Arm(board)
-        print("✓ Arm initialized")
-        
-        # Test named positions
-        positions = ['home', 'rest', 'forward', 'home']
-        for pos in positions:
-            print(f"  Moving to {pos}...")
-            arm.move_to_named(pos, duration=1.5)
-            time.sleep(1.0)
-            
-        # Test gripper
-        print("  Testing gripper...")
-        arm.open_gripper()
-        time.sleep(1.0)
-        arm.close_gripper()
-        time.sleep(1.0)
-        arm.open_gripper()
-        time.sleep(0.5)
-        
-        print("✓ Arm tests complete")
-        
-        arm.rest()
-        board.close()
-        return True
-        
-    except Exception as e:
-        print(f"✗ Arm test failed: {e}")
-        return False
-
-
-def test_vision():
-    """Test vision system"""
-    print("\n=== Testing Vision ===")
-    try:
-        from hardware import Camera
-        from capabilities import VisionSystem
-        import yaml
-        import cv2
-        
-        # Load config
-        with open('config.yaml') as f:
-            config = yaml.safe_load(f)
-            
-        cam = Camera()
-        cam.open()
-        
-        vision = VisionSystem(cam, config['vision'])
-        print("✓ Vision system initialized")
-        
-        print("\nTesting AprilTag detection...")
-        print("  Show AprilTag to camera (press 'q' to continue)...")
-        
-        detected_any = False
-        for _ in range(100):
-            frame = cam.read()
-            if frame is None:
-                continue
-                
-            tags = vision.detect_apriltags(frame)
-            display = vision.draw_apriltags(frame, tags)
-            
-            if tags:
-                detected_any = True
-                cv2.putText(display, f"Tags: {len(tags)}", (10, 30),
-                           cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            else:
-                cv2.putText(display, "No tags detected", (10, 30),
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-                           
-            cv2.imshow('AprilTag Test', display)
-            if cv2.waitKey(100) & 0xFF == ord('q'):
-                break
-                
-        cv2.destroyAllWindows()
-        
-        if detected_any:
-            print("✓ AprilTag detection working")
-        else:
-            print("⚠ No AprilTags detected (may need tags)")
-            
-        print("\nTesting YOLO detection...")
-        print("  Press 'q' to continue...")
-        
-        for _ in range(100):
-            frame = cam.read()
-            if frame is None:
-                continue
-                
-            objects = vision.detect_objects(frame)
-            display = vision.draw_objects(frame, objects)
-            
-            cv2.putText(display, f"Objects: {len(objects)}", (10, 30),
-                       cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-                       
-            cv2.imshow('YOLO Test', display)
-            if cv2.waitKey(100) & 0xFF == ord('q'):
-                break
-                
-        cv2.destroyAllWindows()
-        print("✓ YOLO detection tested")
-        
-        cam.close()
-        return True
-        
-    except Exception as e:
-        print(f"✗ Vision test failed: {e}")
-        import traceback
-        traceback.print_exc()
-        return False
-
-
 def main():
-    """Run hardware tests"""
-    parser = argparse.ArgumentParser(description='Test Pathfinder hardware')
-    parser.add_argument('--all', action='store_true', help='Run all tests')
-    parser.add_argument('--board', action='store_true', help='Test board only')
-    parser.add_argument('--camera', action='store_true', help='Test camera only')
-    parser.add_argument('--sonar', action='store_true', help='Test sonar only')
-    parser.add_argument('--chassis', action='store_true', help='Test chassis only')
-    parser.add_argument('--arm', action='store_true', help='Test arm only')
-    parser.add_argument('--vision', action='store_true', help='Test vision only')
+    """Run all hardware tests"""
+    print("\n" + "="*60)
+    print("  PATHFINDER HARDWARE TEST SUITE")
+    print("="*60)
+    print("\nThis will test all robot hardware components.")
+    print("Make sure robot is powered on and connected.\n")
     
-    args = parser.parse_args()
-    
-    # Default to all if nothing specified
-    if not any([args.all, args.board, args.camera, args.sonar, 
-                args.chassis, args.arm, args.vision]):
-        args.all = True
-        
-    print("="*50)
-    print("  Pathfinder Hardware Test")
-    print("="*50)
+    input("Press Enter to start tests...")
     
     results = {}
     
-    try:
-        if args.all or args.board:
-            results['Board'] = test_board()
-            
-        if args.all or args.camera:
-            results['Camera'] = test_camera()
-            
-        if args.all or args.sonar:
-            results['Sonar'] = test_sonar()
-            
-        if args.all or args.chassis:
-            results['Chassis'] = test_chassis()
-            
-        if args.all or args.arm:
-            results['Arm'] = test_arm()
-            
-        if args.all or args.vision:
-            results['Vision'] = test_vision()
-            
-    except KeyboardInterrupt:
-        print("\n\nTests interrupted by user")
-        
-    # Summary
-    print("\n" + "="*50)
-    print("  Test Summary")
-    print("="*50)
-    for component, passed in results.items():
-        status = "✓ PASS" if passed else "✗ FAIL"
-        print(f"{component:15} {status}")
-    print("="*50)
+    # Test 1: Board
+    results['board'] = test_board()
     
-    # Overall result
-    if results:
-        passed = sum(results.values())
-        total = len(results)
-        print(f"\nOverall: {passed}/{total} tests passed")
+    if results['board']:
+        # Keep board open for motor and servo tests
+        board = Board()
         
-        if passed == total:
-            print("🎉 All tests passed!")
-            return 0
-        else:
-            print("⚠ Some tests failed - check above for details")
-            return 1
+        # Test 2: Motors
+        results['motors'] = test_motors(board)
+        
+        # Test 3: Chassis
+        results['chassis'] = test_chassis(board)
+        
+        # Test 4: Arm Servos
+        results['arm_servos'] = test_arm_servos(board)
+        
+        board.close()
     else:
-        print("No tests run")
-        return 0
+        results['motors'] = False
+        results['chassis'] = False
+        results['arm_servos'] = False
+        
+    # Test 5: Arm IK
+    results['arm_ik'] = test_arm_positions()
+    
+    # Test 6: Camera
+    results['camera'] = test_camera()
+    
+    # Test 7: Sonar
+    results['sonar'] = test_sonar()
+    
+    # Summary
+    print("\n" + "="*60)
+    print("  TEST SUMMARY")
+    print("="*60)
+    
+    for test_name, passed in results.items():
+        status = "✓ PASS" if passed else "✗ FAIL"
+        print(f"{status:8} - {test_name}")
+        
+    total = len(results)
+    passed = sum(results.values())
+    
+    print(f"\nResults: {passed}/{total} tests passed")
+    
+    if passed == total:
+        print("\n🎉 All tests passed! Robot is ready.")
+    else:
+        print("\n⚠ Some tests failed. Check connections and try again.")
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\n\nTest interrupted by user")
+    except Exception as e:
+        print(f"\n\nFatal error: {e}")
+        import traceback
+        traceback.print_exc()

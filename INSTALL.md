@@ -112,7 +112,30 @@ python3 pathfinder.py --no-camera --no-sonar
 # Press Ctrl+C to exit
 ```
 
-## Step 6: Run First Demo
+## Step 6: Test Hardware
+
+Test all components to verify proper assembly:
+
+```bash
+# Initialize robot
+python3 start_robot.py
+
+# Run full hardware test suite
+python3 test_hardware.py
+```
+
+Expected results:
+- ✓ Board connected, buzzer working, battery voltage OK
+- ✓ All 4 motors spin correctly
+- ✓ Chassis moves in all directions
+- ✓ All 5 servos move smoothly
+- ✓ Arm moves to named positions
+- ✓ Camera captures frames
+- ✓ Sonar reads distances
+
+See [TESTING.md](TESTING.md) for detailed testing guide.
+
+## Step 7: Run First Demo
 
 ```bash
 # Basic movement demo
