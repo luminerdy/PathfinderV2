@@ -6,7 +6,7 @@ Distance measurement using HC-SR04 or similar ultrasonic sensor
 import sys
 import time
 import logging
-from typing import Optional
+from typing import Optional, Tuple
 
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))

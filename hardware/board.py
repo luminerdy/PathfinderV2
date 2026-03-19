@@ -6,13 +6,12 @@ Provides servo, LED, buzzer, and sensor control via serial protocol
 import sys
 import time
 import logging
+from pathlib import Path
 from typing import List, Tuple, Optional
 
 # Import from local SDK
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from sdk.common.ros_robot_controller_sdk import Board as ControllerBoard
-
-from pathlib import Path
 
 logger = logging.getLogger(__name__)
 

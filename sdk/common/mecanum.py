@@ -3,7 +3,7 @@
 import sys
 import math
 from sdk.common.ros_robot_controller_sdk import Board
-board = Board()
+board = None  # Will be set by chassis controller
 
 class MecanumChassis:
     # A = 67  # mm

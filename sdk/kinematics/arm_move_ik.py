@@ -4,10 +4,10 @@ import sys
 import time
 import numpy as np
 from math import sqrt
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt  # Not needed for robot operation
 from sdk.kinematics.inversekinematics import *
 from sdk.kinematics.transform import getAngle
-from mpl_toolkits.mplot3d import Axes3D
+# from mpl_toolkits.mplot3d import Axes3D  # Not needed for robot operation
 import sdk.common.yaml_handle as yaml_handle
 
 # 获取机械臂舵机偏差
