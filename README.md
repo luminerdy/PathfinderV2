@@ -1,6 +1,6 @@
 # Pathfinder Robot Framework
 
-A clean, modular Python framework for educational humanoid robots running on **Raspberry Pi 5 8GB**.
+A clean, modular Python framework for educational mobile robots with mecanum drive and robotic arms, running on **Raspberry Pi 5 8GB**.
 
 Built for STEM education, hands-on robotics workshops, and AI/vision experimentation.
 
@@ -293,7 +293,7 @@ class MovementController:
 
 ## Hardware Requirements
 
-- **Humanoid robot platform** with servo-driven arm and mecanum wheels
+- **Mobile robot platform** with servo-driven arm and mecanum wheels
 - **Raspberry Pi 5 8GB** (or Pi 4 4GB+)
 - **USB Camera** (or Pi Camera via libcamera)
 - **Ultrasonic sensor** (HC-SR04 or compatible)

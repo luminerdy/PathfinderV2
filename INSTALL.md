@@ -3,7 +3,7 @@
 ## Prerequisites
 
 ### Hardware
-- Educational humanoid robot platform with Raspberry Pi 5 8GB
+- Educational mobile robot platform with Raspberry Pi 5 8GB
 - USB camera or Pi Camera
 - Ultrasonic sensor (HC-SR04)
 - 7.4V LiPo battery

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Pathfinder Robot - Main Entry Point
-A clean, modular framework for educational humanoid robots
+A clean, modular framework for educational mobile robots
 """
 
 import sys

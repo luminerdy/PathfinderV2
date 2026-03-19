@@ -3,7 +3,7 @@
 robot:
   name: "Pathfinder"
   version: "2.0"
-  platform: "Educational Humanoid"
+  platform: "Mobile Robot with Arm"
   hardware: "Raspberry Pi 5 8GB"
 
 # Hardware Configuration
