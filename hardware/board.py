@@ -8,11 +8,11 @@ import time
 import logging
 from typing import List, Tuple, Optional
 
-# Add Hiwonder SDK to path
-sys.path.append('/home/pi/MasterPi/masterpi_sdk/common_sdk')
-sys.path.append('/home/pi/MasterPi/masterpi_sdk/kinematics_sdk')
+# Import from local SDK
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from sdk.common.ros_robot_controller_sdk import Board as HiwonderBoard
 
-from common.ros_robot_controller_sdk import Board as HiwonderBoard
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 

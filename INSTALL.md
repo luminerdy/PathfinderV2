@@ -11,7 +11,7 @@
 ### Software
 - Raspberry Pi OS (64-bit recommended)
 - Python 3.9 or higher
-- Existing Hiwonder SDK at `/home/pi/MasterPi/masterpi_sdk/`
+- No external dependencies - all SDK code included!
 
 ## Step 1: Clone or Copy Code
 
@@ -62,20 +62,7 @@ pip3 install -r requirements.txt
 # YOLOv11 will download model weights on first run
 ```
 
-## Step 4: Verify Hiwonder SDK
-
-```bash
-# Check SDK exists
-ls -la /home/pi/MasterPi/masterpi_sdk/
-
-# You should see:
-#   common_sdk/
-#   kinematics_sdk/
-```
-
-If SDK is missing, install from Hiwonder or copy from existing Pi.
-
-## Step 5: Configure Hardware
+## Step 4: Configure Hardware
 
 Edit `config.yaml`:
 
@@ -89,7 +76,7 @@ Verify settings match your hardware:
 - Servo IDs and ranges
 - Wheel dimensions
 
-## Step 6: Test Installation
+## Step 5: Test Installation
 
 ### Test hardware connection
 
@@ -125,7 +112,7 @@ python3 pathfinder.py --no-camera --no-sonar
 # Press Ctrl+C to exit
 ```
 
-## Step 7: Run First Demo
+## Step 6: Run First Demo
 
 ```bash
 # Basic movement demo
@@ -164,12 +151,10 @@ v4l2-ctl --list-devices
 ### Import errors
 
 ```bash
-# Verify Python path includes Hiwonder SDK
+# Verify SDK imports work
+cd /home/robot/code/pathfinder
 python3 -c "
-import sys
-sys.path.append('/home/pi/MasterPi/masterpi_sdk/common_sdk')
-sys.path.append('/home/pi/MasterPi/masterpi_sdk/kinematics_sdk')
-from common.ros_robot_controller_sdk import Board
+from sdk.common.ros_robot_controller_sdk import Board
 print('SDK import successful')
 "
 ```
@@ -191,11 +176,11 @@ print('SDK import successful')
 If arm movements are inaccurate:
 
 ```bash
-# Check Deviation.yaml in MasterPi SDK
-cat /home/pi/MasterPi/Deviation.yaml
+# Edit Deviation.yaml in project root
+nano /home/robot/code/pathfinder/Deviation.yaml
 
-# Calibrate servos using Hiwonder tools or:
-# Run calibration script (TODO)
+# Adjust servo offsets as needed
+# Format: 'servo_id': offset_value
 ```
 
 ## Optional: Enable Services

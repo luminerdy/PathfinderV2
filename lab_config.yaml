@@ -1,0 +1,16 @@
+# Lab/Color calibration configuration
+# HSV color ranges for vision system
+
+lab:
+  red:
+    min: [0, 100, 100]
+    max: [10, 255, 255]
+  blue:
+    min: [100, 100, 100]
+    max: [130, 255, 255]
+  green:
+    min: [40, 50, 50]
+    max: [80, 255, 255]
+  yellow:
+    min: [20, 100, 100]
+    max: [30, 255, 255]

@@ -8,8 +8,9 @@ import math
 import logging
 from typing import Tuple
 
-sys.path.append('/home/pi/MasterPi/masterpi_sdk/common_sdk')
-from common.mecanum import MecanumChassis as HiwonderMecanum
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from sdk.common.mecanum import MecanumChassis as HiwonderMecanum
 
 from .board import Board
 
@@ -43,7 +44,7 @@ class Chassis:
                                         wheel_diameter=wheel_diameter)
         
         # Replace the SDK's global board with our instance
-        import common.mecanum as mecanum_module
+        from sdk.common import mecanum as mecanum_module
         mecanum_module.board = board._board
         
         self._max_speed = 100  # mm/s

@@ -8,8 +8,9 @@ import time
 import logging
 from typing import Optional
 
-sys.path.append('/home/pi/MasterPi/masterpi_sdk/common_sdk')
-from common.sonar import Sonar as HiwonderSonar
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from sdk.common.sonar import Sonar as HiwonderSonar
 
 logger = logging.getLogger(__name__)
 

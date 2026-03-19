@@ -1,0 +1,10 @@
+# Servo calibration offsets (pulse width deviations)
+# Adjust these values if servos don't move to correct positions
+# Format: servo_id: offset_value
+
+'1': 0
+'2': 0
+'3': 0
+'4': 0
+'5': 0
+'6': 0

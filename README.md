@@ -34,8 +34,7 @@ cd /home/robot/code/pathfinder
 # Install dependencies
 pip3 install -r requirements.txt
 
-# Install Hiwonder SDK (if not already)
-# The code expects SDK at /home/pi/MasterPi/masterpi_sdk
+# That's it! All SDK components are included locally in sdk/
 ```
 
 ### Basic Usage
@@ -119,6 +118,10 @@ pathfinder/
 │   ├── manipulation.py   # Pick-and-place operations
 │   └── sensors.py        # Sensor monitoring
 │
+├── sdk/                  # Embedded Hiwonder SDK (self-contained)
+│   ├── common/           # Board control, mecanum, sonar
+│   └── kinematics/       # Arm inverse kinematics
+│
 ├── api/                  # Control interfaces (TODO)
 │   ├── webserver.py      # REST API + WebUI
 │   ├── gamepad.py        # Gamepad controller
@@ -132,6 +135,7 @@ pathfinder/
 │
 ├── pathfinder.py         # Main entry point
 ├── config.yaml           # Robot configuration
+├── Deviation.yaml        # Servo calibration
 └── requirements.txt      # Python dependencies
 ```
 

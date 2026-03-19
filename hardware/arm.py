@@ -8,10 +8,10 @@ import time
 import logging
 from typing import Optional, Tuple, Dict
 
-sys.path.append('/home/pi/MasterPi/masterpi_sdk/kinematics_sdk')
-sys.path.append('/home/pi/MasterPi/masterpi_sdk/common_sdk')
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from sdk.kinematics.arm_move_ik import ArmIK as HiwonderArmIK
 
-from kinematics.arm_move_ik import ArmIK as HiwonderArmIK
 from .board import Board
 
 logger = logging.getLogger(__name__)
