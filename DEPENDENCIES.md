@@ -176,22 +176,28 @@ pip3 install --upgrade pip
 
 ```bash
 cd /home/robot/code/pathfinder
-pip3 install -r requirements.txt
+pip3 install -r requirements.txt --break-system-packages
 ```
 
+**Note:** Use `--break-system-packages` flag on Raspberry Pi OS Bookworm+
+
 This installs:
-- numpy
-- pyyaml
-- opencv-python
-- opencv-contrib-python
-- ultralytics (YOLOv11)
-- dt-apriltags or pupil-apriltags
-- flask, flask-cors
-- pygame, inputs
-- pyserial
-- pillow
+- numpy ✅ (required for SDK)
+- pyyaml ✅ (required for config)
+- opencv-python ✅ (REQUIRED - arm IK depends on this)
+- opencv-contrib-python (optional, for advanced vision)
+- ultralytics (YOLOv11 - downloads model on first use)
+- dt-apriltags or pupil-apriltags (for AprilTag detection)
+- flask, flask-cors (for web UI - optional)
+- pygame, inputs (for gamepad - optional)
+- pyserial ✅ (required for board communication)
+- pillow (for image handling)
 
 **Note:** Installation may take 15-30 minutes on Pi 5, longer on Pi 4.
+
+**Known Issues:**
+- matplotlib is imported by SDK but not needed - commented out in code
+- System python3-opencv may conflict with pip opencv-python
 
 ## Step 5: Configure Camera
 
