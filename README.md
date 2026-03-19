@@ -9,7 +9,7 @@ Built for STEM education, hands-on robotics workshops, and AI/vision experimenta
 ### Hardware Abstraction Layer
 - **Board**: Servo, motor, LED, buzzer, sensor control
 - **Chassis**: Mecanum drive with omnidirectional movement
-- **Arm**: 4-DOF arm with inverse kinematics and gripper
+- **Arm**: 5-DOF arm (base, shoulder, elbow, wrist, gripper) with inverse kinematics
 - **Camera**: OpenCV capture with streaming
 - **Sonar**: Ultrasonic distance sensor with RGB indicators
 

@@ -20,13 +20,14 @@ logger = logging.getLogger(__name__)
 class Arm:
     """
     Robotic arm controller with inverse kinematics
+    5-DOF arm (base, shoulder, elbow, wrist, gripper)
     
     Servos:
-        3: Base rotation
-        4: Shoulder
-        5: Elbow  
-        6: Wrist
-        (Additional gripper servo if equipped)
+        1: Base rotation
+        2: Shoulder
+        3: Elbow  
+        4: Wrist
+        5: Gripper
     """
     
     # Named positions (x, y, z in mm)
