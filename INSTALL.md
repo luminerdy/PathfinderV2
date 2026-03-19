@@ -26,41 +26,47 @@ git clone <repository-url> pathfinder
 
 ## Step 2: Install System Dependencies
 
+### Quick Install (Recommended)
+
 ```bash
-# Update system
-sudo apt update && sudo apt upgrade -y
-
-# Install OpenCV dependencies
-sudo apt install -y \
-    python3-opencv \
-    libopencv-dev \
-    python3-pip \
-    python3-dev \
-    build-essential
-
-# Install camera support
-sudo apt install -y \
-    libcamera-dev \
-    libcamera-apps
-
-# Install serial support (if not already)
-sudo apt install -y python3-serial
+cd /home/robot/code/pathfinder
+./install_dependencies.sh
 ```
 
+This installs all required system packages (~20-30 minutes).
+
+**After installation completes, REBOOT:**
+```bash
+sudo reboot
+```
+
+### Manual Install
+
+For detailed package list and troubleshooting, see [DEPENDENCIES.md](DEPENDENCIES.md).
+
+Key packages installed:
+- Build tools (gcc, cmake, etc.)
+- Python development libraries
+- Serial communication (pyserial)
+- Camera support (libcamera, v4l-utils)
+- OpenCV dependencies
+- Numeric libraries (numpy, openblas)
+
 ## Step 3: Install Python Dependencies
+
+**After reboot from Step 2:**
 
 ```bash
 cd /home/robot/code/pathfinder
 
-# Upgrade pip
-pip3 install --upgrade pip
-
 # Install requirements
 pip3 install -r requirements.txt
-
-# Note: This may take 10-15 minutes on Pi 5
-# YOLOv11 will download model weights on first run
 ```
+
+**Note:** 
+- This may take 15-30 minutes on Pi 5, longer on Pi 4
+- YOLOv11 model (~10MB) downloads on first use
+- If installation fails, see [DEPENDENCIES.md](DEPENDENCIES.md) troubleshooting section
 
 ## Step 4: Configure Hardware
 

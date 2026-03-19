@@ -315,7 +315,8 @@ class MovementController:
 - AprilTag detector (dt-apriltags or pupil-apriltags)
 - PyYAML, NumPy, PySerial
 
-See `requirements.txt` for full list.
+See [DEPENDENCIES.md](DEPENDENCIES.md) for complete system requirements and installation guide.  
+See `requirements.txt` for Python package list.
 
 ## License
 
