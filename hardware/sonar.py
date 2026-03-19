@@ -10,7 +10,7 @@ from typing import Optional
 
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from sdk.common.sonar import Sonar as HiwonderSonar
+from sdk.common.sonar import Sonar as BaseSonar
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ class Sonar:
         Args:
             max_distance: Maximum measurable distance in cm
         """
-        self._sonar = HiwonderSonar()
+        self._sonar = BaseSonar()
         self.max_distance = max_distance
         self._last_distance = None
         

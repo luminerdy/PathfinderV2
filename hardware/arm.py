@@ -10,7 +10,7 @@ from typing import Optional, Tuple, Dict
 
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from sdk.kinematics.arm_move_ik import ArmIK as HiwonderArmIK
+from sdk.kinematics.arm_move_ik import ArmIK as BaseArmIK
 
 from .board import Board
 
@@ -48,7 +48,7 @@ class Arm:
             board: Board instance for servo control
         """
         self.board = board
-        self._ik = HiwonderArmIK()
+        self._ik = BaseArmIK()
         self._ik.board = board._board
         
         self._current_position = None

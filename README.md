@@ -1,6 +1,6 @@
 # Pathfinder Robot Framework
 
-A clean, modular Python framework for the **MasterPi** humanoid robot running on **Raspberry Pi 5 8GB**.
+A clean, modular Python framework for educational humanoid robots running on **Raspberry Pi 5 8GB**.
 
 Built for STEM education, hands-on robotics workshops, and AI/vision experimentation.
 
@@ -118,7 +118,7 @@ pathfinder/
 │   ├── manipulation.py   # Pick-and-place operations
 │   └── sensors.py        # Sensor monitoring
 │
-├── sdk/                  # Embedded Hiwonder SDK (self-contained)
+├── sdk/                  # Embedded hardware SDK (self-contained)
 │   ├── common/           # Board control, mecanum, sonar
 │   └── kinematics/       # Arm inverse kinematics
 │
@@ -293,7 +293,7 @@ class MovementController:
 
 ## Hardware Requirements
 
-- **MasterPi robot** (Hiwonder)
+- **Humanoid robot platform** with servo-driven arm and mecanum wheels
 - **Raspberry Pi 5 8GB** (or Pi 4 4GB+)
 - **USB Camera** (or Pi Camera via libcamera)
 - **Ultrasonic sensor** (HC-SR04 or compatible)
@@ -317,7 +317,6 @@ MIT License - Built for education and experimentation.
 
 - **Pathfinder Robot**: Scotty (2026)
 - **PathfinderBot Workshop**: STEM Outreach Initiative (2024)
-- **MasterPi Platform**: Hiwonder
 - **YOLOv11**: Ultralytics
 - **AprilTag**: MIT
 

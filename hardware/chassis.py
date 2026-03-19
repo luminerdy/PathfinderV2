@@ -1,6 +1,6 @@
 """
 Mecanum Chassis Control
-Provides omnidirectional movement control for the MasterPi mecanum drive
+Provides omnidirectional movement control for mecanum drive platforms
 """
 
 import sys
@@ -10,7 +10,7 @@ from typing import Tuple
 
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from sdk.common.mecanum import MecanumChassis as HiwonderMecanum
+from sdk.common.mecanum import MecanumChassis as BaseMecanum
 
 from .board import Board
 
@@ -40,7 +40,7 @@ class Chassis:
             wheel_diameter: Wheel diameter (mm)
         """
         self.board = board
-        self._chassis = HiwonderMecanum(a=wheel_base, b=track_width, 
+        self._chassis = BaseMecanum(a=wheel_base, b=track_width, 
                                         wheel_diameter=wheel_diameter)
         
         # Replace the SDK's global board with our instance

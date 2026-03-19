@@ -1,6 +1,6 @@
 """
 Board Hardware Interface
-Wraps the Hiwonder Board SDK for servo, LED, buzzer, and sensor control
+Provides servo, LED, buzzer, and sensor control via serial protocol
 """
 
 import sys
@@ -10,7 +10,7 @@ from typing import List, Tuple, Optional
 
 # Import from local SDK
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from sdk.common.ros_robot_controller_sdk import Board as HiwonderBoard
+from sdk.common.ros_robot_controller_sdk import Board as ControllerBoard
 
 from pathlib import Path
 
@@ -19,13 +19,13 @@ logger = logging.getLogger(__name__)
 
 class Board:
     """
-    Hardware board interface for MasterPi
+    Hardware board interface
     Provides access to servos, motors, LEDs, buzzer, and sensors
     """
     
     def __init__(self, device="/dev/ttyAMA0", baudrate=1000000):
         """Initialize board connection"""
-        self._board = HiwonderBoard(device=device, baudrate=baudrate)
+        self._board = ControllerBoard(device=device, baudrate=baudrate)
         self._board.enable_reception()
         logger.info(f"Board initialized on {device}")
         

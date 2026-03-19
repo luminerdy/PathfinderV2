@@ -3,7 +3,7 @@
 robot:
   name: "Pathfinder"
   version: "2.0"
-  platform: "MasterPi"
+  platform: "Educational Humanoid"
   hardware: "Raspberry Pi 5 8GB"
 
 # Hardware Configuration

@@ -3,7 +3,7 @@
 ## Prerequisites
 
 ### Hardware
-- MasterPi robot with Raspberry Pi 5 8GB
+- Educational humanoid robot platform with Raspberry Pi 5 8GB
 - USB camera or Pi Camera
 - Ultrasonic sensor (HC-SR04)
 - 7.4V LiPo battery
