@@ -49,11 +49,12 @@ def run(robot):
         print("\n3. Obstacle detection test (20cm threshold)...")
         print("   Place hand in front of sensor...")
         for i in range(10):
+            dist = robot.sonar.get_distance()
             if robot.sonar.is_obstacle_detected(threshold=20):
-                print(f"   OBSTACLE DETECTED at {robot.sonar.get_distance():.1f} cm!")
+                print(f"   OBSTACLE DETECTED at {dist:.1f} cm!" if dist else "   OBSTACLE DETECTED!")
                 robot.sonar.set_both_rgb((255, 0, 0))  # Red
             else:
-                print(f"   Clear ({robot.sonar.get_distance():.1f} cm)")
+                print(f"   Clear ({dist:.1f} cm)" if dist else "   Clear (no reading)")
                 robot.sonar.set_both_rgb((0, 255, 0))  # Green
             time.sleep(0.5)
             

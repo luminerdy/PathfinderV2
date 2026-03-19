@@ -16,8 +16,11 @@ except ImportError:
         from pupil_apriltags import Detector as AprilTagDetector
     except ImportError:
         AprilTagDetector = None
-        
-from ultralytics import YOLO
+
+try:
+    from ultralytics import YOLO
+except ImportError:
+    YOLO = None
 
 logger = logging.getLogger(__name__)
 
@@ -78,15 +81,18 @@ class VisionSystem:
             
         # YOLO detector
         self._yolo = None
-        try:
-            yolo_config = config.get('yolo', {})
-            model_path = yolo_config.get('model', 'yolov11n.pt')
-            self._yolo = YOLO(model_path)
-            self._yolo_conf = yolo_config.get('confidence', 0.5)
-            self._yolo_iou = yolo_config.get('iou_threshold', 0.45)
-            logger.info(f"YOLO detector initialized: {model_path}")
-        except Exception as e:
-            logger.error(f"Failed to initialize YOLO: {e}")
+        if YOLO is not None:
+            try:
+                yolo_config = config.get('yolo', {})
+                model_path = yolo_config.get('model', 'yolov11n.pt')
+                self._yolo = YOLO(model_path)
+                self._yolo_conf = yolo_config.get('confidence', 0.5)
+                self._yolo_iou = yolo_config.get('iou_threshold', 0.45)
+                logger.info(f"YOLO detector initialized: {model_path}")
+            except Exception as e:
+                logger.error(f"Failed to initialize YOLO: {e}")
+        else:
+            logger.warning("YOLO not available (ultralytics not installed)")
             
         # Color tracking ranges (HSV)
         self._color_ranges = {

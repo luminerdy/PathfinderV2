@@ -78,26 +78,32 @@ pip3 install opencv-python --break-system-packages
 - Camera (640x480 capture working, first frame often fails - normal)
 - Sonar (distance readings 369-372cm, RGB indicators working)
 
+✅ **Demos Tested:**
+- D1 Basic Drive ✅ (forward, backward, strafe, rotate, square pattern)
+- D2 Sonar ✅ (distance readings, obstacle detection - minor format fix needed)
+- D3 Arm Basics ✅ (all positions, IK, gripper, pick/place, gestures)
+
 ⏳ **Not Yet Tested:**
-- All 5 servos together
-- All 4 motors together
-- Arm inverse kinematics
-- Chassis mecanum movement
-- Full integrated test suite
+- E2 AprilTag demo (needs camera + AprilTag library)
+- Full integrated test_hardware.py suite
+- Vision system (YOLO object detection)
+- Web UI
+- Gamepad control
 
-### Libraries Still to Verify
+### Libraries Verified
 
-From `requirements.txt`, not yet tested:
-- [ ] numpy
-- [ ] pyyaml  
-- [ ] opencv-contrib-python
-- [ ] ultralytics (YOLOv11)
-- [ ] dt-apriltags or pupil-apriltags
-- [ ] flask, flask-cors
-- [ ] pygame
-- [ ] inputs
-- [ ] pyserial ✅ (working)
-- [ ] pillow
+From `requirements.txt`:
+- [x] numpy ✅ (working - used by IK)
+- [x] pyyaml ✅ (working - config loading)
+- [x] opencv-python ✅ (working - camera + IK)
+- [ ] opencv-contrib-python (not tested yet)
+- [x] ultralytics ✅ (YOLOv11 installed, made optional)
+- [ ] dt-apriltags or pupil-apriltags (not tested yet)
+- [ ] flask, flask-cors (not tested yet - web UI)
+- [ ] pygame (not tested yet - gamepad)
+- [ ] inputs (not tested yet - gamepad)
+- [x] pyserial ✅ (working - board communication)
+- [ ] pillow (not tested yet)
 
 ### Next Testing Steps
 
