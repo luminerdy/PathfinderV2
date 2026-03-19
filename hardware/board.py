@@ -119,7 +119,9 @@ class Board:
         Args:
             r, g, b: Color values (0-255)
         """
-        self._board.set_colorful_leds(0xFF, [[r, g, b]] * 2)
+        # SDK expects: [(index, r, g, b), ...]
+        # Assuming 2 RGB LEDs at indices 1 and 2
+        self._board.set_rgb([(1, r, g, b), (2, r, g, b)])
         
     def rgb_off(self):
         """Turn off RGB LEDs"""

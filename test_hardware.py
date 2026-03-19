@@ -6,12 +6,18 @@ Tests all robot components to verify proper connection
 
 import sys
 import time
+import yaml
 from pathlib import Path
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from hardware import Board, Chassis, Arm, Camera, Sonar
+
+# Load config
+with open(Path(__file__).parent / 'config.yaml', 'r') as f:
+    config = yaml.safe_load(f)
+hw_config = config['hardware']
 
 
 def test_board():
@@ -21,24 +27,27 @@ def test_board():
     print("="*50)
     
     try:
-        board = Board()
-        print("✓ Board connected successfully")
+        board = Board(
+            device=hw_config['board']['serial_port'],
+            baudrate=hw_config['board']['baud_rate']
+        )
+        print("OK Board connected successfully")
         
         # Test buzzer
         print("  Testing buzzer...")
         board.beep(0.1)
         time.sleep(0.3)
         board.beep(0.1)
-        print("  ✓ Buzzer working (did you hear 2 beeps?)")
+        print("  OK Buzzer working (did you hear 2 beeps?)")
         
         # Test battery voltage
         voltage = board.get_battery_voltage()
         if voltage:
-            print(f"  ✓ Battery voltage: {voltage:.2f}V")
+            print(f"  OK Battery voltage: {voltage:.2f}V")
             if voltage < 6.8:
-                print("  ⚠ WARNING: Battery voltage low!")
+                print("  WARN WARNING: Battery voltage low!")
         else:
-            print("  ⚠ Could not read battery voltage")
+            print("  WARN Could not read battery voltage")
             
         # Test RGB LEDs
         print("  Testing RGB LEDs...")
@@ -49,13 +58,13 @@ def test_board():
         board.set_rgb(0, 0, 255)  # Blue
         time.sleep(0.5)
         board.rgb_off()
-        print("  ✓ RGB LEDs working (did you see red/green/blue?)")
+        print("  OK RGB LEDs working (did you see red/green/blue?)")
         
         board.close()
         return True
         
     except Exception as e:
-        print(f"✗ Board test failed: {e}")
+        print(f"FAIL Board test failed: {e}")
         return False
 
 
@@ -83,12 +92,12 @@ def test_motors(board):
             time.sleep(0.5)
             
         board.stop_motors()
-        print("\n✓ All motors tested")
+        print("\nOK All motors tested")
         print("  Verify each motor spun in the correct location")
         return True
         
     except Exception as e:
-        print(f"✗ Motor test failed: {e}")
+        print(f"FAIL Motor test failed: {e}")
         board.stop_motors()
         return False
 
@@ -98,7 +107,7 @@ def test_chassis(board):
     print("\n" + "="*50)
     print("TEST 3: Chassis Movement")
     print("="*50)
-    print("⚠ Place robot on floor before continuing!")
+    print("WARN Place robot on floor before continuing!")
     input("Press Enter when ready...")
     
     try:
@@ -120,12 +129,12 @@ def test_chassis(board):
             chassis.stop()
             time.sleep(1.0)
             
-        print("\n✓ Chassis movement test complete")
+        print("\nOK Chassis movement test complete")
         print("  Verify robot moved correctly in each direction")
         return True
         
     except Exception as e:
-        print(f"✗ Chassis test failed: {e}")
+        print(f"FAIL Chassis test failed: {e}")
         if 'chassis' in locals():
             chassis.stop()
         return False
@@ -157,12 +166,12 @@ def test_arm_servos(board):
             board.set_servo_position(servo_id, center, 0.5)
             time.sleep(0.5)
             
-        print("\n✓ All servos tested")
+        print("\nOK All servos tested")
         print("  Verify each servo moved correctly")
         return True
         
     except Exception as e:
-        print(f"✗ Arm servo test failed: {e}")
+        print(f"FAIL Arm servo test failed: {e}")
         return False
 
 
@@ -204,11 +213,11 @@ def test_arm_positions():
         arm.rest()
         
         board.close()
-        print("\n✓ Arm positioning test complete")
+        print("\nOK Arm positioning test complete")
         return True
         
     except Exception as e:
-        print(f"✗ Arm positioning test failed: {e}")
+        print(f"FAIL Arm positioning test failed: {e}")
         return False
 
 
@@ -223,27 +232,27 @@ def test_camera():
         
         print("  Opening camera...")
         if not camera.open():
-            print("✗ Failed to open camera")
+            print("FAIL Failed to open camera")
             return False
             
-        print("  ✓ Camera opened")
+        print("  OK Camera opened")
         
         print("  Capturing test frames...")
         for i in range(5):
             frame = camera.read()
             if frame is None:
-                print(f"  ⚠ Frame {i+1}: Failed to capture")
+                print(f"  WARN Frame {i+1}: Failed to capture")
             else:
-                print(f"  ✓ Frame {i+1}: {frame.shape} captured")
+                print(f"  OK Frame {i+1}: {frame.shape} captured")
             time.sleep(0.2)
             
         camera.close()
-        print("\n✓ Camera test complete")
+        print("\nOK Camera test complete")
         print("  Note: Use VNC or display to view actual camera feed")
         return True
         
     except Exception as e:
-        print(f"✗ Camera test failed: {e}")
+        print(f"FAIL Camera test failed: {e}")
         return False
 
 
@@ -268,12 +277,12 @@ def test_sonar():
             
         sonar.rgb_off()
         sonar.close()
-        print("\n✓ Sonar test complete")
+        print("\nOK Sonar test complete")
         print("  Verify RGB LEDs changed color based on distance")
         return True
         
     except Exception as e:
-        print(f"✗ Sonar test failed: {e}")
+        print(f"FAIL Sonar test failed: {e}")
         return False
 
 
@@ -326,7 +335,7 @@ def main():
     print("="*60)
     
     for test_name, passed in results.items():
-        status = "✓ PASS" if passed else "✗ FAIL"
+        status = "OK PASS" if passed else "FAIL FAIL"
         print(f"{status:8} - {test_name}")
         
     total = len(results)
@@ -337,7 +346,7 @@ def main():
     if passed == total:
         print("\n🎉 All tests passed! Robot is ready.")
     else:
-        print("\n⚠ Some tests failed. Check connections and try again.")
+        print("\nWARN Some tests failed. Check connections and try again.")
 
 
 if __name__ == '__main__':

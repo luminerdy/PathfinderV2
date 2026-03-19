@@ -62,8 +62,9 @@ pip3 install opencv-python --break-system-packages
 #### 5. RGB LED method name
 **Error:** `AttributeError: 'Board' object has no attribute 'set_colorful_leds'`  
 **Location:** `hardware/board.py` line 122  
-**Issue:** Method name doesn't match actual SDK  
-**Status:** ⏳ To investigate actual method name
+**Issue:** Method name doesn't match actual SDK (should be `set_rgb`)  
+**Solution:** Changed to `board.set_rgb([(1, r, g, b), (2, r, g, b)])`  
+**Status:** ✅ Fixed and tested working
 
 ### Hardware Tests Completed
 
@@ -71,15 +72,18 @@ pip3 install opencv-python --break-system-packages
 - Board serial connection
 - Battery voltage reading (7.52V measured)
 - Buzzer (beep confirmed)
+- RGB LEDs (red, green, blue all working)
+- Servo control (tested servo 5/gripper - smooth movement)
+- Motor control (tested motor 1 - forward/backward working)
+- Camera (640x480 capture working, first frame often fails - normal)
+- Sonar (distance readings 369-372cm, RGB indicators working)
 
 ⏳ **Not Yet Tested:**
-- RGB LEDs (method name issue)
-- Servos (1-5)
-- Motors (1-4)
-- Camera
-- Sonar
+- All 5 servos together
+- All 4 motors together
 - Arm inverse kinematics
-- Chassis movement
+- Chassis mecanum movement
+- Full integrated test suite
 
 ### Libraries Still to Verify
 

@@ -32,14 +32,14 @@ def main():
             device=hw_config['board']['serial_port'],
             baudrate=hw_config['board']['baud_rate']
         )
-        print("   ✓ Board connected")
+        print("   OK Board connected")
         
         # Check battery
         voltage = board.get_battery_voltage()
         if voltage:
             print(f"   Battery: {voltage:.2f}V", end="")
             if voltage < 6.8:
-                print(" ⚠ LOW!")
+                print(" WARN LOW!")
             elif voltage < 7.0:
                 print(" (caution)")
             else:
@@ -74,13 +74,13 @@ def main():
         board.close()
         
         print("\n" + "="*50)
-        print("  ✓ STARTUP COMPLETE")
+        print("  OK STARTUP COMPLETE")
         print("="*50)
         print("\nRobot is initialized and ready for operation.")
         print("Arm is in home position with gripper open.\n")
         
     except Exception as e:
-        print(f"\n✗ Startup failed: {e}")
+        print(f"\nFAIL Startup failed: {e}")
         import traceback
         traceback.print_exc()
         sys.exit(1)
