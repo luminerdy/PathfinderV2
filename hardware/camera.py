@@ -3,6 +3,11 @@ Camera Interface
 Provides video capture and streaming capabilities
 """
 
+import os
+# Suppress OpenCV warnings before importing cv2
+os.environ['OPENCV_LOG_LEVEL'] = 'ERROR'
+os.environ['OPENCV_VIDEOIO_DEBUG'] = '0'
+
 import cv2
 import time
 import logging
@@ -50,7 +55,12 @@ class Camera:
             True if successful
         """
         try:
-            self._cap = cv2.VideoCapture(self.device)
+            # Suppress OpenCV warnings by redirecting stderr temporarily
+            import sys
+            from contextlib import redirect_stderr
+            with open(os.devnull, 'w') as devnull:
+                with redirect_stderr(devnull):
+                    self._cap = cv2.VideoCapture(self.device)
             
             if not self._cap.isOpened():
                 logger.error("Failed to open camera")

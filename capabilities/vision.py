@@ -84,7 +84,7 @@ class VisionSystem:
         if YOLO is not None:
             try:
                 yolo_config = config.get('yolo', {})
-                model_path = yolo_config.get('model', 'yolov11n.pt')
+                model_path = yolo_config.get('model', 'yolo11n.pt')
                 self._yolo = YOLO(model_path)
                 self._yolo_conf = yolo_config.get('confidence', 0.5)
                 self._yolo_iou = yolo_config.get('iou_threshold', 0.45)
