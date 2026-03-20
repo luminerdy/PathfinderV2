@@ -63,6 +63,11 @@ def main():
         default=30,
         help='Maximum block angle to attempt pickup (degrees, default: 30)'
     )
+    parser.add_argument(
+        '--no-mecanum-position',
+        action='store_true',
+        help='Disable mecanum fine positioning (strafing)'
+    )
     
     args = parser.parse_args()
     
@@ -89,6 +94,11 @@ def main():
             pickup.align_to_block = False
             print("⚠️  Block alignment disabled")
         pickup.max_misalignment_degrees = args.max_angle
+        
+        # Configure mecanum positioning
+        if args.no_mecanum_position:
+            pickup.use_mecanum_positioning = False
+            print("⚠️  Mecanum fine positioning disabled")
         
         print("✅ Robot ready!\n")
         

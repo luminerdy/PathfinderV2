@@ -75,6 +75,10 @@ class VisualPickupController:
         self.max_misalignment_degrees = 30  # Max angle difference to attempt pickup
         self.alignment_tolerance_degrees = 5  # "Close enough" for gripper
         
+        # Mecanum fine positioning
+        self.use_mecanum_positioning = True  # Use strafing for precise centering
+        self.position_tolerance_pixels = 20  # Center within this many pixels
+        
         # Camera parameters (these may need calibration)
         self.camera_offset_forward_mm = 100  # Camera is 10cm ahead of base
         self.camera_offset_up_mm = 100  # Camera is 10cm above ground
@@ -179,6 +183,27 @@ class VisualPickupController:
                     )
                 
                 images.append(self._save_image(img, "02b_after_alignment"))
+            
+            # 2.6. FINE POSITIONING using mecanum strafing
+            if self.use_mecanum_positioning:
+                logger.info("Fine-positioning with mecanum strafing...")
+                position_success = self._fine_position_block(color)
+                if position_success:
+                    # Re-detect after fine positioning
+                    time.sleep(0.3)
+                    img = self.camera.read()
+                    block = self._detect_block_by_color(img, color)
+                    if block and use_tag and tag:
+                        tags = self.vision.detect_apriltags()
+                        tag = tags[0] if tags else None
+                        if tag:
+                            block_pos = self._estimate_position_with_tag(block, tag)
+                        else:
+                            block_pos = self._estimate_position_simple(block)
+                    elif block:
+                        block_pos = self._estimate_position_simple(block)
+                    
+                    images.append(self._save_image(img, "02c_after_fine_position"))
             
             # 3. APPROACH block if too far
             if block_pos[0] > self.approach_distance_mm:
@@ -427,6 +452,8 @@ class VisualPickupController:
         """
         Rotate robot base to align gripper with block orientation
         
+        Uses mecanum rotation capability for precise angle adjustment.
+        
         Args:
             target_angle: Block angle to match (degrees)
             tolerance: Acceptable alignment error (degrees)
@@ -443,13 +470,79 @@ class VisualPickupController:
         # Estimate rotation time (rough)
         rotation_time = abs(target_angle) / 45.0  # ~45°/second at speed 0.2
         
-        # Rotate
+        # Rotate in place (mecanum can pivot without translation)
         self.chassis.set_velocity(0, 0, rotation_speed)
         time.sleep(rotation_time)
         self.chassis.stop()
         
         logger.info(f"Rotated ~{target_angle:.1f}° to align gripper")
         return True  # Assume success (no feedback for now)
+    
+    def _fine_position_block(self, color: str, max_iterations: int = 20) -> bool:
+        """
+        Use mecanum strafing to precisely center block
+        
+        Mecanum advantage: Can move laterally without rotating!
+        - Strafe left/right to center horizontally
+        - Move forward/backward for distance
+        - Rotate for angle (already done in _align_to_block)
+        
+        Args:
+            color: Block color to track
+            max_iterations: Max positioning attempts
+        
+        Returns:
+            True if block well-centered
+        """
+        logger.info("Fine-positioning using mecanum strafing...")
+        
+        for i in range(max_iterations):
+            # Detect block
+            img = self.camera.read()
+            block = self._detect_block_by_color(img, color)
+            
+            if not block:
+                logger.warning("Lost block during fine positioning")
+                return False
+            
+            # Check if well-centered
+            center_x = self.camera_width_pixels / 2
+            center_y = self.camera_height_pixels / 2
+            
+            offset_x = block.center[0] - center_x
+            offset_y = block.center[1] - center_y
+            
+            # Good enough?
+            if abs(offset_x) < 20 and abs(offset_y) < 20:
+                logger.info("Block well-centered!")
+                self.chassis.stop()
+                return True
+            
+            # Calculate mecanum movements
+            # Offset in pixels → velocity in each direction
+            
+            # Lateral correction (strafe left/right)
+            strafe_speed = 0
+            if abs(offset_x) > 20:
+                strafe_speed = -offset_x / 15.0  # Proportional
+                strafe_speed = max(-20, min(20, strafe_speed))  # Clamp
+            
+            # Forward/backward correction
+            forward_speed = 0
+            if abs(offset_y) > 20:
+                # Positive offset_y = block in lower part of frame = too far
+                forward_speed = offset_y / 20.0
+                forward_speed = max(-15, min(15, forward_speed))
+            
+            # Move (mecanum can do both simultaneously!)
+            self.chassis.set_velocity(forward_speed, strafe_speed, 0)
+            time.sleep(0.3)
+            self.chassis.stop()
+            time.sleep(0.1)
+        
+        logger.warning("Fine positioning max iterations reached")
+        self.chassis.stop()
+        return False
     
     def _approach_block(self, color: str, max_attempts: int = 30) -> bool:
         """
