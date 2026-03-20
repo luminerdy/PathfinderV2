@@ -23,6 +23,7 @@ class BlockDetection:
     height: int  # pixels
     bbox: Tuple[int, int, int, int]  # (x1, y1, x2, y2)
     confidence: float
+    angle: float = 0.0  # Rotation angle in degrees (0 = aligned with robot)
 
 
 @dataclass
@@ -68,6 +69,11 @@ class VisualPickupController:
         self.pre_grasp_height_mm = 100  # Height above block for pre-grasp
         self.grasp_height_mm = 15  # Height of gripper center above ground
         self.lift_height_mm = 150  # Height to lift block after grasp
+        
+        # Orientation parameters
+        self.align_to_block = True  # Rotate base to match block angle
+        self.max_misalignment_degrees = 30  # Max angle difference to attempt pickup
+        self.alignment_tolerance_degrees = 5  # "Close enough" for gripper
         
         # Camera parameters (these may need calibration)
         self.camera_offset_forward_mm = 100  # Camera is 10cm ahead of base
@@ -141,6 +147,38 @@ class VisualPickupController:
             # Draw detection on image
             img_annotated = self._annotate_detection(img, block, tag)
             images.append(self._save_image(img_annotated, "02_detection"))
+            
+            # 2.5. CHECK ALIGNMENT
+            if self.align_to_block and abs(block.angle) > self.alignment_tolerance_degrees:
+                if abs(block.angle) > self.max_misalignment_degrees:
+                    logger.warning(f"Block angle ({block.angle:.1f}°) too extreme for gripper")
+                    return PickupResult(
+                        success=False,
+                        reason=f"Block misaligned by {block.angle:.1f}° (max {self.max_misalignment_degrees}°)",
+                        block_position=None,
+                        time_taken=time.time() - start_time,
+                        images=images
+                    )
+                
+                logger.info(f"Aligning to block angle: {block.angle:.1f}°")
+                align_success = self._align_to_block(block.angle)
+                if not align_success:
+                    logger.warning("Alignment failed, attempting pickup anyway")
+                
+                # Re-detect after alignment
+                time.sleep(0.5)
+                img = self.camera.read()
+                block = self._detect_block_by_color(img, color)
+                if not block:
+                    return PickupResult(
+                        success=False,
+                        reason="Lost block after alignment",
+                        block_position=block_pos,
+                        time_taken=time.time() - start_time,
+                        images=images
+                    )
+                
+                images.append(self._save_image(img, "02b_after_alignment"))
             
             # 3. APPROACH block if too far
             if block_pos[0] > self.approach_distance_mm:
@@ -228,7 +266,7 @@ class VisualPickupController:
             color: Color to detect
         
         Returns:
-            BlockDetection or None
+            BlockDetection or None (includes orientation angle)
         """
         # Convert to HSV
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -274,6 +312,17 @@ class VisualPickupController:
         cx = x + w // 2
         cy = y + h // 2
         
+        # Get orientation using minimum area rectangle
+        # This gives us the angle of the block!
+        rect = cv2.minAreaRect(largest)
+        angle = rect[2]  # Angle in degrees
+        
+        # OpenCV gives angle in range [-90, 0]
+        # Normalize to [-45, 45] where 0 = aligned with gripper
+        # (Assumes square block, so 90° rotation = same orientation)
+        if angle < -45:
+            angle = 90 + angle
+        
         # Confidence based on area (larger = more confident)
         confidence = min(1.0, area / 10000.0)
         
@@ -283,7 +332,8 @@ class VisualPickupController:
             width=w,
             height=h,
             bbox=(x, y, x+w, y+h),
-            confidence=confidence
+            confidence=confidence,
+            angle=angle  # Block rotation angle
         )
     
     def _estimate_position_with_tag(self, block: BlockDetection, tag) -> Tuple[float, float, float]:
@@ -372,6 +422,34 @@ class VisualPickupController:
         z = 0  # Ground level
         
         return (x, y, z)
+    
+    def _align_to_block(self, target_angle: float, tolerance: float = 5.0) -> bool:
+        """
+        Rotate robot base to align gripper with block orientation
+        
+        Args:
+            target_angle: Block angle to match (degrees)
+            tolerance: Acceptable alignment error (degrees)
+        
+        Returns:
+            True if successfully aligned
+        """
+        logger.info(f"Aligning base to block angle: {target_angle:.1f}°")
+        
+        # Convert angle to rotation
+        # Positive angle = rotate counter-clockwise
+        rotation_speed = 0.2 if target_angle > 0 else -0.2
+        
+        # Estimate rotation time (rough)
+        rotation_time = abs(target_angle) / 45.0  # ~45°/second at speed 0.2
+        
+        # Rotate
+        self.chassis.set_velocity(0, 0, rotation_speed)
+        time.sleep(rotation_time)
+        self.chassis.stop()
+        
+        logger.info(f"Rotated ~{target_angle:.1f}° to align gripper")
+        return True  # Assume success (no feedback for now)
     
     def _approach_block(self, color: str, max_attempts: int = 30) -> bool:
         """
@@ -493,7 +571,16 @@ class VisualPickupController:
             x1, y1, x2, y2 = block.bbox
             cv2.rectangle(img_copy, (x1, y1), (x2, y2), (0, 255, 0), 2)
             cv2.circle(img_copy, block.center, 5, (0, 255, 0), -1)
-            cv2.putText(img_copy, f"{block.color} block", 
+            
+            # Draw orientation arrow
+            arrow_length = 30
+            angle_rad = math.radians(block.angle)
+            end_x = int(block.center[0] + arrow_length * math.cos(angle_rad))
+            end_y = int(block.center[1] + arrow_length * math.sin(angle_rad))
+            cv2.arrowedLine(img_copy, block.center, (end_x, end_y), (255, 0, 0), 2)
+            
+            # Label with color and angle
+            cv2.putText(img_copy, f"{block.color} {block.angle:.1f}deg", 
                        (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
         
         # Draw tag

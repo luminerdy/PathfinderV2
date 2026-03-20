@@ -52,6 +52,17 @@ def main():
         action='store_true',
         help='Detect only, don\'t execute pickup'
     )
+    parser.add_argument(
+        '--no-align',
+        action='store_true',
+        help='Disable automatic alignment to block angle'
+    )
+    parser.add_argument(
+        '--max-angle',
+        type=float,
+        default=30,
+        help='Maximum block angle to attempt pickup (degrees, default: 30)'
+    )
     
     args = parser.parse_args()
     
@@ -72,6 +83,12 @@ def main():
         
         # Create pickup controller
         pickup = VisualPickupController(robot)
+        
+        # Configure alignment
+        if args.no_align:
+            pickup.align_to_block = False
+            print("⚠️  Block alignment disabled")
+        pickup.max_misalignment_degrees = args.max_angle
         
         print("✅ Robot ready!\n")
         
