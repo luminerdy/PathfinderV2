@@ -13,28 +13,28 @@ Self-validating tests using AprilTag visual feedback. Tests can run without huma
 - Family: tag36h11
 - Good lighting, no glare
 
-**Default configuration (wall_field_6x6):**
+**Default configuration (corner_field_6x6):**
 ```
      6 ft
-   ┌─[1]────[2]─┐
+   ┌[0]──────[1]┐
    │            │
-6  [0]         [3]
+6  │            │
 ft │            │
    │            │
-   └─[4]────[5]─┘
+   └[3]──────[2]┘
 ```
 
-- North wall: Tags 1, 2
-- East wall: Tag 3
-- South wall: Tags 4, 5
-- West wall: Tag 0
+- Northwest corner: Tag 0
+- Northeast corner: Tag 1
+- Southeast corner: Tag 2
+- Southwest corner: Tag 3
 
 ### 2. Print AprilTags
 
 **Generate tags:**
 - Online: https://chev.me/arucogen/
   - Family: tag36h11
-  - IDs: 0-5
+  - IDs: 0-3 (4 tags for corner setup)
   - Size: 6" (150mm)
   
 **Or use Python:**
@@ -42,7 +42,7 @@ ft │            │
 pip3 install apriltag-gen
 python3 -c "
 from apriltag_gen import generate
-for i in range(6):
+for i in range(4):
     generate('tag36h11', i, f'tag_{i}.png', 150)  # 150mm = ~6 inches
 "
 ```
@@ -63,7 +63,9 @@ python3 -m tests.run_field_test --list-fields
 
 **Run test suite:**
 ```bash
-python3 -m tests.run_field_test --field wall_field_6x6
+python3 -m tests.run_field_test --field corner_field_6x6
+# Or simply (corner_field_6x6 is now default):
+python3 -m tests.run_field_test
 ```
 
 **Custom output directory:**

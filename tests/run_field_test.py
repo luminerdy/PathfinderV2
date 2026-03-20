@@ -46,8 +46,8 @@ def main():
     parser.add_argument(
         '--field',
         type=str,
-        default='wall_field_6x6',
-        help='Field configuration to use (default: wall_field_6x6)'
+        default='corner_field_6x6',
+        help='Field configuration to use (default: corner_field_6x6)'
     )
     parser.add_argument(
         '--list-fields',
