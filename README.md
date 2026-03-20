@@ -34,8 +34,27 @@ cd /home/robot/code/pathfinder
 # Install dependencies
 pip3 install -r requirements.txt
 
-# That's it! All SDK components are included locally in sdk/
+# That's it! All SDK components are included locally in lib/
 ```
+
+### ⚠️ IMPORTANT: Battery Safety
+
+**ALWAYS check battery voltage before running motors!**
+
+```bash
+# Quick check
+python3 check_battery.py
+
+# Or in code
+python3 -c "from hardware import Board; b = Board(); print(f'{b.get_battery()/1000:.2f}V')"
+```
+
+**Voltage Requirements:**
+- **Minimum for motors:** 7.5V
+- **Fully charged:** 8.4V
+- **Below 7.0V:** Charge immediately (risk of brownout during operation)
+
+See [BATTERY_SAFETY.md](BATTERY_SAFETY.md) for details.
 
 ### Basic Usage
 
