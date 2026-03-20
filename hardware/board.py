@@ -22,8 +22,7 @@ class Board:
     
     def __init__(self, device="/dev/ttyAMA0", baudrate=1000000):
         """Initialize board connection"""
-        self._board = ControllerBoard(device=device, baudrate=baudrate)
-        self._board.enable_reception()
+        self._board = ControllerBoard(port=device, baudrate=baudrate)
         logger.info(f"Board initialized on {device}")
         
     # ===== Servo Control =====
