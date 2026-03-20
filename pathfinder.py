@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from hardware import Board, Chassis, Arm, Camera, Sonar
 from capabilities import MovementController, VisionSystem, ManipulationController, SensorMonitor
+from capabilities.navigation import Navigator
 
 # Configure logging
 logging.basicConfig(
@@ -55,6 +56,7 @@ class Pathfinder:
         self.vision = None
         self.manipulation = None
         self.sensors = None
+        self.navigator = None
         
         self._initialized = False
         
@@ -117,6 +119,7 @@ class Pathfinder:
             if self.camera:
                 self.vision = VisionSystem(self.camera, self.config['vision'])
                 self.manipulation = ManipulationController(self.arm, self.vision)
+                self.navigator = Navigator(self)  # AprilTag navigation
             else:
                 self.manipulation = ManipulationController(self.arm)
                 
