@@ -133,6 +133,11 @@ class Pathfinder:
             self.board.beep(0.1)
             self.arm.home(duration=2.0)
             
+            # Turn off sonar LEDs (power saving)
+            if self.board:
+                self.board.set_rgb(0, 0, 0)  # All LEDs off (black)
+                logger.debug("Sonar LEDs off (power saving)")
+            
             self._initialized = True
             logger.info("Pathfinder ready!")
             
@@ -168,6 +173,8 @@ class Pathfinder:
                 
             # Close board
             if self.board:
+                # Turn off all LEDs before shutdown
+                self.board.set_rgb(0, 0, 0)
                 self.board.beep(0.05)
                 self.board.close()
                 

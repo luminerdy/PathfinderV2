@@ -74,6 +74,8 @@ def check_battery(strict=False, minimum_voltage=7.5):
             print(f"\nERROR: Battery below minimum ({minimum_voltage}V)")
             sys.exit(1)
         
+        # Turn off sonar LEDs (power saving)
+        board.set_rgb(0, 0, 0)  # All LEDs off
         board.close()
         return volts
         
