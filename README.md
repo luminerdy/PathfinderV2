@@ -26,7 +26,13 @@ Built for STEM education, hands-on robotics workshops, and AI/vision experimenta
 
 ## Quick Start
 
-### Installation
+### ⚡ Fresh Install?
+
+**Setting up a new robot?** Follow the complete guide:
+- 📋 **[Setup Checklist](docs/SETUP_CHECKLIST.md)** - Quick checklist format
+- 📖 **[Fresh Install Guide](docs/FRESH_INSTALL.md)** - Detailed step-by-step
+
+### Installation (Existing Pi OS)
 
 ```bash
 cd /home/robot/code/pathfinder
@@ -36,6 +42,8 @@ pip3 install -r requirements.txt
 
 # That's it! All SDK components are included locally in lib/
 ```
+
+**See [INSTALL.md](INSTALL.md) for detailed installation instructions.**
 
 ### ⚠️ IMPORTANT: Battery Safety
 
@@ -336,6 +344,53 @@ class MovementController:
 
 See [DEPENDENCIES.md](DEPENDENCIES.md) for complete system requirements and installation guide.  
 See `requirements.txt` for Python package list.
+
+## Documentation
+
+### 🚀 Getting Started
+- **[Setup Checklist](docs/SETUP_CHECKLIST.md)** - Quick setup reference
+- **[Fresh Install Guide](docs/FRESH_INSTALL.md)** - Complete step-by-step for new Pi OS
+- **[Installation Guide](INSTALL.md)** - Detailed installation instructions
+- **[Testing Guide](TESTING.md)** - Hardware testing procedures
+
+### ⚡ Hardware & Power
+- **[Battery Safety](BATTERY_SAFETY.md)** - Voltage requirements, charging, safety
+- **[Motor Solution](docs/MOTOR_SOLUTION.md)** - UART configuration fix for motors
+- **[Power Requirements](docs/POWER_REQUIREMENTS_ANALYSIS.md)** - Is 2x 18650 enough?
+- **[Power Warnings](docs/POWER_WARNING_ANALYSIS.md)** - Under-voltage troubleshooting
+- **[Shutdown Analysis](docs/SHUTDOWN_BUG_ANALYSIS.md)** - Brownout protection explained
+
+### 📊 Testing & Results
+- **[Testing Results](docs/TESTING_RESULTS.md)** - Verified working configuration
+- **[Testing Log](TESTING_LOG.md)** - Hardware test history
+
+### 🔧 Development
+- **[Dependencies](DEPENDENCIES.md)** - System requirements and packages
+- **[Implementation Checklist](docs/IMPLEMENTATION_CHECKLIST.md)** - Development roadmap
+
+### 📚 Reference
+- **[Hiwonder System Reference](docs/reference/HIWONDER_SYSTEM_REFERENCE.md)** - Complete system analysis
+- **[Session Summary](docs/reference/SESSION_SUMMARY_2026-03-20.md)** - Development history
+
+## Troubleshooting
+
+### Motors Don't Work
+1. Check battery voltage: `python3 check_battery.py` (must be > 7.5V)
+2. Verify UART0 enabled: `ls /dev/ttyAMA0` (should exist)
+3. See [Motor Solution Guide](docs/MOTOR_SOLUTION.md)
+
+### Under-Voltage Warnings
+1. Charge battery to > 7.5V
+2. Use high-discharge 18650 cells (20A+ rating)
+3. See [Battery Safety Guide](BATTERY_SAFETY.md)
+
+### Camera Not Working
+- Expected if camera not connected (warnings can be ignored)
+- If connected: `v4l2-ctl --list-devices`
+
+### More Help
+- Check [Fresh Install Guide](docs/FRESH_INSTALL.md) - Troubleshooting section
+- Review [Testing Results](docs/TESTING_RESULTS.md) - Verified working config
 
 ## License
 
