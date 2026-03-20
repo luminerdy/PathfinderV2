@@ -46,9 +46,13 @@ class Navigator:
         self.rotation_speed = 0.2  # Rotation speed for search
         self.approach_speed = 30    # Forward speed when approaching
         self.slow_distance = 500    # Slow down when closer than this (mm)
-        self.slow_speed = 15        # Reduced speed when close
+        self.slow_speed = 20        # Reduced speed when close (min 20)
         self.center_tolerance = 50  # Pixels from center considered "centered"
         self.max_attempts = 100     # Max control loop iterations
+        
+        # Speed limits (dead zone below ~20)
+        self.min_speed = 20         # Motors don't move below this
+        self.max_speed = 80         # Safe maximum
         
     def go_to_tag(self, tag_id: int, stop_distance: float = 300, 
                   timeout: float = 30.0) -> NavigationResult:
@@ -142,7 +146,12 @@ class Navigator:
                 
             else:
                 # Tag centered, approach
-                speed = self.slow_speed if tag.distance_estimate < self.slow_distance else self.approach_speed
+                # Use slow speed when close, but ensure above minimum
+                if tag.distance_estimate < self.slow_distance:
+                    speed = max(self.min_speed, self.slow_speed)
+                else:
+                    speed = self.approach_speed
+                speed = min(speed, self.max_speed)  # Enforce maximum
                 self.chassis.set_velocity(speed, 0, 0)
                 time.sleep(0.2)
             

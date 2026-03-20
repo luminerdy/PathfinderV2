@@ -79,6 +79,14 @@ class VisualPickupController:
         self.use_mecanum_positioning = True  # Use strafing for precise centering
         self.position_tolerance_pixels = 20  # Center within this many pixels
         
+        # Speed limits (calibrate with tools/calibrate_motors.py)
+        self.min_speed_forward = 20  # Below this, motors don't move
+        self.min_speed_strafe = 20   # Adjust after calibration
+        self.min_speed_rotate = 0.2
+        self.max_speed_forward = 80  # Safe maximum
+        self.max_speed_strafe = 80
+        self.max_speed_rotate = 0.8
+        
         # Camera parameters (these may need calibration)
         self.camera_offset_forward_mm = 100  # Camera is 10cm ahead of base
         self.camera_offset_up_mm = 100  # Camera is 10cm above ground
@@ -525,14 +533,20 @@ class VisualPickupController:
             strafe_speed = 0
             if abs(offset_x) > 20:
                 strafe_speed = -offset_x / 15.0  # Proportional
-                strafe_speed = max(-20, min(20, strafe_speed))  # Clamp
+                # Enforce min/max
+                if abs(strafe_speed) < self.min_speed_strafe:
+                    strafe_speed = self.min_speed_strafe if strafe_speed > 0 else -self.min_speed_strafe
+                strafe_speed = max(-self.max_speed_strafe, min(self.max_speed_strafe, strafe_speed))
             
             # Forward/backward correction
             forward_speed = 0
             if abs(offset_y) > 20:
                 # Positive offset_y = block in lower part of frame = too far
                 forward_speed = offset_y / 20.0
-                forward_speed = max(-15, min(15, forward_speed))
+                # Enforce min/max
+                if abs(forward_speed) < self.min_speed_forward:
+                    forward_speed = self.min_speed_forward if forward_speed > 0 else -self.min_speed_forward
+                forward_speed = max(-self.max_speed_forward, min(self.max_speed_forward, forward_speed))
             
             # Move (mecanum can do both simultaneously!)
             self.chassis.set_velocity(forward_speed, strafe_speed, 0)
@@ -580,12 +594,20 @@ class VisualPickupController:
             
             if abs(offset_x) > 30:  # Need to turn
                 turn_speed = -offset_x / 500.0
-                turn_speed = max(-0.3, min(0.3, turn_speed))  # Clamp
+                turn_speed = max(-self.max_speed_rotate, min(self.max_speed_rotate, turn_speed))
+                # Enforce minimum
+                if abs(turn_speed) < self.min_speed_rotate:
+                    turn_speed = self.min_speed_rotate if turn_speed > 0 else -self.min_speed_rotate
                 self.chassis.set_velocity(0, 0, turn_speed)
                 time.sleep(0.2)
             else:
                 # Block centered, drive forward
-                speed = 15 if block.width > 80 else 25  # Slow down when close
+                # Slow down when close, but respect minimum speed
+                if block.width > 80:  # Very close
+                    speed = max(self.min_speed_forward, 20)
+                else:
+                    speed = max(self.min_speed_forward, 30)
+                speed = min(speed, self.max_speed_forward)
                 self.chassis.set_velocity(speed, 0, 0)
                 time.sleep(0.3)
             
