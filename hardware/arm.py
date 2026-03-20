@@ -8,9 +8,7 @@ import time
 import logging
 from typing import Optional, Tuple, Dict
 
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from sdk.kinematics.arm_move_ik import ArmIK as BaseArmIK
+from lib.arm_move_ik import ArmIK as BaseArmIK
 
 from .board import Board
 

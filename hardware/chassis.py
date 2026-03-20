@@ -8,9 +8,7 @@ import math
 import logging
 from typing import Tuple
 
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from sdk.common.mecanum import MecanumChassis as BaseMecanum
+from lib.mecanum import MecanumChassis as BaseMecanum
 
 from .board import Board
 
@@ -44,7 +42,7 @@ class Chassis:
                                         wheel_diameter=wheel_diameter)
         
         # Replace the SDK's global board with our instance
-        from sdk.common import mecanum as mecanum_module
+        from lib import mecanum as mecanum_module
         mecanum_module.board = board._board
         
         self._max_speed = 100  # mm/s

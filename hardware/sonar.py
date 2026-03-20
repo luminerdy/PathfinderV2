@@ -8,9 +8,7 @@ import time
 import logging
 from typing import Optional, Tuple
 
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from sdk.common.sonar import Sonar as BaseSonar
+from lib.sonar import Sonar as BaseSonar
 
 logger = logging.getLogger(__name__)
 
