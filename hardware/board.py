@@ -127,6 +127,14 @@ class Board:
         
     # ===== Sensors =====
     
+    def get_battery(self) -> Optional[int]:
+        """Get battery voltage in millivolts (raw reading)"""
+        try:
+            return self._board.get_battery()
+        except Exception as e:
+            logger.error(f"Error reading battery: {e}")
+            return None
+    
     def get_battery_voltage(self) -> Optional[float]:
         """Get battery voltage in volts"""
         try:

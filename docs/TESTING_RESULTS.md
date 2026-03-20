@@ -85,12 +85,12 @@ board.pwm_servo_set_position(0.5, [[5, 2000]]) # ✅ Gripper closed!
 - Buzzer: ✅
 - RGB LEDs: ✅
 
-### Next Demo Tests Pending
+### Demo Tests Completed
 
-- [ ] D1 Basic Drive (movement patterns)
-- [ ] D2 Sonar (distance + obstacle avoidance)
-- [ ] D3 Arm Basics (IK positions, pick/place)
-- [ ] E2 AprilTag (tag detection)
+- [x] D1 Basic Drive - ✅ All movement patterns working
+- [x] D2 Sonar - ✅ Code runs (sonar not connected, expected)
+- [x] D3 Arm Basics - ✅ All IK positions, pick/place, gestures working
+- [ ] E2 AprilTag - ⏳ Requires camera connection
 
 ### System Configuration
 

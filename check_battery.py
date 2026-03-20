@@ -29,10 +29,12 @@ def check_battery(strict=False, minimum_voltage=7.5):
     """
     try:
         board = Board()
+        import time
+        time.sleep(0.5)  # Wait for board initialization
         volt_mv = board.get_battery()
         
         if volt_mv is None:
-            print("❌ Cannot read battery voltage")
+            print("ERROR: Cannot read battery voltage")
             print("   Check that board is connected and powered")
             if strict:
                 sys.exit(1)
@@ -42,23 +44,23 @@ def check_battery(strict=False, minimum_voltage=7.5):
         
         # Determine status
         if volts < 6.5:
-            status = "🔴 EMERGENCY"
+            status = "RED EMERGENCY"
             message = "Charge immediately! Risk of battery damage!"
             safe = False
         elif volts < 7.0:
-            status = "🔴 CRITICAL"
+            status = "RED CRITICAL"
             message = "No motor operation allowed. Charge now!"
             safe = False
         elif volts < 7.5:
-            status = "🟡 LOW"
+            status = "YELLOW LOW"
             message = "Charge soon. Light operation only."
             safe = False
         elif volts < 8.0:
-            status = "🟢 OK"
+            status = "GREEN OK"
             message = "Normal operation permitted."
             safe = True
         else:
-            status = "🟢 EXCELLENT"
+            status = "GREEN EXCELLENT"
             message = "Fully charged and ready!"
             safe = True
         
@@ -69,14 +71,14 @@ def check_battery(strict=False, minimum_voltage=7.5):
         
         # Exit based on strict mode
         if strict and not safe:
-            print(f"\n❌ Battery below minimum ({minimum_voltage}V)")
+            print(f"\nERROR: Battery below minimum ({minimum_voltage}V)")
             sys.exit(1)
         
         board.close()
         return volts
         
     except Exception as e:
-        print(f"❌ Error checking battery: {e}")
+        print(f"ERROR: Error checking battery: {e}")
         if strict:
             sys.exit(1)
         return None
@@ -91,10 +93,10 @@ if __name__ == "__main__":
     voltage = check_battery(strict=strict_mode)
     
     if voltage and voltage >= 7.5:
-        print("\n✓ Ready for operation")
+        print("\nOK: Ready for operation")
         sys.exit(0)
     elif voltage:
-        print("\n⚠️ Charge battery before motor operation")
+        print("\nWARNING: Charge battery before motor operation")
         sys.exit(0 if not strict_mode else 1)
     else:
         sys.exit(1)
