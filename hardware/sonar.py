@@ -8,7 +8,7 @@ import time
 import logging
 from typing import Optional, Tuple
 
-from lib.sonar import Sonar as BaseSonar
+from lib.i2c_sonar import I2CSonar as BaseSonar
 
 logger = logging.getLogger(__name__)
 

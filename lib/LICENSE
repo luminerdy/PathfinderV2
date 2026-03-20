@@ -1,0 +1,11 @@
+PathfinderV2 Library Code
+Copyright (c) 2026 Scotty
+
+Clean-room implementations based on:
+- Standard robotics mathematics and kinematics
+- Protocol analysis and hardware testing
+- No vendor source code used
+
+All implementations are original work created for educational purposes.
+
+MIT License - See repository root LICENSE file for full terms.

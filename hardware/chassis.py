@@ -8,7 +8,7 @@ import math
 import logging
 from typing import Tuple
 
-from lib.mecanum import MecanumChassis as BaseMecanum
+from lib.mecanum_kinematics import MecanumChassis as BaseMecanum
 
 from .board import Board
 
@@ -41,9 +41,8 @@ class Chassis:
         self._chassis = BaseMecanum(a=wheel_base, b=track_width, 
                                         wheel_diameter=wheel_diameter)
         
-        # Replace the SDK's global board with our instance
-        from lib import mecanum as mecanum_module
-        mecanum_module.board = board._board
+        # Set board reference for mecanum chassis
+        self._chassis.board = board._board
         
         self._max_speed = 100  # mm/s
         self._current_velocity = 0

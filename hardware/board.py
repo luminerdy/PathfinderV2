@@ -9,7 +9,7 @@ import logging
 from typing import List, Tuple, Optional
 
 # Import from lib (same level)
-from lib.ros_robot_controller_sdk import Board as ControllerBoard
+from lib.board_protocol import BoardController as ControllerBoard
 
 logger = logging.getLogger(__name__)
 

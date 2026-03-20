@@ -8,7 +8,7 @@ import time
 import logging
 from typing import Optional, Tuple, Dict
 
-from lib.arm_move_ik import ArmIK as BaseArmIK
+from lib.arm_inverse_kinematics import ArmIK as BaseArmIK
 
 from .board import Board
 
