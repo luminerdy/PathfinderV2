@@ -8,7 +8,7 @@ import math
 import logging
 from typing import Tuple
 
-from lib.mecanum_kinematics import MecanumChassis as BaseMecanum
+from lib.mecanum_kinematics import MecanumKinematics as BaseMecanum
 
 from .board import Board
 
@@ -38,11 +38,8 @@ class Chassis:
             wheel_diameter: Wheel diameter (mm)
         """
         self.board = board
-        self._chassis = BaseMecanum(a=wheel_base, b=track_width, 
-                                        wheel_diameter=wheel_diameter)
-        
-        # Set board reference for mecanum chassis
-        self._chassis.board = board._board
+        self._kinematics = BaseMecanum(wheelbase_mm=wheel_base, track_width_mm=track_width, 
+                                        wheel_diameter_mm=wheel_diameter)
         
         self._max_speed = 100  # mm/s
         self._current_velocity = 0
@@ -58,16 +55,23 @@ class Chassis:
         Set chassis velocity using polar coordinates
         
         Args:
-            velocity: Speed in mm/s (0-100)
+            velocity: Speed in mm/s (0-100) OR motor duty (-100 to 100)
             direction: Direction in degrees (0=forward, 90=right, 180=back, 270=left)
-            rotation: Rotation rate (-1.0 to 1.0, positive = clockwise)
+            rotation: Rotation rate (-1.0 to 1.0, positive = counter-clockwise)
         """
-        # Clamp values
-        velocity = max(0, min(self._max_speed, velocity))
-        direction = direction % 360
-        rotation = max(-1.0, min(1.0, rotation))
+        # Convert polar to cartesian
+        vx = velocity * math.cos(math.radians(direction))  # Forward component
+        vy = velocity * math.sin(math.radians(direction))  # Strafe component
+        omega = rotation * 50  # Scale rotation to motor range
         
-        self._chassis.set_velocity(velocity, direction, rotation)
+        # Get wheel speeds from kinematics
+        v1, v2, v3, v4 = self._kinematics.inverse_kinematics(vx, vy, omega)
+        
+        # Send to motors (convert to duty cycle)
+        self.board.set_motor_duty(1, int(v1))  # Front left
+        self.board.set_motor_duty(2, int(v2))  # Front right
+        self.board.set_motor_duty(3, int(v3))  # Rear left
+        self.board.set_motor_duty(4, int(v4))  # Rear right
         
         self._current_velocity = velocity
         self._current_direction = direction
@@ -75,7 +79,10 @@ class Chassis:
         
     def stop(self):
         """Stop all movement"""
-        self._chassis.reset_motors()
+        self.board.set_motor_duty(1, 0)
+        self.board.set_motor_duty(2, 0)
+        self.board.set_motor_duty(3, 0)
+        self.board.set_motor_duty(4, 0)
         self._current_velocity = 0
         self._current_direction = 0
         self._current_rotation = 0
@@ -135,7 +142,9 @@ class Chassis:
             vy: Velocity in Y direction (mm/s, positive = forward)
             rotation: Rotation rate (-1.0 to 1.0)
         """
-        velocity, direction = self._chassis.translation(vx, vy, fake=True)
+        # Convert cartesian to polar
+        velocity = math.sqrt(vx*vx + vy*vy)
+        direction = math.degrees(math.atan2(vy, vx))
         self.set_velocity(velocity, direction, rotation)
         
     # ===== Advanced Movement =====
