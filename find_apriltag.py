@@ -2,6 +2,23 @@
 """
 Autonomous AprilTag Search and Localization
 Robot rotates to find AprilTags and determine position
+
+IMPORTANT - GRIPPER STATE:
+When using this for localization while carrying a block, you MUST:
+1. Set holding_block=True in position_camera_forward()
+2. Set holding_block=True in search_for_tags()
+
+This keeps the gripper CLOSED during camera positioning and rotation.
+Otherwise the robot will drop the block when moving the arm!
+
+USAGE:
+    # Empty gripper (default)
+    finder.position_camera_forward()
+    finder.search_for_tags()
+    
+    # Holding a block
+    finder.position_camera_forward(holding_block=True)
+    finder.search_for_tags(holding_block=True)
 """
 
 import cv2
@@ -32,19 +49,42 @@ class AprilTagFinder:
         self.check_interval = 0.3  # Check for tags every 300ms
         self.max_rotation_time = 30  # Give up after 30 seconds
         
-    def position_camera_forward(self):
-        """Position arm to camera-forward for tag searching"""
-        print("Positioning camera forward...")
+    def position_camera_forward(self, holding_block=False):
+        """
+        Position arm to camera-forward for tag searching
         
-        camera_forward = [
-            (1, 2500),  # Gripper open
+        Args:
+            holding_block: If True, maintain gripper closed (don't drop block!)
+        
+        IMPORTANT: When holding a block, gripper stays closed during repositioning
+        """
+        if holding_block:
+            print("Positioning camera forward (maintaining grip on block)...")
+        else:
+            print("Positioning camera forward...")
+        
+        # Camera-forward positions
+        # NOTE: Gripper (servo 1) is handled conditionally
+        arm_positions = [
             (6, 1500),  # Base forward
             (5, 700),   # Shoulder
             (4, 2450),  # Elbow
             (3, 590),   # Wrist
         ]
         
-        for servo_id, pwm in camera_forward:
+        # Set gripper based on whether holding block
+        if holding_block:
+            gripper_pos = 1475  # Closed - maintain grip
+            print("  [!] Gripper staying CLOSED (holding block)")
+        else:
+            gripper_pos = 2500  # Open - no block
+        
+        # Position gripper first
+        self.board.set_servo_position(500, [(1, gripper_pos)])
+        time.sleep(0.3)
+        
+        # Then position rest of arm
+        for servo_id, pwm in arm_positions:
             self.board.set_servo_position(500, [(servo_id, pwm)])
             time.sleep(0.3)
         
@@ -75,14 +115,24 @@ class AprilTagFinder:
         """Stop rotating"""
         self.board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
     
-    def search_for_tags(self, direction='right', save_image=True):
+    def search_for_tags(self, direction='right', save_image=True, holding_block=False):
         """
         Rotate and search for AprilTags
+        
+        Args:
+            direction: 'right' or 'left' rotation
+            save_image: Save annotated image when tag found
+            holding_block: If True, warns about maintaining grip
         
         Returns:
             List of detected tags or None if timeout
         """
-        print(f"\nSearching for AprilTags (rotating {direction})...")
+        if holding_block:
+            print(f"\nSearching for AprilTags (rotating {direction})...")
+            print("  [!] HOLDING BLOCK - Gripper must stay closed!")
+        else:
+            print(f"\nSearching for AprilTags (rotating {direction})...")
+        
         print(f"Will check every {self.check_interval}s for up to {self.max_rotation_time}s")
         
         # Start rotating
@@ -198,15 +248,20 @@ def main():
     print("=" * 60)
     print("APRILTAG AUTONOMOUS SEARCH")
     print("=" * 60)
+    print("\nIMPORTANT: If robot is holding a block, use:")
+    print("  finder.position_camera_forward(holding_block=True)")
+    print("  finder.search_for_tags(holding_block=True)")
+    print("This maintains gripper grip during search!\n")
     
     finder = AprilTagFinder()
     
     try:
-        # Position camera
-        finder.position_camera_forward()
+        # Position camera (gripper opens by default)
+        # Change to holding_block=True if carrying a block!
+        finder.position_camera_forward(holding_block=False)
         
         # Search for tags
-        tags = finder.search_for_tags(direction='right')
+        tags = finder.search_for_tags(direction='right', holding_block=False)
         
         if tags:
             # Localize based on tags
