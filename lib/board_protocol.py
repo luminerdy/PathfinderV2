@@ -197,6 +197,9 @@ class BoardController:
         """
         data = bytes([0x05, len(motors)])  # Sub-command 0x05 = duty cycle
         for motor_id, duty in motors:
+            # Invert motors 1 and 3 (left side) - they're wired backwards
+            if motor_id in [1, 3]:
+                duty = -duty
             # Pack motor index (0-based) and duty as float
             data += struct.pack("<Bf", motor_id - 1, float(duty))
         self.protocol.send_command(Function.MOTOR, data)
