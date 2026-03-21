@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Servo Control</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+        }
+        .servo-control {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+        .servo-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .servo-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .servo-value {
+            font-size: 18px;
+            color: #fff;
+            background: #333;
+            padding: 4px 12px;
+            border-radius: 4px;
+        }
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #555;
+            outline: none;
+            margin: 10px 0;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #888;
+        }
+        .presets {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        button {
+            background: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button:active {
+            background: #3d8b40;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Servo Control</h1>
+        
+        <div class="presets">
+            <button onclick="loadPreset('rest')">Rest Position</button>
+            <button onclick="loadPreset('forward')">Camera Forward</button>
+        </div>
+        
+        <div class="servo-control">
+            <div class="servo-header">
+                <span class="servo-name">1. Gripper</span>
+                <span class="servo-value" id="value1">2500</span>
+            </div>
+            <input type="range" id="servo1" min="1475" max="2500" value="2500" 
+                   oninput="updateServo(1, this.value)">
+            <div class="range-labels">
+                <span>1475 (closed)</span>
+                <span>1987</span>
+                <span>2500 (open)</span>
+            </div>
+        </div>
+        
+        <div class="servo-control">
+            <div class="servo-header">
+                <span class="servo-name">3. Wrist</span>
+                <span class="servo-value" id="value3">1500</span>
+            </div>
+            <input type="range" id="servo3" min="500" max="2500" value="1500" 
+                   oninput="updateServo(3, this.value)">
+            <div class="range-labels">
+                <span>500</span>
+                <span>1500 (center)</span>
+                <span>2500</span>
+            </div>
+        </div>
+        
+        <div class="servo-control">
+            <div class="servo-header">
+                <span class="servo-name">4. Elbow</span>
+                <span class="servo-value" id="value4">1500</span>
+            </div>
+            <input type="range" id="servo4" min="500" max="2500" value="1500" 
+                   oninput="updateServo(4, this.value)">
+            <div class="range-labels">
+                <span>500</span>
+                <span>1500 (center)</span>
+                <span>2500</span>
+            </div>
+        </div>
+        
+        <div class="servo-control">
+            <div class="servo-header">
+                <span class="servo-name">5. Shoulder</span>
+                <span class="servo-value" id="value5">1500</span>
+            </div>
+            <input type="range" id="servo5" min="500" max="2500" value="1500" 
+                   oninput="updateServo(5, this.value)">
+            <div class="range-labels">
+                <span>500</span>
+                <span>1500 (center)</span>
+                <span>2500</span>
+            </div>
+        </div>
+        
+        <div class="servo-control">
+            <div class="servo-header">
+                <span class="servo-name">6. Base (Rotation)</span>
+                <span class="servo-value" id="value6">1500</span>
+            </div>
+            <input type="range" id="servo6" min="500" max="2500" value="1500" 
+                   oninput="updateServo(6, this.value)">
+            <div class="range-labels">
+                <span>500 (right)</span>
+                <span>1500 (forward)</span>
+                <span>2500 (left)</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let timeout = null;
+        
+        function updateServo(servo, value) {
+            // Update display
+            document.getElementById('value' + servo).textContent = value;
+            
+            // Debounce - only send after user stops moving slider
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                fetch('/set_servo', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({servo: servo, position: parseInt(value)})
+                });
+            }, 100);
+        }
+        
+        function loadPreset(name) {
+            fetch('/preset/' + name)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        // Update sliders to match preset
+                        for (let servo in data.positions) {
+                            let pos = data.positions[servo];
+                            document.getElementById('servo' + servo).value = pos;
+                            document.getElementById('value' + servo).textContent = pos;
+                        }
+                    }
+                });
+        }
+        
+        // Load current positions on page load
+        fetch('/get_positions')
+            .then(response => response.json())
+            .then(positions => {
+                for (let servo in positions) {
+                    let pos = positions[servo];
+                    document.getElementById('servo' + servo).value = pos;
+                    document.getElementById('value' + servo).textContent = pos;
+                }
+            });
+    </script>
+</body>
+</html>

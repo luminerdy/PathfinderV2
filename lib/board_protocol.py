@@ -228,12 +228,12 @@ class BoardController:
                    servo_id: 1-6 (typically)
                    pulse_width: 500-2500 (1500 = center)
         """
-        data = bytes([0x01])  # Sub-command 0x01 = set position
-        data += struct.pack("<H", duration_ms)  # Duration (16-bit little-endian)
-        data += bytes([len(servos)])
+        # Duration in milliseconds, split into low/high bytes
+        data = bytes([0x01, duration_ms & 0xFF, (duration_ms >> 8) & 0xFF, len(servos)])
         
         for servo_id, pulse in servos:
-            data += struct.pack("<BH", servo_id - 1, pulse)  # Servos are 0-based like motors
+            # Servos are 1-based (unlike motors which are 0-based)
+            data += struct.pack("<BH", servo_id, pulse)
             
         self.protocol.send_command(Function.SERVO, data)
         

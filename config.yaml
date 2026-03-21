@@ -47,7 +47,7 @@ hardware:
     width: 640
     height: 480
     fps: 30
-    flip: false  # Camera orientation is correct as-is
+    flip: true  # Arm is backwards, camera upside down
     
   sonar:
     trigger_pin: 23
