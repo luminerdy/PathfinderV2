@@ -46,24 +46,27 @@ try:
 except Exception as e:
     print(f"  [WARN] Battery check failed: {e}")
 
-# Position arm safely
-print("\n[4/6] Positioning arm to safe rest position...")
-safe_positions = [
-    (2, 1700),  # Shoulder lowered
-    (3, 1300),  # Elbow bent
-    (4, 1500),  # Wrist neutral
-    (1, 1500),  # Base centered
-    (5, 1000),  # Gripper open
+# Position arm to camera-forward position
+print("\n[4/6] Positioning arm to camera-forward position...")
+
+# Correct servo mapping:
+# 1=Gripper, 2=EMPTY, 3=Wrist, 4=Elbow, 5=Shoulder, 6=Base
+camera_forward = [
+    (1, 2500),  # Gripper open
+    (6, 1500),  # Base forward (center)
+    (5, 700),   # Shoulder
+    (4, 2450),  # Elbow
+    (3, 590),   # Wrist
 ]
 
-# Move servos with longer duration to ensure they reach position
-for servo_id, pwm in safe_positions:
-    board.set_servo_position(800, [(servo_id, pwm)])  # Slower, 800ms
-    time.sleep(0.5)
+# Move servos sequentially to avoid power spike
+for servo_id, pwm in camera_forward:
+    board.set_servo_position(800, [(servo_id, pwm)])
+    time.sleep(0.4)
     
 # Extra wait to ensure settled
 time.sleep(0.5)
-print("  [OK] Arm in safe rest position")
+print("  [OK] Arm positioned with camera facing forward")
 
 # Turn off RGB LEDs (power saving)
 print("\n[5/6] Turning off RGB LEDs (power saving)...")
