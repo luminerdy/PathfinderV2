@@ -1,0 +1,17 @@
+[Unit]
+Description=PathfinderV2 Servo Control Interface
+After=pathfinder-startup.service network.target
+Requires=pathfinder-startup.service
+
+[Service]
+Type=simple
+User=robot
+WorkingDirectory=/home/robot/code/pathfinder
+ExecStart=/usr/bin/python3 /home/robot/code/pathfinder/web_servo.py
+Restart=on-failure
+RestartSec=5
+StandardOutput=append:/home/robot/code/pathfinder/web_servo.log
+StandardError=append:/home/robot/code/pathfinder/web_servo.log
+
+[Install]
+WantedBy=multi-user.target

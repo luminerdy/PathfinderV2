@@ -1,0 +1,16 @@
+[Unit]
+Description=PathfinderV2 Robot Startup Sequence
+After=network.target
+Wants=network.target
+
+[Service]
+Type=oneshot
+User=robot
+WorkingDirectory=/home/robot/code/pathfinder
+ExecStart=/usr/bin/python3 /home/robot/code/pathfinder/robot_startup.py
+RemainAfterExit=yes
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
