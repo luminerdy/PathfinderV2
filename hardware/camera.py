@@ -24,7 +24,7 @@ class Camera:
     """
     
     def __init__(self, device: int = 0, width: int = 640, height: int = 480, 
-                 fps: int = 30):
+                 fps: int = 30, flip: bool = False):
         """
         Initialize camera
         
@@ -33,11 +33,13 @@ class Camera:
             width: Frame width
             height: Frame height
             fps: Target frames per second
+            flip: Flip image 180° (for backward/upside-down mounted cameras)
         """
         self.device = device
         self.width = width
         self.height = height
         self.fps = fps
+        self.flip = flip
         
         self._cap = None
         self._frame = None
@@ -103,7 +105,11 @@ class Camera:
         """
         with self._lock:
             if self._frame is not None:
-                return self._frame.copy()
+                frame = self._frame.copy()
+                # Flip 180° if camera mounted backward/upside-down
+                if self.flip:
+                    frame = cv2.rotate(frame, cv2.ROTATE_180)
+                return frame
         return None
         
     def read_with_timestamp(self) -> Tuple[Optional[np.ndarray], float]:

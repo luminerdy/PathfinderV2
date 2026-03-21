@@ -100,7 +100,8 @@ class Pathfinder:
                     device=cam_config['device'],
                     width=cam_config['width'],
                     height=cam_config['height'],
-                    fps=cam_config['fps']
+                    fps=cam_config['fps'],
+                    flip=cam_config.get('flip', False)  # Flip if backward/upside-down
                 )
                 self.camera.open()
                 
