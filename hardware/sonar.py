@@ -29,11 +29,15 @@ class Sonar:
         self.max_distance = max_distance
         self._last_distance = None
         
-        # Turn off RGB LEDs initially
-        self._sonar.setRGBMode(0)
-        self._sonar.setPixelColor(0, (0, 0, 0))
-        self._sonar.setPixelColor(1, (0, 0, 0))
-        self._sonar.show()
+        # Turn off RGB LEDs initially (clean-room API uses snake_case)
+        try:
+            self._sonar.set_rgb_mode(0)
+            self._sonar.set_pixel_color(0, (0, 0, 0))
+            self._sonar.set_pixel_color(1, (0, 0, 0))
+            self._sonar.show()
+        except AttributeError:
+            # If sonar not actually connected, skip LED setup
+            pass
         
         logger.info("Sonar initialized")
         

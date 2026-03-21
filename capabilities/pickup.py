@@ -99,7 +99,8 @@ class VisualPickupController:
             'red2': [(170, 100, 100), (180, 255, 255)],  # Upper red
             'blue': [(100, 100, 100), (130, 255, 255)],
             'green': [(40, 100, 100), (80, 255, 255)],
-            'yellow': [(20, 100, 100), (40, 255, 255)]
+            'yellow': [(20, 100, 100), (40, 255, 255)],
+            'purple': [(130, 100, 100), (160, 255, 255)]  # Purple/violet
         }
     
     def pickup_block(self, color: str = 'red', use_tag: bool = True, 
