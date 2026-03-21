@@ -230,7 +230,7 @@ class BoardController:
         data += bytes([len(servos)])
         
         for servo_id, pulse in servos:
-            data += struct.pack("<BH", servo_id, pulse)
+            data += struct.pack("<BH", servo_id - 1, pulse)  # Servos are 0-based like motors
             
         self.protocol.send_command(Function.SERVO, data)
         
