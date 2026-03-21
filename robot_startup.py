@@ -110,12 +110,12 @@ print("=" * 60)
 # Double beep to indicate ready
 print("\nBeeping to signal ready...")
 try:
-    board.set_buzzer(100, 100)  # 100ms on, 100ms off
-    time.sleep(0.3)
-    board.set_buzzer(100, 100)
-    time.sleep(0.3)
-except:
-    print("  (Buzzer not available)")
+    # Buzzer: freq_hz, on_seconds, off_seconds, repeat
+    board.set_buzzer(1000, 0.1, 0.1, 2)  # 1kHz, beep twice
+    time.sleep(0.5)
+    print("  [OK] Ready signal sent")
+except Exception as e:
+    print(f"  [WARN] Buzzer not available: {e}")
 
 print("\nRobot initialized and ready!")
 print("\nUseful commands:")
