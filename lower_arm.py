@@ -26,4 +26,4 @@ for servo_id, position in positions:
     board.set_servo_position(500, [(servo_id, position)])
     time.sleep(0.3)
 
-print("✓ Arm lowered and safe")
+print("[OK] Arm lowered and safe")

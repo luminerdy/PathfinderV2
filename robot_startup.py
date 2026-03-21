@@ -56,9 +56,13 @@ safe_positions = [
     (5, 1000),  # Gripper open
 ]
 
+# Move servos with longer duration to ensure they reach position
 for servo_id, pwm in safe_positions:
-    board.set_servo_position(400, [(servo_id, pwm)])
-    time.sleep(0.3)
+    board.set_servo_position(800, [(servo_id, pwm)])  # Slower, 800ms
+    time.sleep(0.5)
+    
+# Extra wait to ensure settled
+time.sleep(0.5)
 print("  [OK] Arm in safe rest position")
 
 # Turn off RGB LEDs (power saving)
