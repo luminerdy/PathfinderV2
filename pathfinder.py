@@ -131,7 +131,8 @@ class Pathfinder:
             
             # Startup sequence
             self.board.beep(0.1)
-            self.arm.home(duration=2.0)
+            # TODO: Fix arm IK wrapper before enabling home
+            # self.arm.home(duration=2.0)
             
             # Turn off sonar LEDs (power saving)
             if self.board:
@@ -160,8 +161,9 @@ class Pathfinder:
                 self.chassis.stop()
                 
             # Move arm to safe position
-            if self.arm:
-                self.arm.rest()
+            # TODO: Fix arm IK wrapper before enabling
+            # if self.arm:
+            #     self.arm.rest()
                 
             # Close camera
             if self.camera:
