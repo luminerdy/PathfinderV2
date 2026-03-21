@@ -24,8 +24,7 @@ except Exception as e:
 
 # Stop all motors
 print("\n[2/6] Stopping all motors...")
-for motor in range(1, 5):
-    board.set_motor_duty(motor, 0)
+board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
 print("  [OK] All motors stopped")
 
 # Check battery
@@ -34,7 +33,7 @@ try:
     # Battery reading comes from periodic SYS packets
     time.sleep(0.5)
     voltage = board.get_battery()
-    if voltage:
+    if voltage and voltage < 100:  # Sanity check
         print(f"  Battery: {voltage:.2f}V")
         if voltage < 7.0:
             print("  [WARN] Battery low! Charge soon")
@@ -43,9 +42,9 @@ try:
         else:
             print("  [OK] Battery good")
     else:
-        print("  [WARN] Could not read battery voltage")
-except:
-    print("  [WARN] Battery check failed")
+        print("  [WARN] Could not read battery voltage (got invalid reading)")
+except Exception as e:
+    print(f"  [WARN] Battery check failed: {e}")
 
 # Position arm safely
 print("\n[4/6] Positioning arm to safe rest position...")
@@ -100,13 +99,13 @@ print("=" * 60)
 
 # Double beep to indicate ready
 print("\nBeeping to signal ready...")
-board.set_buzzer(True)
-time.sleep(0.1)
-board.set_buzzer(False)
-time.sleep(0.2)
-board.set_buzzer(True)
-time.sleep(0.1)
-board.set_buzzer(False)
+try:
+    board.set_buzzer(100, 100)  # 100ms on, 100ms off
+    time.sleep(0.3)
+    board.set_buzzer(100, 100)
+    time.sleep(0.3)
+except:
+    print("  (Buzzer not available)")
 
 print("\nRobot initialized and ready!")
 print("\nUseful commands:")

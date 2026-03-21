@@ -12,8 +12,7 @@ board = BoardController()
 time.sleep(0.3)
 
 # Stop motors
-for motor in range(1, 5):
-    board.set_motor_duty(motor, 0)
+board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
 
 # Move servos to camera-ready position
 # These are starting guesses - adjust with find_camera_position.py
@@ -32,9 +31,10 @@ for servo_id, pwm in positions:
     time.sleep(0.5)
 
 # Beep
-board.set_buzzer(True)
-time.sleep(0.1)
-board.set_buzzer(False)
+try:
+    board.set_buzzer(100, 0)  # 100ms beep
+except:
+    pass
 
 print("\n[OK] Done")
 print("Check camera view - adjust positions with find_camera_position.py if needed")
