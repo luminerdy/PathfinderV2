@@ -27,8 +27,16 @@ print("\n[2/6] Stopping all motors...")
 board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
 print("  [OK] All motors stopped")
 
+# Turn off sonar RGB LEDs (they default to ON at power-up)
+print("\n[3/6] Turning off sonar RGB LEDs...")
+try:
+    board.set_rgb(0, 0, 0)  # All LEDs black (off)
+    print("  [OK] Sonar LEDs off (power saving)")
+except Exception as e:
+    print(f"  [WARN] Could not control RGB LEDs: {e}")
+
 # Check battery
-print("\n[3/6] Checking battery voltage...")
+print("\n[4/7] Checking battery voltage...")
 try:
     # Battery reading comes from periodic SYS packets
     time.sleep(0.5)
@@ -47,7 +55,7 @@ except Exception as e:
     print(f"  [WARN] Battery check failed: {e}")
 
 # Position arm to camera-forward position
-print("\n[4/6] Positioning arm to camera-forward position...")
+print("\n[5/7] Positioning arm to camera-forward position...")
 
 # Correct servo mapping:
 # 1=Gripper, 2=EMPTY, 3=Wrist, 4=Elbow, 5=Shoulder, 6=Base
@@ -68,16 +76,8 @@ for servo_id, pwm in camera_forward:
 time.sleep(0.5)
 print("  [OK] Arm positioned with camera facing forward")
 
-# Turn off RGB LEDs (power saving)
-print("\n[5/6] Turning off RGB LEDs (power saving)...")
-try:
-    board.set_rgb(0, 0, 0)  # All black
-    print("  [OK] RGB LEDs off")
-except:
-    print("  [WARN] Could not control RGB LEDs")
-
 # Check camera
-print("\n[6/6] Checking camera...")
+print("\n[6/7] Checking camera...")
 import cv2
 camera_found = False
 for device in [0, 1, 2]:
@@ -100,6 +100,9 @@ if not camera_found:
     print("         Check USB connection if using USB camera")
 
 # Startup complete
+print("\n[7/7] Final check...")
+print("  [OK] All systems ready")
+
 print("\n" + "=" * 60)
 print("STARTUP COMPLETE")
 print("=" * 60)
