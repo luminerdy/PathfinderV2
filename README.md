@@ -376,7 +376,7 @@ See `requirements.txt` for Python package list.
 - **[Implementation Checklist](docs/IMPLEMENTATION_CHECKLIST.md)** - Development roadmap
 
 ### 📚 Reference
-- **[Hiwonder System Reference](docs/reference/HIWONDER_SYSTEM_REFERENCE.md)** - Complete system analysis
+- **[Hardware System Reference](docs/reference/HARDWARE_SYSTEM_REFERENCE.md)** - Complete system analysis
 - **[Session Summary](docs/reference/SESSION_SUMMARY_2026-03-20.md)** - Development history
 
 ## Troubleshooting

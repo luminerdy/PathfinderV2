@@ -353,11 +353,11 @@ Build a complete Python framework for an educational mobile robot with mecanum d
 ### **Software Architecture - COMPLETE** ✅
 
 #### Clean-Room Implementation
-- **NO vendor code on GitHub:** All Hiwonder SDK replaced
+- **NO vendor code on GitHub:** All vendor SDK replaced with clean-room implementation
 - **Custom protocols:** Serial, I2C, servo control, mecanum kinematics
 - **Path-independent:** Works from any directory
 - **Self-contained:** All dependencies in lib/ directory
-- **Vendor-neutral:** No MasterPi/Hiwonder branding
+- **Vendor-neutral:** Platform-independent design
 
 #### Core Components
 ```
@@ -522,7 +522,7 @@ pathfinder/
 ### Communication
 - **Serial:** /dev/ttyAMA0, 1000000 baud
 - **I2C:** Bus 1, sonar at 0x77
-- **Network:** 10.10.10.134 (MasterPi5)
+- **Network:** 10.10.10.134 (PathfinderV2)
 
 ### Performance
 - **Battery runtime:** 15-20 minutes typical workshop use
@@ -676,7 +676,7 @@ The robot has **limited arm reach** (~80-150mm) and the camera cannot see AprilT
 ## 🎓 Lessons Learned
 
 ### Technical Insights
-1. **Vendor code analysis is gold** - Found servo indexing bug by reading their implementation
+1. **Reference code analysis is gold** - Found servo indexing bug by reading vendor implementation
 2. **Simple beats complex** - Simple forward navigation outperformed visual servoing
 3. **Move-stop-look pattern** - Essential for camera-based navigation on moving robots
 4. **Unit conversions matter** - mm vs cm caused "broken" sonar diagnosis
