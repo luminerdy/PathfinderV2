@@ -51,10 +51,16 @@ class Sonar:
             Distance in cm, or None if measurement failed
         """
         try:
-            distance = self._sonar.get_distance()
+            distance_mm = self._sonar.get_distance()
+            
+            if distance_mm is None:
+                return None
+            
+            # Convert millimeters to centimeters
+            distance = distance_mm / 10.0
             
             # Filter invalid readings
-            if distance is None or distance < 2 or distance > self.max_distance:
+            if distance < 0.2 or distance > self.max_distance:
                 return None
                 
             self._last_distance = distance
