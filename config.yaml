@@ -57,7 +57,7 @@ hardware:
 # Vision Configuration
 vision:
   apriltag:
-    family: "tag36h11"
+    family: "tag16h5"  # Using tag16h5 (was tag36h11)
     quad_decimate: 2.0
     quad_sigma: 0.0
     decode_sharpening: 0.25

@@ -45,9 +45,10 @@ class AprilTagFinder:
         self.vision = VisionSystem(self.camera, self.config['vision'])
         
         # Search parameters
-        self.rotation_speed = 20  # Slow rotation for reliable detection
-        self.check_interval = 0.3  # Check for tags every 300ms
-        self.max_rotation_time = 30  # Give up after 30 seconds
+        self.rotation_speed = 25  # Speed for incremental rotation
+        self.rotation_increment_time = 0.5  # Rotate for 0.5s at a time
+        self.settle_time = 0.3  # Wait for camera to settle after stopping
+        self.max_rotation_time = 40  # Give up after 40 seconds
         
     def position_camera_forward(self, holding_block=False):
         """
@@ -117,7 +118,7 @@ class AprilTagFinder:
     
     def search_for_tags(self, direction='right', save_image=True, holding_block=False):
         """
-        Rotate and search for AprilTags
+        Rotate and search for AprilTags using move-stop-look pattern
         
         Args:
             direction: 'right' or 'left' rotation
@@ -133,21 +134,28 @@ class AprilTagFinder:
         else:
             print(f"\nSearching for AprilTags (rotating {direction})...")
         
-        print(f"Will check every {self.check_interval}s for up to {self.max_rotation_time}s")
-        
-        # Start rotating
-        self.start_rotation(direction)
+        print(f"Using move-stop-look pattern for {self.max_rotation_time}s")
+        print(f"  Rotate {self.rotation_increment_time}s → Stop → Wait {self.settle_time}s → Look")
         
         start_time = time.time()
         check_count = 0
         
         try:
             while (time.time() - start_time) < self.max_rotation_time:
-                # Capture frame
+                # MOVE: Rotate for a short increment
+                self.start_rotation(direction)
+                time.sleep(self.rotation_increment_time)
+                
+                # STOP: Stop completely
+                self.stop_rotation()
+                
+                # SETTLE: Wait for camera to focus and stabilize
+                time.sleep(self.settle_time)
+                
+                # LOOK: Capture clear frame
                 ret, frame = self.camera.read()
                 if not ret:
                     print("  [WARN] Camera read failed")
-                    time.sleep(self.check_interval)
                     continue
                 
                 check_count += 1
