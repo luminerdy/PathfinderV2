@@ -570,15 +570,22 @@ pathfinder/
 - **DEPENDENCIES.md** - All required packages
 - **C3_CONNECT_AND_TEST.md** - Initial testing guide
 - **PICKUP_IK_GUIDE.md** - IK-based pickup explained
+- **POSITIONING_STRATEGY.md** - **NEW!** 3-phase positioning approach
 - **APRILTAG_PRINTING.md** - Tag printing instructions
 - **BLOCK_ORIENTATION.md** - Orientation detection
 - **MECANUM_POSITIONING.md** - Mecanum control guide
 - **MOTOR_CALIBRATION.md** - Calibration procedures
 - **systemd/README.md** - Auto-start service guide
 
+### Calibration Tools
+- **calibrate_arm_reach.py** - **NEW!** Arm reach envelope measurement
+- **test_camera_modes.py** - **NEW!** Camera angle optimization
+- **calibrate_motors.py** - Motor speed calibration
+- **calibrate_apriltag_distance.py** - Distance estimation
+
 ### Code Documentation
-- **18 documentation files**
-- **120+ KB of guides**
+- **20+ documentation files**
+- **150+ KB of guides**
 - **Complete API references**
 - **Workshop-ready materials**
 
@@ -602,7 +609,32 @@ pathfinder/
 
 ## 🎯 Next Steps (Optional)
 
+### **IMMEDIATE: Calibration & Positioning** ⚠️
+**New calibration tools created (March 22, 2026):**
+
+The robot has **limited arm reach** (~80-150mm) and the camera cannot see AprilTags and floor blocks simultaneously. A **3-phase positioning strategy** has been designed:
+
+**Phase 1:** Coarse navigation using AprilTags (camera forward)  
+**Phase 2:** Camera mode switch (forward → down to see blocks)  
+**Phase 3:** Fine positioning using block vision + mecanum drive
+
+**Required calibrations:**
+- [ ] **Arm reach envelope** - Run `calibrate_arm_reach.py` (30 min)
+  - Measures actual pickup zone (80-150mm range)
+  - Determines lateral tolerance
+  - Outputs optimal approach distance
+- [ ] **Camera modes** - Run `test_camera_modes.py` (15 min)
+  - Tests navigation mode (forward-facing)
+  - Tests block detection mode (angled down)
+  - Saves optimal servo positions
+
+**See:** `docs/POSITIONING_STRATEGY.md` for complete approach
+
+---
+
 ### Phase 1: Competition Refinement
+- [ ] Complete positioning calibrations (above)
+- [ ] Implement position_for_pickup() using calibration data
 - [ ] Print larger AprilTags (8-10 inches)
 - [ ] Mount tags at wall centers (3ft from corners)
 - [ ] Run motor calibration on field surface
@@ -627,17 +659,17 @@ pathfinder/
 ## 💾 Repository Status
 
 **GitHub:** https://github.com/luminerdy/PathfinderV2  
-**Latest Commit:** `36adb41` - Fix sonar unit conversion  
-**Total Commits:** 30+  
-**Files:** 100+ Python files, 18 documentation files  
-**Size:** 500+ KB code + docs  
+**Latest Commit:** `fc65472` - Add arm reach and camera positioning calibration tools  
+**Total Commits:** 33+  
+**Files:** 100+ Python files, 20+ documentation files  
+**Size:** 550+ KB code + docs  
 
 ### Recent Commits (Last 5)
-1. `36adb41` - Fix sonar: Convert millimeters to centimeters
-2. `e168024` - Working AprilTag navigation - simple forward approach
-3. `7e5a5a1` - Improve AprilTag detection: move-stop-look pattern
-4. `0723184` - Add wall-centered AprilTag field configuration
-5. `5458461` - Add systemd auto-start services
+1. `fc65472` - Add arm reach and camera positioning calibration tools
+2. `ce3f71b` - Add comprehensive RESULTS section to project status
+3. `87ae148` - Add comprehensive project status documentation
+4. `36adb41` - Fix sonar: Convert millimeters to centimeters
+5. `e168024` - Working AprilTag navigation - simple forward approach
 
 ---
 
