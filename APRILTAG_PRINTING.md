@@ -1,28 +1,40 @@
 # AprilTag Printing Guide
 
+**Updated:** March 22, 2026 - PathfinderBot standard configuration
+
 ## What to Print
 
-You need **4 AprilTags** for the corner field configuration:
+You need **4 AprilTags** for the wall-centered field configuration:
 
-- **Tag ID: 0** (Northwest corner)
-- **Tag ID: 1** (Northeast corner)
-- **Tag ID: 2** (Southeast corner)
-- **Tag ID: 3** (Southwest corner)
+**PathfinderBot Standard IDs:**
+- **Tag ID: 583** (North wall) - Home/Start position
+- **Tag ID: 584** (East wall) - Pickup Zone 1
+- **Tag ID: 585** (South wall) - Pickup Zone 2
+- **Tag ID: 586** (West wall) - Delivery Zone
 
-**Tag Family:** tag36h11 (standard)  
-**Size:** 6 inches x 6 inches  
-**Paper:** 8.5" x 11" white paper  
+**Tag Family:** tag36h11 (PathfinderBot standard)  
+**Size:** 10 inches x 10 inches (upgraded from 6" for better detection)  
+**Paper:** 11" x 17" or tile across multiple 8.5" x 11" sheets  
 
 ## Download Pre-Generated Tags
 
-### Option 1: MIT AprilTag Images (Recommended)
+### Option 1: PathfinderBot PDF (Recommended)
+**Complete tag36h11 family PDF:**
+https://github.com/stemoutreach/PathfinderBot/blob/main/Reference/Tech/AprilTag-tag36h11.pdf
+
+**Also saved locally:** `/home/robot/apriltag_tag36h11.pdf`
+
+**Tags to print from PDF:**
+- Pages with Tag 583, 584, 585, 586
+
+### Option 2: MIT AprilTag Images
 https://github.com/AprilRobotics/apriltag-imgs/tree/master/tag36h11
 
-**Direct links:**
-- Tag 0: https://raw.githubusercontent.com/AprilRobotics/apriltag-imgs/master/tag36h11/tag36_11_00000.png
-- Tag 1: https://raw.githubusercontent.com/AprilRobotics/apriltag-imgs/master/tag36h11/tag36_11_00001.png
-- Tag 2: https://raw.githubusercontent.com/AprilRobotics/apriltag-imgs/master/tag36h11/tag36_11_00002.png
-- Tag 3: https://raw.githubusercontent.com/AprilRobotics/apriltag-imgs/master/tag36h11/tag36_11_00003.png
+**Direct links for our IDs:**
+- Tag 583: https://raw.githubusercontent.com/AprilRobotics/apriltag-imgs/master/tag36h11/tag36_11_00583.png
+- Tag 584: https://raw.githubusercontent.com/AprilRobotics/apriltag-imgs/master/tag36h11/tag36_11_00584.png
+- Tag 585: https://raw.githubusercontent.com/AprilRobotics/apriltag-imgs/master/tag36h11/tag36_11_00585.png
+- Tag 586: https://raw.githubusercontent.com/AprilRobotics/apriltag-imgs/master/tag36h11/tag36_11_00586.png
 
 ### Option 2: Online Generator
 https://chev.me/arucogen/
@@ -47,7 +59,8 @@ Save all 4 PNG files to your computer
 
 ### 3. Verify Size
 After printing, **measure the tag!**
-- Black square border should be **exactly 6 inches**
+- Black square border should be **exactly 10 inches** (254mm)
+- Minimum 1" white border around tag (total paper size ~12" x 12")
 - Use a ruler to verify
 - If wrong, adjust print scaling and reprint
 

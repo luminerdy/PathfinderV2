@@ -1,40 +1,42 @@
 """
 Wall-Centered Field Configuration
 4 AprilTags, one per wall, centered
+PathfinderBot standard: tag36h11 family, IDs 583-586
 """
 
 from field_config import FieldConfig, WallConfig
 
 # 4-tag wall-centered field (easier to mount than corners)
+# Using PathfinderBot standard tag IDs
 WALL_CENTERED_6X6 = FieldConfig(
     name="wall_centered_6x6",
-    description="6x6 ft field with one tag per wall (centered)",
+    description="6x6 ft field with one tag per wall (centered) - PathfinderBot standard",
     size_ft=(6, 6),
     tag_height_in=10,
-    tag_size_in=6,
+    tag_size_in=10,  # Upgraded from 6" to 10" for better detection
     walls=[
         WallConfig(
             name="north",
             length_ft=6,
-            tags=[0],  # Center of north wall
+            tags=[583],  # Home/Start (was 0)
             position="top"
         ),
         WallConfig(
             name="east",
             length_ft=6,
-            tags=[1],  # Center of east wall
+            tags=[584],  # Pickup Zone 1 (was 1)
             position="right"
         ),
         WallConfig(
             name="south",
             length_ft=6,
-            tags=[2],  # Center of south wall
+            tags=[585],  # Pickup Zone 2 (was 2)
             position="bottom"
         ),
         WallConfig(
             name="west",
             length_ft=6,
-            tags=[3],  # Center of west wall
+            tags=[586],  # Delivery Zone (was 3)
             position="left"
         )
     ]
