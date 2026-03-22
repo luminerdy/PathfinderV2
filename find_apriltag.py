@@ -135,7 +135,7 @@ class AprilTagFinder:
             print(f"\nSearching for AprilTags (rotating {direction})...")
         
         print(f"Using move-stop-look pattern for {self.max_rotation_time}s")
-        print(f"  Rotate {self.rotation_increment_time}s → Stop → Wait {self.settle_time}s → Look")
+        print(f"  Rotate {self.rotation_increment_time}s > Stop > Wait {self.settle_time}s > Look")
         
         start_time = time.time()
         check_count = 0

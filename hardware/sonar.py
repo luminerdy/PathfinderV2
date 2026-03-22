@@ -51,7 +51,7 @@ class Sonar:
             Distance in cm, or None if measurement failed
         """
         try:
-            distance = self._sonar.getDistance()
+            distance = self._sonar.get_distance()
             
             # Filter invalid readings
             if distance is None or distance < 2 or distance > self.max_distance:
