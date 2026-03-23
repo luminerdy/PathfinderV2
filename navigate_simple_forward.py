@@ -24,7 +24,7 @@ board = BoardController()
 time.sleep(0.5)
 camera = cv2.VideoCapture(0)
 time.sleep(1)
-detector = Detector(families="tag16h5")
+detector = Detector(families="tag36h11")  # Updated for new 10" tags
 
 print("\nPositioning camera...")
 for sid, p in [(1,2500), (6,1500), (5,700), (4,2450), (3,590)]:
