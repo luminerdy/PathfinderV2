@@ -138,11 +138,11 @@ try:
             
             # Check if we just stopped at this tag
             if stopped_at_tag == tag_id and area > TARGET_AREA * 0.9:
-                # Already at this tag, don't move
+                # Already at this tag, rotate to find a different one
                 if time.time() - last_status_time > 2:
-                    print(f"[Stopped at Tag {tag_id} ({tag_name})] Point at different tag to continue")
+                    print(f"[At Tag {tag_id} ({tag_name})] Rotating to find next tag...")
                     last_status_time = time.time()
-                stop()
+                rotate_right(ROTATION_SPEED)  # Rotate to find different tag
                 last_tag = tag_id
                 continue
             
@@ -155,9 +155,10 @@ try:
                 stop()
                 stopped_at_tag = tag_id
                 print(f"\nSUCCESS: REACHED Tag {tag_id} ({tag_name})! Area={area:.0f}px²")
-                print("   Point at another tag to continue...\n")
+                print("   Rotating to find next tag...\n")
                 last_tag = tag_id
-                time.sleep(1)  # Pause briefly
+                time.sleep(1.5)  # Pause briefly to "celebrate"
+                # Will start rotating on next iteration
                 continue
             
             # Decide action based on centering

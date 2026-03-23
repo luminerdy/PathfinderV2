@@ -13,7 +13,7 @@ This script makes the robot:
 2. **Auto-drive** toward any visible tag
 3. **Auto-center** the tag (rotates if tag is off-center)
 4. **Stop** when close enough (area > 25,000 px²)
-5. **Wait** for you to point at next tag
+5. **Automatically rotate** to find the next tag
 
 Perfect for:
 - ✅ Testing all field tags quickly
@@ -60,17 +60,19 @@ Scanning for tags... (point robot at any tag)
 
 **The robot will:**
 - Detect the tag
-- Show status: `Tag 583 (Pickup_1): 5000px² | → Driving forward`
+- Show status: `Tag 583 (Pickup_1): 5000px² | > Driving forward`
 - Drive toward it
-- Auto-center if needed: `↺ Rotating left to center`
-- Stop when close: `✅ REACHED Tag 583 (Pickup_1)! Area=27000px²`
+- Auto-center if needed: `< Rotating left to center`
+- Stop when close: `SUCCESS: REACHED Tag 583 (Pickup_1)! Area=27000px²`
+- **Automatically rotate** to find next tag
 
-### **Step 3: Point at Another Tag**
+### **Step 3: Robot Finds Next Tag Automatically**
 
-**While robot is stopped:**
-- Manually rotate/push robot to point at different tag
-- Robot detects new tag and drives to it
-- Repeat for all tags!
+**After reaching a tag:**
+- Robot automatically starts rotating
+- Searches for a different tag
+- Drives to the new tag when found
+- Repeats until you press Ctrl+C!
 
 ### **Step 4: Stop When Done**
 
