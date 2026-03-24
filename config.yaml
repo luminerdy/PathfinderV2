@@ -62,24 +62,40 @@ vision:
     quad_decimate: 2.0
     quad_sigma: 0.0
     decode_sharpening: 0.25
-    # Tag assignments (actual tags on field: 582-585)
+    # Tag assignments (actual tags on field: 578-585, 2 per wall, clockwise)
     tags:
+      578:
+        name: "home_left"
+        description: "Home/Start - Left"
+        location: "North wall, 12\" left of center"
+      579:
+        name: "home_right"
+        description: "Home/Start - Right"
+        location: "North wall, 12\" right of center"
+      580:
+        name: "pickup1_left"
+        description: "Pickup Zone 1 - Left"
+        location: "East wall, 12\" left of center"
+      581:
+        name: "pickup1_right"
+        description: "Pickup Zone 1 - Right"
+        location: "East wall, 12\" right of center"
       582:
-        name: "home"
-        description: "Start/Home position"
-        location: "North wall"
+        name: "pickup2_left"
+        description: "Pickup Zone 2 - Left"
+        location: "South wall, 12\" left of center"
       583:
-        name: "pickup_1"
-        description: "Pickup Zone 1"
-        location: "East wall"
+        name: "pickup2_right"
+        description: "Pickup Zone 2 - Right"
+        location: "South wall, 12\" right of center"
       584:
-        name: "pickup_2"
-        description: "Pickup Zone 2"
-        location: "South wall"
+        name: "delivery_left"
+        description: "Delivery Zone - Left"
+        location: "West wall, 12\" left of center"
       585:
-        name: "delivery"
-        description: "Delivery Zone"
-        location: "West wall"
+        name: "delivery_right"
+        description: "Delivery Zone - Right"
+        location: "West wall, 12\" right of center"
     
   yolo:
     model: "yolov11n.pt"  # Nano model for Pi 5
