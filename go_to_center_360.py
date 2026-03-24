@@ -17,9 +17,10 @@ print("="*70)
 print()
 
 # Config
-ROTATION_SPEED = 15  # Slow rotation for good sampling
+ROTATION_SPEED = 28  # Minimum power to overcome friction (calibrated)
 MOVE_SPEED = 28
 TARGET_CENTER_DIST = 76  # cm (~2.5 ft from walls)
+ROTATION_TIME = 3.4  # Time for 360° at ~105 deg/sec
 
 # Initialize
 board = BoardController()
@@ -56,14 +57,14 @@ def rotate_360_scan():
     board.set_motor_duty([(1, ROTATION_SPEED), (2, -ROTATION_SPEED),
                           (3, ROTATION_SPEED), (4, -ROTATION_SPEED)])
     
-    # Collect samples for ~6 seconds (360° at speed 15)
-    # Speed 15 rotates ~60°/sec, so 6 sec = 360°
+    # Collect samples for ~3.4 seconds (360° at ~105 deg/sec)
+    # Calibrated: Power 28 rotates ~105 deg/sec
     start_time = time.time()
     sample_interval = 0.1  # 100ms between samples
     
-    while time.time() - start_time < 6.0:
+    while time.time() - start_time < ROTATION_TIME:
         elapsed = time.time() - start_time
-        angle = (elapsed / 6.0) * 360  # Estimate current angle
+        angle = (elapsed / ROTATION_TIME) * 360  # Estimate current angle
         
         dist = sonar.get_distance()
         if dist and dist > 0:
@@ -135,8 +136,8 @@ def rotate_to_direction(target_angle):
     print(f"Rotating to face {target_angle:.0f}°...")
     
     # Simple: rotate for calculated time
-    # Speed 15 = ~60°/sec
-    rotation_time = target_angle / 60
+    # Speed 28 = ~105°/sec (calibrated)
+    rotation_time = target_angle / 105
     
     board.set_motor_duty([(1, ROTATION_SPEED), (2, -ROTATION_SPEED),
                           (3, ROTATION_SPEED), (4, -ROTATION_SPEED)])

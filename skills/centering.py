@@ -30,16 +30,16 @@ class CenteringController:
         self.PIXEL_TOLERANCE = 40       # ±40px is "centered enough"
         self.ANGLE_TOLERANCE = 5.0      # ±5° is "centered enough" (was 3.0)
         
-        # Rotation speed limits
-        self.MIN_ROTATION_SPEED = 15    # Minimum to overcome friction
-        self.MAX_ROTATION_SPEED = 25    # Maximum safe speed (reduced from 28)
+        # Rotation speed limits (calibrated Day 7)
+        self.MIN_ROTATION_SPEED = 28    # Minimum to overcome friction (calibrated)
+        self.MAX_ROTATION_SPEED = 28    # Use constant reliable speed
         
         # Proportional gain (tuning parameter)
         self.ANGLE_GAIN = 0.5           # Speed per degree (reduced from 0.8)
         self.PIXEL_GAIN = 0.03          # Speed per pixel (reduced from 0.05)
         
-        # Estimated rotation rate (deg/sec at speed 25)
-        self.ROTATION_RATE = 40         # degrees per second (was 35)
+        # Estimated rotation rate (deg/sec at power 28, calibrated)
+        self.ROTATION_RATE = 105        # degrees per second at power 28
         
         # Damping factor (reduce speed when getting close)
         self.DAMPING_THRESHOLD = 10     # Start damping below this angle

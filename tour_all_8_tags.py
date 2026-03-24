@@ -37,7 +37,7 @@ TAG_NAMES = {
 TARGET_AREA = 25000
 MIN_AREA = 2000
 DRIVE_SPEED = 28
-SEARCH_SPEED = 22
+SEARCH_SPEED = 28  # Increased from 22 (calibrated minimum for rotation)
 SONAR_STOP = 18  # cm
 CENTER_TOLERANCE = 80  # pixels from center (640/2 = 320)
 
