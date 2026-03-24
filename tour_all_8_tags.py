@@ -39,6 +39,7 @@ MIN_AREA = 2000
 DRIVE_SPEED = 28
 SEARCH_SPEED = 22
 SONAR_STOP = 18  # cm
+CENTER_TOLERANCE = 80  # pixels from center (640/2 = 320)
 
 # Camera params for pose
 CAMERA_PARAMS = [500, 500, 320, 240]
@@ -121,7 +122,21 @@ try:
             print(f"  Could not find Tag {target_tag}, skipping...")
             continue
         
-        # PHASE 2: Approach the tag
+        # PHASE 2: Check if already too close
+        sonar_dist = sonar.get_distance()
+        if sonar_dist is not None and sonar_dist > 0 and sonar_dist < 60:
+            print(f"  Already close to wall ({sonar_dist:.0f}cm), backing up first...")
+            board.set_motor_duty([(1, -28), (2, -28), (3, -28), (4, -28)])
+            time.sleep(1.5)
+            stop()
+            time.sleep(0.5)
+            new_dist = sonar.get_distance()
+            if new_dist is not None and new_dist > 0:
+                print(f"  Now at {new_dist:.0f}cm")
+            else:
+                print(f"  Backed up (sonar reading unclear)")
+        
+        # PHASE 3: Approach the tag
         print(f"Approaching Tag {target_tag}...")
         approach_count = 0
         
@@ -152,6 +167,11 @@ try:
                     height = max(corners[:, 1]) - min(corners[:, 1])
                     area = width * height
                     
+                    # Get tag center position
+                    center_x = tag.center[0]
+                    frame_center_x = 320  # 640/2
+                    offset_x = center_x - frame_center_x
+                    
                     # Check if reached
                     if area >= TARGET_AREA:
                         stop()
@@ -160,18 +180,31 @@ try:
                         time.sleep(1)
                         break
                     
-                    # Slow down when getting close!
-                    if area > 15000:
-                        speed = 20  # SLOW when very close
-                    elif area > 10000:
-                        speed = 24  # Medium when close
+                    # Decide action: CENTER first, then APPROACH
+                    if abs(offset_x) > CENTER_TOLERANCE:
+                        # Tag is off-center - rotate to center it
+                        if offset_x > 0:
+                            # Tag on right, rotate right
+                            rotate_right(18)
+                            action = "centering right"
+                        else:
+                            # Tag on left, rotate left
+                            board.set_motor_duty([(1, -18), (2, 18), (3, -18), (4, 18)])
+                            action = "centering left"
                     else:
-                        speed = DRIVE_SPEED  # Full speed when far
-                    
-                    forward(speed)
+                        # Tag centered - drive forward with speed control
+                        if area > 15000:
+                            speed = 20  # SLOW when very close
+                        elif area > 10000:
+                            speed = 24  # Medium when close
+                        else:
+                            speed = DRIVE_SPEED  # Full speed when far
+                        
+                        forward(speed)
+                        action = f"driving (speed {speed})"
                     
                     if approach_count % 20 == 0:
-                        print(f"  Approaching... {area:.0f} px²")
+                        print(f"  {area:.0f} px², offset {offset_x:+.0f}px - {action}")
                     
                     break
             
