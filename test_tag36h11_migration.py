@@ -7,10 +7,11 @@ Verifies new tag family detection after migration
 import sys
 sys.path.append('/home/robot/code/pathfinder')
 
-from capabilities.vision import Vision
+from capabilities.vision import VisionSystem
 from hardware.camera import Camera
 import cv2
 import time
+import yaml
 
 def test_migration():
     """Test tag36h11 detection"""
@@ -22,12 +23,16 @@ def test_migration():
     print("Expected tags: 583, 584, 585, 586")
     print("(PathfinderBot standard)")
     print()
-    print("Hold up one tag in front of camera...")
-    print("Press Ctrl+C to exit")
+    print("Point robot at tags on field...")
+    print("Press ESC or Ctrl+C to exit")
     print()
     
+    # Load config
+    with open('/home/robot/code/pathfinder/config.yaml') as f:
+        config = yaml.safe_load(f)
+    
     camera = Camera()
-    vision = Vision()
+    vision = VisionSystem(camera, config.get('vision', {}))
     camera.start_capture()
     
     time.sleep(1)  # Let camera initialize
@@ -41,7 +46,8 @@ def test_migration():
                 continue
             
             # Detect tags
-            tags = vision.detect_apriltags(frame)
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            tags = vision.detect_apriltags(gray)
             
             # Draw detections
             for tag in tags:
