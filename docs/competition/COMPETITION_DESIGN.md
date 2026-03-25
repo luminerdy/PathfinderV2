@@ -93,18 +93,27 @@ At 1.2 inches, blocks are small:
 
 ### Block Delivery
 
-| Action | Points |
-|--------|--------|
-| Block delivered to scoring zone | **10 pts** |
-| Red block delivered | **15 pts** (bonus color) |
-| Block transferred over barrier then delivered | **20 pts** |
-| Complete color set (R+B+Y in same scoring zone) | **+25 bonus** |
+Points scale with detection difficulty — harder to detect = more points.
+
+| Action | Points | Why |
+|--------|--------|-----|
+| 🟥 Red block delivered | **5 pts** | Easiest to detect (highest contrast) |
+| 🟦 Blue block delivered | **10 pts** | Medium difficulty |
+| 🟨 Yellow block delivered | **15 pts** | Hardest to detect (lighting glare) |
+| Any block transferred through barrier window | **2× points** | Coordination bonus |
+| Complete color set (R+B+Y in same scoring zone) | **+25 bonus** | Strategy reward |
+
+**Strategy tension:**
+- Safe play: Grab red blocks fast (easy, 5 pts each)
+- Skilled play: Go for yellow (hard to detect, 15 pts each)
+- One yellow = three reds — teams that tune detection get rewarded
 
 ### Maximum Theoretical Score
-- 9 blocks × ~15 avg = ~135 pts
-- With transfers and color sets: ~160+ pts
-- Realistic good team: 30-75 pts
-- Great team: 100+ pts
+- 3 red (15) + 3 blue (30) + 3 yellow (45) = 90 pts solo
+- With transfers (2×): up to 180 pts
+- With color set bonus: +25 = 205 pts theoretical max
+- Realistic good team: 30-60 pts
+- Great team: 80-120 pts
 
 ### Timing
 - **Round duration:** 5 minutes
