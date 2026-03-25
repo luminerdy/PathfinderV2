@@ -176,6 +176,14 @@ class StrafeNavigator:
         
         return best.tag_id, x, y, z, dist, angle
     
+    def check_battery(self, min_voltage=8.1):
+        """Check battery before motor operations. Returns (voltage, ok)."""
+        mv = self.board.get_battery()
+        if not mv:
+            return 0, False
+        v = mv / 1000.0
+        return v, v >= min_voltage
+    
     def navigate_to_tag(self, target_id=None, target_distance=None, 
                         timeout=30, callback=None):
         """
@@ -200,6 +208,18 @@ class StrafeNavigator:
         """
         if target_distance is None:
             target_distance = self.TARGET_DISTANCE
+        
+        # Battery check before driving
+        voltage, ok = self.check_battery()
+        if not ok:
+            return {
+                'success': False,
+                'tag_id': None,
+                'final_distance': 0,
+                'final_angle': 0,
+                'iterations': 0,
+                'reason': f'battery_low ({voltage:.2f}V)'
+            }
         
         self._open_camera()
         self._last_tag_time = time.time()
