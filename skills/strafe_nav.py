@@ -35,8 +35,8 @@ class StrafeNavigator:
     TAG_SIZE = 0.254  # meters (10-inch tags)
     
     # Proportional control gains
-    Kx = 150        # Lateral gain (strafe speed per meter of lateral error)
-    Kz = 120        # Forward gain (forward speed per meter of distance error)
+    Kx = 120        # Lateral gain (strafe speed per meter of lateral error)
+    Kz = 100        # Forward gain (forward speed per meter of distance error)
     
     # Deadbands — don't correct if error is smaller than this
     CENTER_TOLERANCE = 0.03   # meters (~1.2 inches lateral)
@@ -47,14 +47,18 @@ class StrafeNavigator:
     MIN_SPEED = 28      # Minimum to overcome friction (calibrated)
     
     # Target distance — how close to get to the tag
-    TARGET_DISTANCE = 0.50    # meters (~20 inches, arm reach zone)
+    TARGET_DISTANCE = 0.55    # meters (~22 inches)
     
     # Sonar safety
     SONAR_STOP = 15      # cm — emergency stop
     SONAR_SLOW = 30      # cm — reduce speed
+    SONAR_BACKUP = 50    # cm — backup before approaching if too close to wall
     
     # Tag loss timeout
     TAG_TIMEOUT = 1.5    # seconds — stop if no tag for this long
+    
+    # Angle limits for strafe
+    MAX_STRAFE_ANGLE = 20  # degrees — above this, rotate first instead of strafing
     
     def __init__(self, board=None, sonar=None):
         self.board = board or BoardController()
@@ -257,6 +261,17 @@ class StrafeNavigator:
                 error_x = x             # lateral error (meters, positive = tag is right)
                 error_z = z - target_distance   # distance error (positive = too far)
                 
+                # Large angle? Rotate in place first to avoid losing tag
+                if abs(angle) > self.MAX_STRAFE_ANGLE:
+                    # Too far off-center for strafe — rotate to reduce angle
+                    rot_speed = self.MIN_SPEED if angle > 0 else -self.MIN_SPEED
+                    self.board.set_motor_duty([
+                        (1, rot_speed), (2, -rot_speed),
+                        (3, rot_speed), (4, -rot_speed)
+                    ])
+                    time.sleep(0.1)
+                    continue
+                
                 # Calculate motor commands with proportional control + deadbands
                 if abs(error_x) > self.CENTER_TOLERANCE:
                     strafe = error_x * self.Kx
@@ -333,10 +348,11 @@ class StrafeNavigator:
             self._stop()
             raise
     
-    def search_and_navigate(self, target_id=None, search_timeout=10, 
+    def search_and_navigate(self, target_id=None, search_timeout=15, 
                             nav_timeout=30, callback=None):
         """
         Search for a tag by rotating, then navigate to it.
+        Backs up from walls if sonar shows we're too close.
         
         Args:
             target_id: Specific tag to find (None = any tag)
@@ -348,6 +364,16 @@ class StrafeNavigator:
             Same dict as navigate_to_tag
         """
         self._open_camera()
+        
+        # Phase 0: Backup from wall if too close
+        sonar_dist = self.sonar.get_distance()
+        if sonar_dist and 0 < sonar_dist < self.SONAR_BACKUP:
+            if callback:
+                callback(0, 0, 0, f'BACKUP (sonar {sonar_dist:.0f}cm)')
+            self.board.set_motor_duty([(1, -30), (2, -30), (3, -30), (4, -30)])
+            time.sleep(1.0)
+            self._stop()
+            time.sleep(0.3)
         
         # Phase 1: Search by rotating
         start = time.time()
@@ -374,8 +400,10 @@ class StrafeNavigator:
                 )
             
             # Keep searching — rotate
-            self.board.set_motor_duty([(1, 28), (2, -28), (3, 28), (4, -28)])
-            time.sleep(0.1)
+            self.board.set_motor_duty([(1, 30), (2, -30), (3, 30), (4, -30)])
+            time.sleep(0.15)
+            self._stop()
+            time.sleep(0.1)  # Brief pause to read camera clearly
         
         # Search failed
         self._stop()
@@ -390,7 +418,7 @@ class StrafeNavigator:
     
     def tour(self, tag_sequence, target_distance=None, callback=None):
         """
-        Visit a sequence of tags.
+        Visit a sequence of tags. Retries failed tags once.
         
         Args:
             tag_sequence: List of tag IDs to visit in order
@@ -408,8 +436,26 @@ class StrafeNavigator:
             
             result = self.search_and_navigate(
                 target_id=tag_id,
+                search_timeout=15,
                 callback=callback
             )
+            
+            # Retry once if failed (backup + search again)
+            if not result['success']:
+                if callback:
+                    callback(tag_id, 0, 0, f'RETRY ({i+1}/{len(tag_sequence)})')
+                
+                # Backup and try again
+                self.board.set_motor_duty([(1, -30), (2, -30), (3, -30), (4, -30)])
+                time.sleep(0.8)
+                self._stop()
+                time.sleep(0.3)
+                
+                result = self.search_and_navigate(
+                    target_id=tag_id,
+                    search_timeout=15,
+                    callback=callback
+                )
             
             results.append(result)
             
