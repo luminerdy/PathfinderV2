@@ -49,3 +49,26 @@ calibration/
 # Temporary files
 *.tmp
 temp/
+
+# Debug images and test artifacts
+*.jpg
+*.jpeg
+*.png
+!docs/images/*.png
+!docs/images/*.jpg
+images/debug/
+
+# Web control state
+saved_positions.json
+
+# Calibration data files
+*_calibration.txt
+# Data/state files (not config)
+*_calibration*.json
+saved_positions.json
+
+# Log files
+*.log
+
+# YOLO models
+*.pt
