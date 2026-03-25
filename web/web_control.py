@@ -24,9 +24,17 @@ app = Flask(__name__)
 
 # Global state
 board = BoardController()
-camera = cv2.VideoCapture(0)
-camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+camera = None  # Opened lazily to avoid locking camera on import
+
+def get_camera():
+    """Get or open camera (lazy initialization)"""
+    global camera
+    if camera is None or not camera.isOpened():
+        camera = cv2.VideoCapture(0)
+        camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+        camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+        time.sleep(0.5)
+    return camera
 
 # Servo positions (match startup script camera-forward position)
 servo_positions = {
@@ -49,7 +57,8 @@ motor_power = {
 def generate_frames():
     """Generate video frames for streaming"""
     while True:
-        success, frame = camera.read()
+        cam = get_camera()
+        success, frame = cam.read()
         if not success:
             break
         

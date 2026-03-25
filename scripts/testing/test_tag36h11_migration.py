@@ -5,7 +5,7 @@ Verifies new tag family detection after migration
 """
 
 import sys
-sys.path.append('/home/robot/code/pathfinder')
+import sys; from pathlib import Path; sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from capabilities.vision import VisionSystem
 from hardware.camera import Camera

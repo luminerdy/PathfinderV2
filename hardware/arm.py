@@ -18,14 +18,22 @@ logger = logging.getLogger(__name__)
 class Arm:
     """
     Robotic arm controller with inverse kinematics
-    5-DOF arm (base, shoulder, elbow, wrist, gripper)
+    5-DOF arm with gripper
     
-    Servos:
-        1: Base rotation
-        2: Shoulder
-        3: Elbow  
-        4: Wrist
-        5: Gripper
+    CORRECT Servo Mapping (verified Day 7):
+        1: Claw/Gripper (1475=closed, 2500=open)
+        2: DOES NOT EXIST
+        3: Wrist
+        4: Elbow
+        5: Shoulder
+        6: Base rotation (1500=center/forward)
+    
+    Camera-forward position:
+        1=2500, 3=590, 4=2450, 5=700, 6=1500
+    
+    WARNING: This module's methods still use the OLD incorrect mapping
+    internally. Use lib/board_protocol.py directly for reliable servo
+    control until this module is rewritten.
     """
     
     # Named positions (x, y, z in mm)
@@ -181,7 +189,7 @@ class Arm:
         position = max(0, min(1, position))
         pulse = int(500 + position * 2000)  # 500 (open) to 2500 (closed)
         
-        self.board.set_servo_position(5, pulse, duration)  # Assuming servo 5 is gripper
+        self.board.set_servo_position(1, pulse, duration)  # Servo 1 = Claw/Gripper
         self._gripper_state = position
         
     def open_gripper(self, duration: float = 0.5):
