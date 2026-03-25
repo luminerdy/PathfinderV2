@@ -57,8 +57,9 @@ except Exception as e:
 # Position arm to camera-forward position
 print("\n[5/7] Positioning arm to camera-forward position...")
 
-# Correct servo mapping:
-# 1=Gripper, 2=EMPTY, 3=Wrist, 4=Elbow, 5=Shoulder, 6=Base
+# CORRECT servo mapping (verified):
+# 1=Gripper (claw), 3=Wrist, 4=Elbow, 5=Shoulder, 6=Base
+# Servo 2 does NOT exist on this robot
 camera_forward = [
     (1, 2500),  # Gripper open
     (6, 1500),  # Base forward (center)
