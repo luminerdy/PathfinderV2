@@ -257,6 +257,92 @@ robot.auto_cycle()            # Find block → pickup → deliver → repeat
 
 ---
 
+## Line Following — Skill Gate
+
+### Concept
+
+A section of the field has no AprilTags visible. The only way through is following a **green line** on the floor. This creates a "skill gate" — teams that implement line following unlock access to high-value yellow blocks.
+
+### Why Green
+- Not a competition block color (Red, Blue, Yellow are blocks)
+- Distinct HSV range (H=35-85), no overlap with block colors
+- Visible on gray floor
+- Cheap (green tape from hardware store, ~$3)
+- Classic robotics challenge
+
+### Field Integration
+
+**Bonus zone** accessible only by line following:
+
+```
+┌────────────────────────────────────┐
+│                                    │
+│  Normal zones                      │
+│  (AprilTags visible, R+B blocks)   │
+│                                    │
+│  ─────────────────────╗            │
+│                       ║ BARRIER    │
+│   ┌───────────────┐   ║            │
+│   │ LINE CORRIDOR │   ║            │
+│   │ No tags here  │   ║            │
+│   │ ════════════  │ ← green line   │
+│   └───────┬───────┘   ║            │
+│           │            ║            │
+│   ┌───────▼───────┐   ║            │
+│   │  BONUS ZONE   │   ║            │
+│   │  🟨 🟨 🟨     │   ║            │
+│   │  Yellow only  │   ║            │
+│   └───────────────┘   ║            │
+│                       ║            │
+└────────────────────────────────────┘
+```
+
+### Scoring Impact
+
+| Route | Access | Blocks Available |
+|-------|--------|-----------------|
+| **Normal zones** (AprilTag nav) | Any team | Red (5pts) + Blue (10pts) |
+| **Bonus zone** (line following) | Line-follow teams only | Yellow (15pts) |
+
+**Potential bonus zone value:** 2-3 yellow blocks × 15 pts = **30-45 pts**
+
+**The reward is access, not points for following.** Time saved and yellow blocks earned are the payoff.
+
+### Skill Ladder
+
+This creates a clear progression of difficulty:
+
+| Skill Level | Capability | Expected Score |
+|-------------|-----------|---------------|
+| **Beginner** | Manual drive only | 10-20 pts |
+| **Intermediate** | AprilTag navigation + block pickup | 30-60 pts |
+| **Advanced** | + Line following (unlock yellow blocks) | 60-100 pts |
+| **Expert** | + Transfers + color sets | 100-150+ pts |
+
+### Implementation
+
+Line following uses the same camera and color detection as block detection:
+
+```python
+# Look at bottom third of frame for green line
+bottom = frame[320:480, :]
+mask = cv2.inRange(hsv, green_lower, green_upper)
+cx = centroid_x(mask)  # Where is the line?
+# cx < 320: steer left, cx > 320: steer right
+```
+
+**Estimated development effort:** 2-3 hours
+**Materials:** Roll of green tape (~$3)
+
+### Line Specifications
+- **Color:** Green (electrical tape or painter's tape)
+- **Width:** ~1 inch (visible from camera height)
+- **Path:** Gentle curves, no sharp turns (robot needs to keep up)
+- **Length:** 4-6 feet through corridor
+- **Floor:** Must contrast with floor color (green on gray = good)
+
+---
+
 ## Open Questions
 
 1. **Transfer mechanic:** Is lifting over a 12" barrier realistic with 1.2" blocks? May need a "transfer slot" or "window" in the barrier instead.
