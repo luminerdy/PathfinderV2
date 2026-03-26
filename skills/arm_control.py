@@ -26,6 +26,7 @@ SERVO_IDS = [1, 3, 4, 5, 6]
 # Named positions: {name: {servo_id: pulse_width}}
 POSITIONS = {
     'camera_forward': {1: 2500, 3: 590, 4: 2450, 5: 700, 6: 1500},
+    'camera_down':    {1: 2500, 3: 590, 4: 2450, 5: 1214, 6: 1500},
     'gripper_open':   {1: 2500},
     'gripper_closed': {1: 1475},
     'rest':           {1: 2500, 3: 1500, 4: 1500, 5: 1500, 6: 1500},
@@ -201,8 +202,12 @@ class ArmController:
     # ===== Convenience Methods =====
     
     def camera_forward(self, duration_ms=800):
-        """Move to camera-forward position"""
+        """Move to camera-forward position (see AprilTags)"""
         self.move_to_named('camera_forward', duration_ms)
+    
+    def camera_down(self, duration_ms=800):
+        """Move to camera-down position (see blocks on floor)"""
+        self.move_to_named('camera_down', duration_ms)
     
     def gripper_open(self, duration_ms=400):
         """Open gripper"""
