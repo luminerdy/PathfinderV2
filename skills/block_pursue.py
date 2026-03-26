@@ -244,14 +244,14 @@ class BlockPursuer:
                 last_y = block.center_y
                 last_color = block.color
                 
+                # Calculate errors
+                error_x = block.center_x - self.CENTER_X
+                error_y = self.TARGET_Y - block.center_y
+                
                 # Update arm position based on block Y
                 # Only tilt arm when block is horizontally centered
                 if abs(error_x) < self.X_TOLERANCE * 1.5:
                     self._update_arm(block.center_y)
-                
-                # Check if arrived (block at bottom, arm pointing at it)
-                error_x = block.center_x - self.CENTER_X
-                error_y = self.TARGET_Y - block.center_y
                 
                 if abs(error_x) < self.X_TOLERANCE and abs(error_y) < self.Y_TOLERANCE:
                     self._stop()
