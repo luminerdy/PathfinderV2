@@ -161,6 +161,14 @@ class BlockApproach:
                     self._stop()
                     continue
                 
+                # Reject detection if it jumped too far (likely different object)
+                if last_x > 0 and last_y > 0:
+                    dx = abs(block.center_x - last_x)
+                    dy = abs(block.center_y - last_y)
+                    if dx > 150 or dy > 150:
+                        # Detection jumped — ignore this frame
+                        continue
+                
                 # Block found
                 self._last_seen = time.time()
                 last_color = block.color

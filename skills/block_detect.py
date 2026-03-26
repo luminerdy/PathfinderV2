@@ -62,9 +62,10 @@ COLOR_RANGES = {
 FOCAL_LENGTH = 500          # Estimated camera focal length (pixels)
 BLOCK_SIZE_MM = 30          # Real block size (1.2 inches)
 FRAME_CENTER_X = 320        # 640 / 2
-MIN_AREA = 20               # Minimum contour area (pixels)
-MIN_ASPECT = 0.4            # Minimum aspect ratio (reject very elongated shapes)
-MAX_AREA = 50000            # Maximum area (reject huge blobs = not a block)
+MIN_AREA = 50               # Minimum contour area (increased from 20 to reduce noise)
+MIN_ASPECT = 0.5            # Minimum aspect ratio (blocks are square-ish)
+MAX_AREA = 5000             # Maximum area (reduced — a 1.2" block can't be huge)
+MIN_CONFIDENCE = 0.5        # Minimum confidence to report a detection
 
 
 class BlockDetector:
@@ -179,6 +180,9 @@ class BlockDetector:
                 dist_mm = self._estimate_distance(pixel_width)
                 confidence = self._compute_confidence(area, aspect, pixel_width)
                 offset = cx - FRAME_CENTER_X
+                
+                if confidence < MIN_CONFIDENCE:
+                    continue
                 
                 detections.append(BlockDetection(
                     color=color,
