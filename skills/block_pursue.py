@@ -65,8 +65,8 @@ class BlockPursuer:
     # Other servos stay fixed during pursuit
     ARM_FIXED = {1: 2500, 3: 590, 4: 2450, 6: 1500}  # Gripper open, wrist/elbow/base fixed
     
-    # Tracking
-    LOCK_RADIUS = 120
+    # Tracking (wider radius because arm tilt shifts the view)
+    LOCK_RADIUS = 200
     LOST_TIMEOUT = 2.0
     TIMEOUT = 30
     MIN_BATTERY = None
@@ -137,7 +137,8 @@ class BlockPursuer:
         target_s5 = self._interpolate_s5(block_y)
         
         # Only update if significantly different (avoid servo chatter)
-        if abs(target_s5 - self._current_s5) > 20:
+        # Larger threshold = smoother, less view disruption
+        if abs(target_s5 - self._current_s5) > 50:
             self._current_s5 = target_s5
             # Move shoulder only — other servos stay fixed
             self.board.set_servo_position(200, [(5, target_s5)])
