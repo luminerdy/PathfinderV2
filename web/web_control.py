@@ -18,12 +18,15 @@ from flask import Flask, render_template, Response, jsonify, request
 import cv2
 import time
 import json
-from lib.board_protocol import BoardController
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+from lib.board import get_board
+BoardController = None  # Use get_board() instead
 
 app = Flask(__name__)
 
 # Global state
-board = BoardController()
+board = get_board()
 camera = None  # Opened lazily to avoid locking camera on import
 
 def get_camera():
