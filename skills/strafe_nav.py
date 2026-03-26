@@ -176,8 +176,20 @@ class StrafeNavigator:
         
         return best.tag_id, x, y, z, dist, angle
     
-    def check_battery(self, min_voltage=8.1):
-        """Check battery before motor operations. Returns (voltage, ok)."""
+    def check_battery(self, min_voltage=None):
+        """Check battery before motor operations. Returns (voltage, ok).
+        
+        Default threshold depends on platform:
+          Pi 5: 8.1V (voltage regulator struggles under load)
+          Pi 4: 7.0V (much more power efficient)
+        """
+        if min_voltage is None:
+            try:
+                from lib.board import PLATFORM
+                min_voltage = 7.0 if PLATFORM == 'pi4' else 8.1
+            except ImportError:
+                min_voltage = 7.5  # Safe default
+        
         mv = self.board.get_battery()
         if not mv:
             return 0, False
