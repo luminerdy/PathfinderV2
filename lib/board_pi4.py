@@ -38,6 +38,9 @@ try:
 except (ImportError, RuntimeError):
     _GPIO_AVAILABLE = False
 
+# Note: Board has WS281x NeoPixels on GPIO 12, but they require
+# root (DMA access). We use sonar I2C LEDs instead — no sudo needed.
+
 # I2C configuration
 I2C_BUS = 1
 I2C_ADDR = 0x7A
@@ -223,28 +226,29 @@ class BoardController:
     
     def set_rgb(self, leds: List[Tuple[int, int, int, int]]):
         """
-        Set RGB LED colors.
+        Set RGB LED colors via sonar I2C LEDs (no sudo needed).
         
-        Note: Pi 4 uses WS281x (NeoPixel) on GPIO 12.
-        Requires root access for DMA.
+        The board also has WS281x NeoPixels on GPIO 12, but those
+        require root for DMA. We use the sonar's I2C LEDs instead.
         
         Args:
             leds: List of (led_id, r, g, b) tuples
                  led_id: 0-1
                  r, g, b: 0-255
         """
+        SONAR_ADDR = 0x77
         try:
-            from rpi_ws281x import PixelStrip, Color
-            
-            strip = PixelStrip(2, 12, 800000, 10, False, 120, 0)
-            strip.begin()
-            
-            for led_id, r, g, b in leds:
-                if 0 <= led_id <= 1:
-                    strip.setPixelColor(led_id, Color(r, g, b))
-            strip.show()
+            with SMBus(I2C_BUS) as bus:
+                for led_id, r, g, b in leds:
+                    if led_id not in (0, 1):
+                        continue
+                    reg_base = 0x03 if led_id == 0 else 0x06
+                    bus.write_byte_data(SONAR_ADDR, 0x02, 0)  # Static mode
+                    bus.write_byte_data(SONAR_ADDR, reg_base, r & 0xFF)
+                    bus.write_byte_data(SONAR_ADDR, reg_base + 1, g & 0xFF)
+                    bus.write_byte_data(SONAR_ADDR, reg_base + 2, b & 0xFF)
         except Exception:
-            pass  # LEDs not critical, fail silently
+            pass  # LEDs not critical
     
     # ===== Cleanup =====
     
