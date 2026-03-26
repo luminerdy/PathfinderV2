@@ -261,10 +261,15 @@ class BlockApproach:
                 strafe = self._clamp(error_x * kx)
                 forward = self._clamp(error_y * ky) if error_y > 0 else 0
                 
-                # If block near edge of frame, stop and let it re-center
-                if block.center_x < 50 or block.center_x > 590:
-                    strafe = 0
-                    forward = 0
+                # If block near edge of frame, rotate in place to bring it center
+                if block.center_x < 80 or block.center_x > 560:
+                    rot_dir = self.MIN_SPEED if block.center_x > self.CENTER_X else -self.MIN_SPEED
+                    self.board.set_motor_duty([
+                        (1, rot_dir), (2, -rot_dir),
+                        (3, rot_dir), (4, -rot_dir)
+                    ])
+                    time.sleep(0.1)
+                    continue
                 
                 # Center first before driving forward
                 if abs(error_x) > self.X_TOLERANCE * 2:
