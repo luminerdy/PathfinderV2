@@ -46,7 +46,7 @@ class BlockApproach:
     # Safety
     TIMEOUT = 30            # Max seconds
     LOST_TIMEOUT = 2.0      # Stop if block lost for this long
-    MIN_BATTERY = 8.1       # Minimum battery voltage
+    MIN_BATTERY = None      # Auto-detect: Pi 4 = 7.0V, Pi 5 = 8.1V
     
     def __init__(self, board=None):
         self.board = board or BoardController()
@@ -109,11 +109,19 @@ class BlockApproach:
         if timeout is None:
             timeout = self.TIMEOUT
         
-        # Battery check
+        # Battery check (platform-aware threshold)
+        min_bat = self.MIN_BATTERY
+        if min_bat is None:
+            try:
+                from lib.board import PLATFORM
+                min_bat = 7.0 if PLATFORM == 'pi4' else 8.1
+            except ImportError:
+                min_bat = 7.5
+        
         mv = self.board.get_battery()
         if mv:
             v = mv / 1000.0
-            if v < self.MIN_BATTERY:
+            if v < min_bat:
                 return {
                     'success': False, 'color': None,
                     'final_x': 0, 'final_y': 0,
