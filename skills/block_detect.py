@@ -62,10 +62,10 @@ COLOR_RANGES = {
 FOCAL_LENGTH = 500          # Estimated camera focal length (pixels)
 BLOCK_SIZE_MM = 30          # Real block size (1.2 inches)
 FRAME_CENTER_X = 320        # 640 / 2
-MIN_AREA = 50               # Minimum contour area (increased from 20 to reduce noise)
-MIN_ASPECT = 0.5            # Minimum aspect ratio (blocks are square-ish)
-MAX_AREA = 5000             # Maximum area (reduced — a 1.2" block can't be huge)
-MIN_CONFIDENCE = 0.5        # Minimum confidence to report a detection
+MIN_AREA = 30               # Minimum contour area
+MIN_ASPECT = 0.4            # Minimum aspect ratio
+MAX_AREA = 5000             # Maximum area (1.2" block can't be huge)
+MIN_CONFIDENCE = 0.3        # Lowered — was missing real blocks at 0.5
 
 
 class BlockDetector:
