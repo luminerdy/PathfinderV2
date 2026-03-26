@@ -37,9 +37,9 @@ from skills.block_detect import BlockDetector
 MOTOR_POWER = 30
 ROTATION_POWER = 30
 
-# Camera-down view: block centered in forward view appears at ~x=120 in down view
-# due to physical camera offset when shoulder tilts
-DOWN_VIEW_CENTER_X = 150
+# Camera-down view: block centered in forward view appears at ~x=350 in down view
+# Calibrated from real test: forward offset=+30px → down view x=350
+DOWN_VIEW_CENTER_X = 350
 DOWN_VIEW_TARGET_Y = 350
 
 DOWN_VIEW_X_TOL = 80
