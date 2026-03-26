@@ -27,6 +27,10 @@ SERVO_IDS = [1, 3, 4, 5, 6]
 POSITIONS = {
     'camera_forward': {1: 2500, 3: 590, 4: 2450, 5: 700, 6: 1500},
     'camera_down':    {1: 2500, 3: 590, 4: 2450, 5: 1214, 6: 1500},
+    'block_close':    {1: 2500, 3: 590, 4: 2450, 5: 1694, 6: 1500},
+    'pickup_ready':   {1: 1558, 3: 830, 4: 2170, 5: 2410, 6: 1500},
+    'pickup_grab':    {1: 1475, 3: 830, 4: 2170, 5: 2410, 6: 1500},
+    'pickup_lift':    {1: 1475, 3: 590, 4: 2450, 5: 700, 6: 1500},
     'gripper_open':   {1: 2500},
     'gripper_closed': {1: 1475},
     'rest':           {1: 2500, 3: 1500, 4: 1500, 5: 1500, 6: 1500},
@@ -35,16 +39,15 @@ POSITIONS = {
 # Action sequences: list of (position_dict, duration_ms)
 SEQUENCES = {
     'pickup_ready': [
-        # From camera_forward, lower arm to floor level
-        ({1: 2500, 3: 590, 4: 2450, 5: 700, 6: 1500}, 500),   # Start: camera forward
-        ({1: 2500, 3: 1200, 4: 1800, 5: 1200, 6: 1500}, 800),  # Mid: arm extending down
-        ({1: 2500, 3: 1500, 4: 1200, 5: 1500, 6: 1500}, 800),  # Low: near floor
+        # From block_close, lower arm to block (tested positions)
+        ({1: 2500, 3: 830, 4: 2170, 5: 2410, 6: 1500}, 1000),  # Arm down to block, gripper open
+        ({1: 1558, 3: 830, 4: 2170, 5: 2410, 6: 1500}, 300),   # Partially close around block
     ],
     'pickup_grab': [
-        ({1: 1475}, 400),  # Close gripper
+        ({1: 1475, 3: 830, 4: 2170, 5: 2410, 6: 1500}, 400),  # Grip tight
     ],
     'pickup_lift': [
-        ({1: 1475, 3: 590, 4: 2450, 5: 700, 6: 1500}, 800),  # Lift to camera forward (carrying)
+        ({1: 1475, 3: 590, 4: 2450, 5: 700, 6: 1500}, 1000),  # Lift to camera forward (carrying)
     ],
     'drop': [
         ({1: 2500}, 400),  # Open gripper
@@ -218,12 +221,16 @@ class ArmController:
         self.move_to({1: 1475}, duration_ms)
     
     def pickup(self):
-        """Full pickup sequence: lower → grab → lift"""
-        self.run_sequence('pickup_ready')
+        """Full pickup sequence: lower arm → grab → lift
+        
+        Assumes robot is already at block_close position
+        (block directly in front, within arm reach).
+        """
+        self.run_sequence('pickup_ready')   # Arm down, open gripper
+        time.sleep(0.2)
+        self.run_sequence('pickup_grab')    # Close gripper tight
         time.sleep(0.3)
-        self.run_sequence('pickup_grab')
-        time.sleep(0.3)
-        self.run_sequence('pickup_lift')
+        self.run_sequence('pickup_lift')    # Lift to carry position
     
     def drop(self):
         """Drop block"""
