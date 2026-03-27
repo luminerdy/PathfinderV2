@@ -5,7 +5,7 @@ Demonstrates how arm positions are calculated, not hardcoded
 """
 
 import time
-from lib.board_protocol import BoardController
+from lib.board import get_board as BoardController
 from lib.arm_inverse_kinematics import ArmIK
 
 def main():

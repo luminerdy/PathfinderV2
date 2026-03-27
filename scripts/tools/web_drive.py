@@ -5,7 +5,7 @@ Provides browser-based control with camera stream
 """
 
 from flask import Flask, render_template, Response, jsonify, request
-from lib.board_protocol import BoardController
+from lib.board import get_board as BoardController
 import cv2
 import time
 import threading

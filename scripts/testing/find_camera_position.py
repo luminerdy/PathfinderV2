@@ -4,7 +4,7 @@ Interactive tool to find arm position that gives camera good floor view
 Camera is backward and upside-down, so this helps find the right angle
 """
 
-from lib.board_protocol import BoardController
+from lib.board import get_board as BoardController
 import time
 
 board = BoardController()

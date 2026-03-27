@@ -4,7 +4,7 @@ Move arm to camera-forward position
 Uses servo positions that work (will tune interactively)
 """
 
-from lib.board_protocol import BoardController
+from lib.board import get_board as BoardController
 import time
 
 print("Moving arm for camera to see forward...")

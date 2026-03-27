@@ -9,7 +9,8 @@ import logging
 from typing import List, Tuple, Optional
 
 # Import from lib (same level)
-from lib.board_protocol import BoardController as ControllerBoard
+from lib.board import get_board
+ControllerBoard = get_board
 
 logger = logging.getLogger(__name__)
 

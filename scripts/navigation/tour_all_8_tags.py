@@ -12,7 +12,7 @@ Cycles through all 8 tags (578-585) in order:
 import cv2
 import time
 import math
-from lib.board_protocol import BoardController
+from lib.board import get_board as BoardController
 from hardware.sonar import Sonar
 from pupil_apriltags import Detector
 

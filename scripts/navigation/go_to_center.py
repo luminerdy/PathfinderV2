@@ -7,7 +7,7 @@ roughly in the center of the 6x6 ft field (center = 3ft = 91cm from each wall).
 """
 
 import time
-from lib.board_protocol import BoardController
+from lib.board import get_board as BoardController
 from hardware.sonar import Sonar
 
 print("="*70)

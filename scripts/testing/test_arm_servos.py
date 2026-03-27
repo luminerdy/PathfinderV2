@@ -7,7 +7,7 @@ NOTE: Currently not working due to servo protocol issue
 Servo commands trigger motors instead of servos
 """
 
-from lib.board_protocol import BoardController
+from lib.board import get_board as BoardController
 import time
 
 print("=" * 60)

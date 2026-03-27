@@ -23,7 +23,7 @@ USAGE:
 
 import cv2
 import time
-from lib.board_protocol import BoardController
+from lib.board import get_board as BoardController
 from capabilities.vision import VisionSystem
 import yaml
 

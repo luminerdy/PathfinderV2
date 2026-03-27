@@ -8,7 +8,7 @@ of all walls, then moves toward the most open space (center).
 
 import time
 import math
-from lib.board_protocol import BoardController
+from lib.board import get_board as BoardController
 from hardware.sonar import Sonar
 
 print("="*70)

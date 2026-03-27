@@ -6,7 +6,7 @@ Uses camera + mecanum drive to approach a block
 
 import cv2
 import numpy as np
-from lib.board_protocol import BoardController
+from lib.board import get_board as BoardController
 import time
 
 # Color detection parameters

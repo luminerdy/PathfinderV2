@@ -4,7 +4,7 @@ Quick script to lower arm to safe rest position
 Use after initialization if arm is pointing up
 """
 
-from lib.board_protocol import BoardController
+from lib.board import get_board as BoardController
 import time
 
 print("Lowering arm to safe rest position...")

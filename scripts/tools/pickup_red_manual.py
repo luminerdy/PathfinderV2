@@ -5,7 +5,7 @@ Uses servo control to pick up block seen in camera
 """
 
 import time
-from lib.board_protocol import BoardController
+from lib.board import get_board as BoardController
 
 def main():
     print("=" * 60)

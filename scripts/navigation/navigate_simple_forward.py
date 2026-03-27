@@ -7,7 +7,7 @@ Don't worry about perfect centering
 
 import cv2
 import time
-from lib.board_protocol import BoardController
+from lib.board import get_board as BoardController
 from pupil_apriltags import Detector
 
 print("="*60)

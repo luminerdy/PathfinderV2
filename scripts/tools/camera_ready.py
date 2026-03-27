@@ -4,7 +4,7 @@ Position arm so camera points forward and down to see blocks on floor
 Camera is mounted on arm, so arm position = camera angle
 """
 
-from lib.board_protocol import BoardController
+from lib.board import get_board as BoardController
 import time
 
 print("Positioning arm for camera view of floor blocks...")

@@ -4,7 +4,7 @@ Test individual motors
 Tests each wheel motor one at a time to verify connections
 """
 
-from lib.board_protocol import BoardController
+from lib.board import get_board as BoardController
 import time
 
 print("=" * 60)

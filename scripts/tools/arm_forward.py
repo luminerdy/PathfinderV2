@@ -5,7 +5,7 @@ Based on original PathfinderBot code: AK.setPitchRangeMoving((0, 6, 18), ...)
 Position: x=0, y=60mm, z=180mm (camera points forward and down)
 """
 
-from lib.board_protocol import BoardController
+from lib.board import get_board as BoardController
 import time
 
 print("Moving arm to forward-facing camera position...")

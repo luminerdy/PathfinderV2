@@ -5,7 +5,7 @@ Provides sliders to position each arm servo
 """
 
 from flask import Flask, render_template, jsonify, request
-from lib.board_protocol import BoardController
+from lib.board import get_board as BoardController
 import threading
 
 app = Flask(__name__)

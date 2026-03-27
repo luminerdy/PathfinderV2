@@ -5,7 +5,7 @@ Camera is mounted backward and upside down on arm
 So we need to position arm so camera faces the blocks
 """
 
-from lib.board_protocol import BoardController
+from lib.board import get_board as BoardController
 import time
 
 print("Camera hardware: mounted BACKWARD and UPSIDE DOWN")
