@@ -44,7 +44,7 @@ Built for STEM education, hands-on robotics workshops, and autonomous competitio
 ### ❌ Not Yet Implemented
 - Full pickup → navigate → deliver cycle
 - Competition scoring system
-- Gamepad control
+- Gamepad control (Logitech F710)
 - Workshop curriculum
 
 ## Quick Start
