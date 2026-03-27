@@ -93,6 +93,11 @@ pathfinder/
 │   └── sonar.py           # Ultrasonic sensor
 │
 ├── skills/                # Autonomous behaviors
+│   ├── strafe_nav.py      # Mecanum navigation (strafe + forward)
+│   ├── block_detect.py    # Color block detection (Red, Blue, Yellow)
+│   ├── block_approach.py  # Drive to block with target locking
+│   ├── arm_control.py     # Smooth multi-servo arm control
+│   ├── auto_pickup.py     # Full autonomous pickup cycle
 │   └── centering.py       # Proportional target centering
 │
 ├── scripts/               # Runnable scripts
@@ -149,8 +154,8 @@ Note: Servo 2 does not exist on this platform.
 
 ### Power Requirements
 - **Battery:** 2× 18650 (3.7V nominal, 8.4V fully charged)
-- **Minimum voltage:** >7.0V (Pi 4) or >8.2V (Pi 5)
-- **Pi 5 requirement:** 5V / 5A (25W) — 67% more than Pi 4
+- **Minimum voltage:** >7.0V (Pi 4, recommended) or >8.2V (Pi 5)
+- **Note:** Pi 4 recommended for competition (better battery life, no throttling)
 - **Runtime:** 30-45 minutes per charge
 - **Motor minimum power:** 30 (below ~25, static friction wins)
 
@@ -168,8 +173,8 @@ See [Power Requirements](docs/calibration/POWER_REQUIREMENTS.md) for detailed an
 - [Rotation Calibration](docs/calibration/ROTATION_CALIBRATION_RESULTS.md) — Detailed test results
 - [Power Requirements](docs/calibration/POWER_REQUIREMENTS.md) — Voltage thresholds
 
-### Reference
-- [Hardware System Reference](docs/reference/HARDWARE_SYSTEM_REFERENCE.md) — Complete system analysis
+### Competition
+- [Competition Design](docs/competition/COMPETITION_DESIGN.md) — Multi-robot team competition rules
 
 ## Competition Context
 
@@ -182,11 +187,10 @@ Designed for 6-hour STEM events:
 ## Development
 
 **Day 0-4:** Framework, hardware, motor/servo breakthroughs
-**Day 5-6:** AprilTag navigation, 8-tag field, smart approach (87% → 100%)
+**Day 5-6:** AprilTag navigation, 8-tag field, smart approach (87% to 100%)
 **Day 7:** Centering skill, power analysis, movement calibration, web control
-**Day 8+:** Block approach, pickup sequence, competition tasks
-
-74 commits across 8 days of development.
+**Day 8:** Repo cleanup, strafe navigation, block detection, competition design
+**Day 9:** Pi 4 driver, Buddy robot, platform auto-detect, documentation cleanup
 
 ## Credits
 
