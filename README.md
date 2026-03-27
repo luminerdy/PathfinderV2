@@ -59,9 +59,9 @@ python3 scripts/tools/check_battery.py
 ```
 
 **Battery Requirements:**
-- **Minimum for reliable operation: >8.2V** (2x 18650 cells, 8.4V fully charged)
-- Below 8.0V: Motors become unreliable, Pi may throttle
-- Below 7.5V: Critical — replace immediately
+- **Pi 4 (competition): >7.0V** for reliable operation
+- **Pi 5 (development): >8.2V** (Pi 5 draws more power)
+- Below 7.0V: Replace batteries immediately
 
 ### Run the Web Control Interface
 ```bash
@@ -149,7 +149,7 @@ Note: Servo 2 does not exist on this platform.
 
 ### Power Requirements
 - **Battery:** 2× 18650 (3.7V nominal, 8.4V fully charged)
-- **Minimum voltage:** >8.2V for reliable motor + Pi 5 operation
+- **Minimum voltage:** >7.0V (Pi 4) or >8.2V (Pi 5)
 - **Pi 5 requirement:** 5V / 5A (25W) — 67% more than Pi 4
 - **Runtime:** 30-45 minutes per charge
 - **Motor minimum power:** 30 (below ~25, static friction wins)

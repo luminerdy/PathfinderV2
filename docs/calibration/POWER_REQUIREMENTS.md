@@ -1,3 +1,5 @@
+> **Note:** Calibration data from Pi 5 (Day 7). Pi 4 values may differ.
+
 # Power Requirements Summary
 ## PathfinderV2 with Raspberry Pi 5
 

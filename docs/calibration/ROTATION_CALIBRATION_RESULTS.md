@@ -1,3 +1,5 @@
+> **Note:** Calibration data from Pi 5 (Day 7). Pi 4 values may differ.
+
 # Rotation Calibration Results
 ## Day 7 - March 24, 2026
 

@@ -1,7 +1,7 @@
 # PathfinderV2 - Project Status
 
-**Last Updated:** March 25, 2026 (Day 8)
-**Status:** 🔧 In Development — Navigation proven, pickup next
+**Last Updated:** March 26, 2026 (Day 9)
+**Status:** 🔧 In Development — Navigation proven, pickup in progress
 
 ---
 
@@ -73,6 +73,8 @@
 | <7.5V | Critical | All fail | Heavy throttling |
 
 **Key finding:** Pi 5 requires 5V/5A (25W), 67% more than Pi 4. The voltage regulator struggles under combined Pi + motor load at <8.2V.
+
+**Decision (Day 9):** Pi 4 is the competition platform. Works reliably at 7.0V+ with no throttling. Same code runs on both via `lib/board.py` auto-detection.
 
 **Runtime:** 30-45 minutes per charge
 

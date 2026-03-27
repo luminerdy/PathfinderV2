@@ -7,8 +7,8 @@ uses `lib/board_protocol.py` directly.
 
 **Correct imports for new code:**
 ```python
-from lib.board_protocol import BoardController
-from hardware.sonar import Sonar  # Sonar wrapper is still good
+from lib.board import get_board    # Auto-detects Pi 4 or Pi 5
+from hardware.sonar import Sonar   # Sonar wrapper is still good
 from skills.strafe_nav import StrafeNavigator
 from skills.block_detect import BlockDetector
 from skills.centering import CenteringController

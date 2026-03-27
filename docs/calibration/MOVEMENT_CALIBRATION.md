@@ -1,3 +1,5 @@
+> **Note:** Calibration data from Pi 5 (Day 7). Pi 4 values may differ.
+
 # Movement Calibration Results
 ## Fresh Battery (8.21V) - March 24, 2026
 
