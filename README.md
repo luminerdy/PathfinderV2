@@ -39,6 +39,7 @@ Built for STEM education, hands-on robotics workshops, and autonomous competitio
 - Block approach (drive to block on floor)
 - Automated pickup sequence
 - Blue/yellow block detection (HSV tuning needed)
+- Green line following (1/2 inch green tape, unlocks bonus zone)
 
 ### ❌ Not Yet Implemented
 - Full pickup → navigate → deliver cycle
