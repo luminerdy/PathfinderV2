@@ -18,7 +18,8 @@ import cv2
 import math
 import time
 from pupil_apriltags import Detector
-from lib.board_protocol import BoardController
+from lib.board import get_board
+BoardController = None  # Use get_board() instead
 from hardware.sonar import Sonar
 
 
@@ -61,7 +62,7 @@ class StrafeNavigator:
     MAX_STRAFE_ANGLE = 20  # degrees — above this, rotate first instead of strafing
     
     def __init__(self, board=None, sonar=None):
-        self.board = board or BoardController()
+        self.board = board or get_board()
         self.sonar = sonar or Sonar()
         self.detector = Detector(families='tag36h11')
         self.camera = None

@@ -12,7 +12,8 @@ Calibration: March 24, 2026
 """
 
 import time
-from lib.board_protocol import BoardController
+from lib.board import get_board
+BoardController = None  # Use get_board() instead
 
 # Calibration constants (Power 30, Battery 8.2V+)
 ROTATION_POWER = 30
@@ -214,7 +215,7 @@ if __name__ == '__main__':
     print("="*50)
     print()
     
-    board = BoardController()
+    board = get_board()
     
     # Check battery
     voltage, ok = check_battery(board)

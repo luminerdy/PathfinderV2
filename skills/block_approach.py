@@ -16,7 +16,8 @@ Target lock prevents jumping between blocks mid-approach.
 import cv2
 import math
 import time
-from lib.board_protocol import BoardController
+from lib.board import get_board
+BoardController = None  # Use get_board() instead
 from skills.block_detect import BlockDetector, BlockDetection
 
 
@@ -53,7 +54,7 @@ class BlockApproach:
     MIN_BATTERY = None      # Auto: Pi4=7.0, Pi5=8.1
     
     def __init__(self, board=None):
-        self.board = board or BoardController()
+        self.board = board or get_board()
         self.detector = BlockDetector()
         self.camera = None
         self._last_seen = 0

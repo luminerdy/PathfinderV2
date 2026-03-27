@@ -17,7 +17,8 @@ Servo Mapping (verified):
 import time
 import json
 from pathlib import Path
-from lib.board_protocol import BoardController
+from lib.board import get_board
+BoardController = None  # Use get_board() instead
 
 
 # All servo IDs on this robot
@@ -88,7 +89,7 @@ class ArmController:
     """
     
     def __init__(self, board=None):
-        self.board = board or BoardController()
+        self.board = board or get_board()
         self._current = {}  # Track current servo positions
         self._positions = dict(POSITIONS)
         self._sequences = dict(SEQUENCES)

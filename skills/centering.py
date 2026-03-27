@@ -7,7 +7,8 @@ Uses pose angle when available, falls back to pixel offset.
 """
 
 import math
-from lib.board_protocol import BoardController
+from lib.board import get_board
+BoardController = None  # Use get_board() instead
 
 class CenteringController:
     """
@@ -24,7 +25,7 @@ class CenteringController:
         Args:
             board: BoardController instance (optional, creates if None)
         """
-        self.board = board if board else BoardController()
+        self.board = board if board else get_board()
         
         # Tuning parameters
         self.PIXEL_TOLERANCE = 40       # ±40px is "centered enough"
