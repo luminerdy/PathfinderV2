@@ -1,7 +1,7 @@
 # PathfinderV2
 
 **Status: 🔧 IN DEVELOPMENT**
-**Latest Update:** March 25, 2026
+**Latest Update:** March 26, 2026
 
 A Python framework for educational mobile robots with mecanum drive and robotic arms, running on Raspberry Pi 4 or Pi 5.
 
@@ -159,12 +159,8 @@ See [Power Requirements](docs/calibration/POWER_REQUIREMENTS.md) for detailed an
 ## Documentation
 
 ### Setup
-- [Fresh Install Guide](docs/FRESH_INSTALL.md) — Complete step-by-step for new Pi OS
-- [Setup Checklist](docs/SETUP_CHECKLIST.md) — Quick reference
-- [Installation Guide](INSTALL.md) — Dependencies and configuration
-
-### Hardware
-- [Motor Solution](docs/MOTOR_SOLUTION.md) — UART configuration for motors
+- [A1: Robot Pi OS Build](docs/setup/A1_ROBOT_PI_OS_BUILD.md) — Complete SD card image creation
+- [Installation Guide](INSTALL.md) — Quick install reference
 - [Battery Safety](BATTERY_SAFETY.md) — Voltage requirements and charging
 
 ### Calibration
