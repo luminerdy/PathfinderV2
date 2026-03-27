@@ -3,7 +3,7 @@
 **Status:** This layer is NOT used by working code.
 
 All proven code (strafe navigation, centering, web control, block detection)
-uses `lib/board_protocol.py` directly.
+uses `lib/board.get_board()` (auto-detects Pi 4 I2C or Pi 5 serial).
 
 **Correct imports for new code:**
 ```python
@@ -25,7 +25,7 @@ from skills.centering import CenteringController
 
 **The real architecture is:**
 ```
-lib/board_protocol.py  — Serial communication (proven)
+lib/board.py           — Platform auto-detect entry point (proven)
 lib/i2c_sonar.py       — Sonar I2C driver (proven)
 lib/movement.py        — Calibrated movement functions (proven)
 hardware/sonar.py      — Sonar abstraction (proven)

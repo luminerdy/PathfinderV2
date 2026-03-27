@@ -6,7 +6,7 @@ Complete list of system packages and libraries required for Pathfinder on a fres
 
 - **OS:** Raspberry Pi OS (64-bit recommended)
 - **Python:** 3.9 or higher
-- **Hardware:** Raspberry Pi 5 8GB (or Pi 4 4GB minimum)
+- **Hardware:** Raspberry Pi 4 4GB+ (recommended) or Pi 5 8GB
 - **Storage:** 16GB SD card minimum, 32GB recommended
 - **Network:** Wi-Fi or Ethernet connection
 

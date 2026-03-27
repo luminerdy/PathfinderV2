@@ -32,7 +32,7 @@ class Arm:
         1=2500, 3=590, 4=2450, 5=700, 6=1500
     
     WARNING: This module's methods still use the OLD incorrect mapping
-    internally. Use lib/board_protocol.py directly for reliable servo
+    internally. Use lib/board.get_board() for reliable servo
     control until this module is rewritten.
     """
     

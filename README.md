@@ -3,7 +3,7 @@
 **Status: 🔧 IN DEVELOPMENT**
 **Latest Update:** March 25, 2026
 
-A Python framework for educational mobile robots with mecanum drive and robotic arms, running on Raspberry Pi 5 8GB.
+A Python framework for educational mobile robots with mecanum drive and robotic arms, running on Raspberry Pi 4 or Pi 5.
 
 Built for STEM education, hands-on robotics workshops, and autonomous competition scenarios.
 
@@ -79,7 +79,7 @@ python3 scripts/navigation/tour_all_8_tags.py
 ```
 pathfinder/
 ├── lib/                   # Core libraries
-│   ├── board_protocol.py  # Serial communication with controller board
+│   ├── board.py           # Platform auto-detect (Pi 4 I2C / Pi 5 serial)
 │   ├── i2c_sonar.py       # Sonar sensor driver
 │   ├── mecanum_kinematics.py
 │   ├── arm_inverse_kinematics.py
