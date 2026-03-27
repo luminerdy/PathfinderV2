@@ -1,127 +1,114 @@
 #!/usr/bin/env python3
 """
-Robot Startup Sequence
-Runs on boot to initialize robot to known good state
+PathfinderV2 Robot Startup Sequence
+
+Runs at boot to initialize robot to a known good state.
+Works on both Pi 4 (I2C) and Pi 5 (serial) via auto-detection.
+
+Actions:
+  1. Connect to motor board
+  2. Stop all motors
+  3. Turn off sonar LEDs
+  4. Position arm to camera-forward
+  5. Check battery
+  6. Check camera
+  7. Beep to signal ready
+
+Install as systemd service:
+  sudo systemctl enable pathfinder-startup.service
 """
 
 import sys
+import os
 import time
-from lib.board_protocol import BoardController
+
+# Add project root to path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from lib.board import get_board, PLATFORM
 
 print("=" * 60)
-print("PATHFINDER ROBOT STARTUP SEQUENCE")
+print("PATHFINDER STARTUP")
+print("Platform: %s" % PLATFORM)
 print("=" * 60)
 
-# Initialize board
-print("\n[1/6] Initializing control board...")
+# 1. Connect to board
+print("\n[1/7] Connecting to board...")
 try:
-    board = BoardController()
-    time.sleep(0.5)
-    print("  [OK] Control board connected")
+    board = get_board()
+    time.sleep(1)
+    print("  OK")
 except Exception as e:
-    print(f"  [FAIL] Could not connect to board: {e}")
+    print("  FAIL: %s" % e)
     sys.exit(1)
 
-# Stop all motors
-print("\n[2/6] Stopping all motors...")
+# 2. Stop all motors
+print("[2/7] Stopping motors...")
 board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
-print("  [OK] All motors stopped")
+print("  OK")
 
-# Turn off sonar RGB LEDs (they default to ON at power-up)
-print("\n[3/6] Turning off sonar RGB LEDs...")
+# 3. Turn off sonar LEDs
+print("[3/7] LEDs off...")
 try:
-    board.set_rgb(0, 0, 0)  # All LEDs black (off)
-    print("  [OK] Sonar LEDs off (power saving)")
-except Exception as e:
-    print(f"  [WARN] Could not control RGB LEDs: {e}")
+    board.set_rgb([(0, 0, 0, 0), (1, 0, 0, 0)])
+    print("  OK")
+except Exception:
+    print("  SKIP (not critical)")
 
-# Check battery
-print("\n[4/7] Checking battery voltage...")
-try:
-    # Battery reading comes from periodic SYS packets
-    time.sleep(0.5)
-    voltage = board.get_battery()
-    if voltage and voltage < 100:  # Sanity check
-        print(f"  Battery: {voltage:.2f}V")
-        if voltage < 7.0:
-            print("  [WARN] Battery low! Charge soon")
-        elif voltage < 7.5:
-            print("  [WARN] Battery getting low")
-        else:
-            print("  [OK] Battery good")
-    else:
-        print("  [WARN] Could not read battery voltage (got invalid reading)")
-except Exception as e:
-    print(f"  [WARN] Battery check failed: {e}")
-
-# Position arm to camera-forward position
-print("\n[5/7] Positioning arm to camera-forward position...")
-
-# CORRECT servo mapping (verified):
-# 1=Gripper (claw), 3=Wrist, 4=Elbow, 5=Shoulder, 6=Base
-# Servo 2 does NOT exist on this robot
+# 4. Position arm to camera-forward
+print("[4/7] Arm to camera-forward...")
 camera_forward = [
     (1, 2500),  # Gripper open
-    (6, 1500),  # Base forward (center)
+    (6, 1500),  # Base center
     (5, 700),   # Shoulder
     (4, 2450),  # Elbow
     (3, 590),   # Wrist
 ]
-
-# Move servos sequentially to avoid power spike
 for servo_id, pwm in camera_forward:
     board.set_servo_position(800, [(servo_id, pwm)])
     time.sleep(0.4)
-    
-# Extra wait to ensure settled
 time.sleep(0.5)
-print("  [OK] Arm positioned with camera facing forward")
+print("  OK")
 
-# Check camera
-print("\n[6/7] Checking camera...")
-import cv2
-camera_found = False
-for device in [0, 1, 2]:
-    try:
-        cap = cv2.VideoCapture(device)
-        if cap.isOpened():
-            ret, frame = cap.read()
-            if ret and frame is not None:
-                print(f"  [OK] Camera found on device {device}")
-                print(f"       Resolution: {frame.shape[1]}x{frame.shape[0]}")
-                camera_found = True
-                cap.release()
-                break
-            cap.release()
-    except:
-        pass
+# 5. Check battery
+print("[5/7] Battery...")
+voltage = 0
+for _ in range(5):
+    mv = board.get_battery()
+    if mv and 5000 < mv < 20000:
+        voltage = mv / 1000.0
+        break
+    time.sleep(0.3)
 
-if not camera_found:
-    print("  [WARN] No camera detected")
-    print("         Check USB connection if using USB camera")
+if voltage > 0:
+    print("  %.2fV" % voltage)
+    if voltage < 7.0:
+        print("  WARNING: Battery low!")
+else:
+    print("  Could not read (check board power)")
 
-# Startup complete
-print("\n[7/7] Final check...")
-print("  [OK] All systems ready")
+# 6. Check camera
+print("[6/7] Camera...")
+try:
+    import cv2
+    cam = cv2.VideoCapture(0)
+    time.sleep(0.5)
+    ret, frame = cam.read()
+    if ret:
+        print("  %dx%d OK" % (frame.shape[1], frame.shape[0]))
+    else:
+        print("  No frame (check USB)")
+    cam.release()
+except Exception:
+    print("  Not available")
 
-print("\n" + "=" * 60)
+# 7. Beep ready
+print("[7/7] Ready beep...")
+board.set_buzzer(1000, 0.1, 0.1, 2)
+time.sleep(0.5)
+print("  OK")
+
+print()
+print("=" * 60)
 print("STARTUP COMPLETE")
 print("=" * 60)
-
-# Double beep to indicate ready
-print("\nBeeping to signal ready...")
-try:
-    # Buzzer: freq_hz, on_seconds, off_seconds, repeat
-    board.set_buzzer(1000, 0.1, 0.1, 2)  # 1kHz, beep twice
-    time.sleep(0.5)
-    print("  [OK] Ready signal sent")
-except Exception as e:
-    print(f"  [WARN] Buzzer not available: {e}")
-
-print("\nRobot initialized and ready!")
-print("\nUseful commands:")
-print("  python3 test_movement.py       - Test chassis movement")
-print("  python3 check_battery.py       - Check battery status")
-print("  python3 lower_arm.py           - Lower arm if pointing up")
-print("  python3 camera_forward_simple.py - Position camera")
-print("")

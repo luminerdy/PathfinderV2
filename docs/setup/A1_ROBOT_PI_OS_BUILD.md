@@ -358,9 +358,9 @@ print('Hardware test complete!')
 
 ---
 
-## Step 9: Optional — Create Startup Service
+## Step 9: Create Startup Service
 
-Positions the arm at boot so the camera faces forward:
+Initializes the robot at boot: stops motors, turns off LEDs, positions arm forward, checks battery, beeps when ready.
 
 ```bash
 sudo tee /etc/systemd/system/pathfinder-startup.service << 'EOF'
