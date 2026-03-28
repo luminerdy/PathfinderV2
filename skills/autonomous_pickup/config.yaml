@@ -1,0 +1,41 @@
+# Autonomous Pickup Configuration (E5)
+
+# Phase 1: Scan
+scan:
+  steps: 16              # Rotation steps (16 = ~360 degrees)
+  tolerance: 100         # Max offset to consider "facing" (pixels)
+  rotation_power: 30
+
+# Phase 2: Approach (stop-look-drive)
+approach:
+  cycles: 40             # Max approach iterations
+  motor_power: 30
+  down_view_center_x: 350  # Calibrated center in down view
+  down_view_target_y: 350  # Target Y for "arrived"
+  x_tolerance: 80          # Horizontal tolerance (pixels)
+  y_tolerance: 50          # Vertical tolerance (pixels)
+  min_y: 50                # Ignore detections above this
+
+# Phase 3: Arm positions (servo PWM values)
+# Format: [gripper, wrist, elbow, shoulder, base]
+arm_positions:
+  camera_forward: [2500, 590, 2450, 700, 1500]
+  camera_down:    [2500, 590, 2450, 1214, 1500]
+  pickup_ready:   [1558, 830, 2170, 2410, 1500]
+  pickup_grab:    [1475, 830, 2170, 2410, 1500]
+  pickup_lift:    [1475, 590, 2450, 700, 1500]
+  carry:          [1558, 569, 2400, 809, 1500]
+
+# Arm timing (milliseconds)
+arm_timing:
+  camera_switch: 800
+  pickup_lower: 1000
+  pickup_grab: 400
+  pickup_lift: 1000
+  carry: 800
+
+# Safety
+safety:
+  battery_min_pi4: 7.0
+  battery_min_pi5: 8.1
+  timeout: 30

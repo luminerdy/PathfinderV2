@@ -1,0 +1,66 @@
+# AprilTag Navigation Configuration (Level 2: Tune Parameters)
+#
+# Edit these values to customize robot behavior.
+# No code changes needed - just save this file and run again!
+
+# Which tag to navigate to
+target_tag_id: 581
+
+# How close to get (meters)
+# 0.55m = ~22 inches (safe distance)
+# Try: 0.40 (closer), 0.70 (farther)
+target_distance: 0.55
+
+# Camera calibration
+# Run calibrate_camera.py to get accurate values for your camera
+# These are estimates that work "good enough" for most setups
+camera:
+  fx: 500  # Focal length X (pixels)
+  fy: 500  # Focal length Y (pixels)
+  cx: 320  # Principal point X (image center)
+  cy: 240  # Principal point Y (image center)
+
+# AprilTag specifications
+tag:
+  size: 0.254  # Tag size in meters (0.254m = 10 inches)
+  family: tag36h11  # Tag family (don't change unless you know why)
+
+# Control gains (higher = stronger/faster response)
+# If robot overshoots or wobbles, reduce these
+# If robot is too slow or doesn't correct, increase these
+gains:
+  lateral: 120   # Kx - how hard to strafe to center (try 80-150)
+  forward: 100   # Kz - how fast to approach (try 70-120)
+
+# Tolerances (when to stop correcting small errors)
+# Smaller = more precise but may never settle
+# Larger = less precise but reaches target faster
+tolerances:
+  center: 0.03  # Lateral tolerance (meters, ~1.2 inches)
+  distance: 0.05  # Distance tolerance (meters, ~2 inches)
+
+# Speed limits
+# Adjust based on your floor surface and battery voltage
+speeds:
+  max: 35  # Maximum motor duty (0-100, try 25-40)
+  min: 28  # Minimum to overcome friction (calibrate on your floor)
+
+# Safety (sonar obstacle detection)
+# Robot will stop or slow down if sonar detects obstacle
+safety:
+  sonar_stop: 15   # Emergency stop distance (cm)
+  sonar_slow: 30   # Reduce speed distance (cm)
+  sonar_backup: 50  # Backup if starting too close to wall (cm)
+
+# Advanced tuning (usually don't need to change)
+advanced:
+  tag_timeout: 1.5  # Seconds without seeing tag before stopping
+  max_strafe_angle: 20  # Degrees - rotate instead of strafe if tag angle > this
+  loop_delay: 0.01  # Seconds between control loop iterations
+
+# Debugging
+# Set to true to see detailed output (slows down robot)
+debug:
+  print_detections: false  # Print tag pose data every frame
+  show_video: false  # Display camera feed with tag overlay (requires display)
+  log_to_file: false  # Save navigation log to file

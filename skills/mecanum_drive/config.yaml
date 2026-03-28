@@ -1,0 +1,73 @@
+# Mecanum Drive Configuration (Level 2: Tune Parameters)
+#
+# Edit these values to customize robot behavior.
+# No code changes needed - just save and run again!
+
+# Speed limits (motor duty cycle 0-100)
+# Higher = faster, but may lose traction
+# Lower = slower, but more controlled
+speeds:
+  max: 50          # Maximum speed for normal movement (try 30-70)
+  min: 25          # Minimum to overcome friction (try 20-30)
+  rotation: 35     # Speed for rotation (try 25-45)
+  square: 35       # Speed for square pattern
+
+# Demo timing (seconds)
+demo:
+  duration: 2.0    # How long each movement lasts (try 1.0-3.0)
+  pause: 1.5       # Pause between movements (try 0.5-2.0)
+  rotation_time: 1.2  # Time for 90° rotation (calibrate!)
+  square_side_time: 1.5  # Time for one side of square
+
+# Motor inversions (if your robot moves wrong direction)
+# Set to -1 to reverse that motor, 1 for normal
+# Common issue: Motors wired backward during assembly
+motor_directions:
+  front_left: 1    # Motor 1 (FL)
+  front_right: 1   # Motor 2 (FR)
+  rear_left: 1     # Motor 3 (RL)
+  rear_right: 1    # Motor 4 (RR)
+
+# Robot physical dimensions (meters)
+# Used for rotation speed calculations
+dimensions:
+  wheelbase: 0.20        # Left-to-right wheel distance
+  track_width: 0.20      # Front-to-back wheel distance
+  wheel_diameter: 0.065  # Mecanum wheel diameter
+
+# Battery safety
+battery:
+  min_voltage: 7.0  # Minimum safe voltage (below this = warning)
+  warn_voltage: 7.2  # Warn user below this
+
+# Advanced tuning (usually don't need to change)
+advanced:
+  wheelbase_rotation_factor: 0.1  # Tune if rotation speed feels wrong
+  normalize_speeds: true  # Scale speeds if any wheel > max
+  
+# Troubleshooting notes:
+#
+# Robot doesn't move:
+#   - Check battery voltage (run battery_check.py)
+#   - Verify motors with test_motors.py
+#   - Look for red LED on board (low voltage)
+#
+# Robot moves backward when expecting forward:
+#   - Set front_left: -1 and rear_left: -1
+#   OR set front_right: -1 and rear_right: -1
+#   (One side is reversed)
+#
+# Strafe is crooked (robot rotates while strafing):
+#   - Check wheel mounting (45° roller angle matters!)
+#   - Verify weight distribution (battery centered?)
+#   - Try different floor surface (smooth is best)
+#
+# Square pattern doesn't close:
+#   - Normal! Open-loop control drifts
+#   - Tune rotation_time (increase/decrease for better 90°)
+#   - Acceptable if within 6 inches of start
+#
+# Robot too fast or too slow:
+#   - Adjust speeds.max (try different values)
+#   - Check floor surface (carpet vs tile vs concrete)
+#   - Battery voltage affects speed (fresh battery = faster)

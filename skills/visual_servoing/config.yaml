@@ -1,0 +1,36 @@
+# Visual Servoing Configuration (E4)
+
+# Control gains
+control:
+  Kx: 0.15              # Strafe proportional gain
+  Ky: 0.10              # Forward proportional gain
+  close_range_gain: 0.7 # Reduce speed when <30cm
+
+# Tolerances (pixels)
+tolerances:
+  x_tolerance: 40        # Horizontal centering
+  y_tolerance: 30        # Vertical (arrival)
+  target_y: 420          # Block at bottom of frame = pickup distance
+
+# Speed limits
+speed:
+  max_speed: 30
+  min_speed: 28
+
+# Target lock
+target_lock:
+  lock_radius: 120       # Max pixel movement between frames
+  lost_timeout: 2.0      # Seconds before declaring lost
+
+# Centering controller
+centering:
+  pixel_tolerance: 40    # Pixels from center
+  angle_tolerance: 5.0   # Degrees from center
+  rotation_speed: 28     # Motor power for rotation
+  rotation_rate: 105     # Degrees/second at power 28
+
+# Safety
+safety:
+  approach_timeout: 30   # Max seconds for approach
+  battery_min_pi4: 7.0
+  battery_min_pi5: 8.1

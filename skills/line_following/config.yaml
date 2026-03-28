@@ -1,0 +1,56 @@
+# Line Following Configuration (E6)
+
+# Lime green tape HSV range
+# Tune these if detection is unreliable
+color:
+  lower: [40, 100, 100]   # H, S, V minimums
+  upper: [75, 255, 255]   # H, S, V maximums
+  description: "Lime green / fluorescent green tape"
+
+# Region of Interest
+roi:
+  top_ratio: 0.65  # Start ROI at 65% down frame (bottom 35%)
+  # Lower value = see further ahead (better for fast speeds)
+  # Higher value = see closer (better for tight curves)
+
+# Control parameters
+control:
+  Kp: 0.15              # Proportional gain (steer = error * Kp)
+  forward_speed: 25      # Base forward speed (duty cycle 0-100)
+  max_steer: 35          # Maximum steering correction
+  min_motor: 15          # Minimum motor speed (overcome friction)
+
+# Line detection thresholds
+detection:
+  min_line_ratio: 0.005  # Minimum green pixel ratio (0.5% of ROI)
+  lost_frames: 15        # Frames without line before declaring "line ended"
+  morph_kernel: 5        # Morphology kernel size (noise cleanup)
+
+# Arm position for camera-down view
+arm:
+  camera_down: [2500, 590, 2450, 1214, 1500]  # [grip, wrist, elbow, shoulder, base]
+
+# Safety
+safety:
+  timeout: 30  # Max seconds to follow
+
+# Tuning guide:
+#
+# Robot oscillates (wobbles):
+#   - Decrease Kp (e.g., 0.10)
+#   - Decrease forward_speed (slower = smoother)
+#
+# Robot loses line on curves:
+#   - Increase Kp (e.g., 0.20)
+#   - Decrease forward_speed (more time to react)
+#   - Decrease roi.top_ratio (see further ahead)
+#
+# False detections:
+#   - Narrow HSV range (increase S_min or V_min)
+#   - Increase morph_kernel (more noise filtering)
+#   - Increase min_line_ratio (require more green pixels)
+#
+# Doesn't detect tape:
+#   - Widen HSV range (decrease lower, increase upper)
+#   - Run test_line_detect.py to check what camera sees
+#   - Check lighting (shadows reduce saturation)

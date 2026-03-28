@@ -1,0 +1,135 @@
+# Robotic Arm Configuration
+
+# Servo mappings and ranges
+servos:
+  gripper:
+    id: 1
+    min: 1475  # Closed
+    max: 2500  # Open
+    default: 2500  # Start open
+    description: "Claw/gripper"
+  
+  wrist:
+    id: 3
+    min: 500
+    max: 2500
+    center: 1500
+    description: "Wrist rotation"
+  
+  elbow:
+    id: 4
+    min: 500
+    max: 2500
+    center: 1500
+    description: "Elbow joint"
+  
+  shoulder:
+    id: 5
+    min: 500
+    max: 2500
+    center: 1500
+    description: "Shoulder joint"
+  
+  base:
+    id: 6
+    min: 500
+    max: 2500
+    center: 1500
+    description: "Base rotation"
+
+# Named positions (servo PWM values)
+# Format: [gripper, wrist, elbow, shoulder, base]
+named_positions:
+  rest:
+    gripper: 2500  # Open
+    wrist: 590
+    elbow: 2450
+    shoulder: 700
+    base: 1500
+    description: "Compact, safe position"
+  
+  home:
+    gripper: 2500
+    wrist: 1200
+    elbow: 1500
+    shoulder: 1500
+    base: 1500
+    description: "Neutral starting position"
+  
+  forward:
+    gripper: 2500
+    wrist: 1200
+    elbow: 1800
+    shoulder: 1200
+    base: 1500
+    description: "Reach forward"
+  
+  pickup:
+    gripper: 2500
+    wrist: 590
+    elbow: 2450
+    shoulder: 1200
+    base: 1500
+    description: "Low, ready to grab"
+  
+  carry:
+    gripper: 1475  # Closed
+    wrist: 1000
+    elbow: 1800
+    shoulder: 800
+    base: 1500
+    description: "Hold object while moving"
+
+# Movement timing (seconds)
+timing:
+  default_duration: 1.0  # Default movement time
+  gripper_duration: 0.5  # Faster for gripper
+  quick: 0.5
+  smooth: 2.0
+
+# Workspace limits (millimeters)
+# These are approximate - IK will check reachability
+workspace:
+  x_min: -100
+  x_max: 100
+  y_min: 50
+  y_max: 250
+  z_min: 10
+  z_max: 200
+
+# Action groups directory
+action_groups:
+  directory: "/home/robot/code/ActionGroups"
+  available:
+    - stand
+    - shake_head
+    - move_to_the_left_front
+    - move_to_the_right_front
+
+# Safety
+safety:
+  max_speed: 100  # Maximum servo speed (duty cycle)
+  collision_check: true  # Check self-collision (not implemented yet)
+  soft_limits: true  # Enforce workspace limits
+
+# Troubleshooting notes:
+#
+# Servo doesn't move:
+#   - Check PWM range (500-2500 valid)
+#   - Verify servo ID (1, 3, 4, 5, 6 - no servo 2!)
+#   - Test individual servo: board.set_servo_position(1000, [(id, pwm)])
+#
+# Arm hits itself:
+#   - Use named positions (pre-tested safe)
+#   - Avoid extreme combinations
+#   - Move through waypoints, not direct paths
+#
+# Gripper won't close:
+#   - Check if object too large
+#   - Try grip(force=1.0) for maximum force
+#   - Verify PWM 1475 (closed) vs 2500 (open)
+#
+# Position unreachable:
+#   - Check workspace limits above
+#   - Arm has limited reach (~250mm max)
+#   - Can't go below base (Z must be >10mm)

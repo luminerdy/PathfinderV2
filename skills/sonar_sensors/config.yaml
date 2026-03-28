@@ -1,0 +1,82 @@
+# Sonar Sensors Configuration (Level 2: Tune Parameters)
+
+# Distance thresholds (centimeters)
+# Adjust based on your robot's speed and reaction time
+thresholds:
+  danger: 15       # Red zone - emergency stop (try 10-20)
+  caution: 30      # Yellow zone - slow down (try 20-40)
+  safe: 50         # Green zone - full speed OK (try 40-100)
+  obstacle: 20     # When to consider something an "obstacle" (try 15-30)
+
+# Sensor filtering
+# More samples = smoother but slower
+filtering:
+  median_samples: 10     # How many samples for median filter (try 5-15)
+  outlier_reject: 50     # Reject readings >50cm from median (try 30-100)
+  moving_average: 5      # Window size for rolling average (try 3-10)
+
+# RGB LED colors (R, G, B values 0-255)
+# Customize these to your preference!
+colors:
+  danger: [255, 0, 0]      # Red (close obstacle, stop!)
+  caution: [255, 255, 0]   # Yellow (medium distance, slow down)
+  safe: [0, 255, 0]        # Green (far away, full speed OK)
+  off: [0, 0, 0]           # LEDs off
+  
+  # Alternative colors you can try:
+  # danger: [255, 0, 100]    # Pink/magenta
+  # caution: [255, 165, 0]   # Orange
+  # safe: [0, 255, 255]      # Cyan
+  
+  # Fun colors for testing:
+  # blue: [0, 0, 255]
+  # purple: [255, 0, 255]
+  # white: [255, 255, 255]
+
+# Movement safety settings
+safety:
+  stop_distance: 15    # Emergency stop if closer (cm)
+  slow_distance: 30    # Reduce speed if closer (cm)
+  check_interval: 0.05 # How often to check while moving (seconds)
+  backup_distance: 20  # How far to back up when avoiding (cm)
+  turn_duration: 0.6   # How long to turn when avoiding (seconds)
+
+# Sensor physical limits
+sensor:
+  min_range: 2         # Minimum valid reading (cm) - sensor blind spot
+  max_range: 400       # Maximum valid reading (cm) - beyond this is "infinity"
+  update_rate: 20      # Hz - how fast sensor can update (don't exceed 50 Hz)
+  beam_angle: 15       # Degrees - cone angle of sensor
+
+# Advanced tuning
+advanced:
+  temperature_compensation: false  # Adjust for temperature (needs temp sensor)
+  kalman_filter: false            # Use Kalman filter instead of median
+  multi_sensor: false             # Set true if using multiple sonar sensors
+
+# Troubleshooting:
+#
+# Readings always 400cm (max range):
+#   - Normal if no object in front
+#   - Object too far away (>4m)
+#   - Soft surface absorbs sound (carpet, foam)
+#
+# Readings are noisy/jumpy:
+#   - Increase median_samples (more averaging)
+#   - Check for ultrasonic interference
+#   - Smooth floor better than carpet
+#
+# RGB LEDs don't light up:
+#   - Check RGB cable connection
+#   - Verify GPIO pins correct
+#   - Test with: python3 ../../tests/test_rgb.py
+#
+# Robot doesn't stop for obstacles:
+#   - Increase stop_distance (give more reaction time)
+#   - Check sensor mounting (not blocked?)
+#   - Reduce robot speed (needs more time to stop)
+#
+# Avoidance behavior too aggressive:
+#   - Reduce backup_distance
+#   - Reduce turn_duration
+#   - Increase obstacle threshold (backs up less often)

@@ -1,0 +1,40 @@
+# Block Detection Configuration (E3)
+
+# Color ranges (HSV format)
+# H: 0-180, S: 0-255, V: 0-255
+colors:
+  red:
+    ranges:
+      - lower: [0, 80, 50]
+        upper: [10, 255, 255]
+      - lower: [160, 80, 50]
+        upper: [180, 255, 255]
+  blue:
+    ranges:
+      - lower: [100, 60, 50]
+        upper: [130, 255, 255]
+  yellow:
+    ranges:
+      - lower: [20, 80, 50]
+        upper: [40, 255, 255]
+
+# Detection parameters
+detection:
+  focal_length: 500       # Camera focal length (pixels)
+  block_size_mm: 30       # Real block size (1.2 inches)
+  min_area: 30            # Minimum contour area (pixels)
+  max_area: 5000          # Maximum contour area
+  min_aspect_ratio: 0.4   # Reject elongated shapes
+  min_confidence: 0.3     # Minimum detection confidence
+
+# Camera
+camera:
+  device: 0
+  width: 640
+  height: 480
+  warmup_seconds: 1.5
+
+# Tuning tips:
+# Too many false positives: Increase S_min (e.g., 80 -> 120)
+# Missing detections: Decrease S_min and V_min
+# Wrong color detected: Adjust H range boundaries

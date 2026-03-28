@@ -1,0 +1,99 @@
+# Camera Vision Configuration
+
+# Hardware
+camera:
+  device: 0  # /dev/video0 (try 1 or 2 if 0 doesn't work)
+  
+  # Resolution (pixels)
+  width: 640
+  height: 480
+  
+  # Performance
+  fps: 30  # Target frames per second (actual may vary)
+  
+  # Orientation
+  flip: false  # Flip 180° if camera upside-down
+  mirror: false  # Mirror horizontally
+  
+  # Exposure (camera-dependent)
+  auto_exposure: true
+  exposure: -1  # Manual value (-1 = auto)
+  
+  # White balance
+  auto_white_balance: true
+
+# Color detection ranges (HSV format)
+# Format: [H_min, S_min, V_min], [H_max, S_max, V_max]
+# H: 0-180, S: 0-255, V: 0-255
+colors:
+  red:
+    lower: [0, 100, 100]
+    upper: [10, 255, 255]
+    description: "Red objects (blocks, balls)"
+  
+  green:
+    lower: [40, 50, 50]
+    upper: [80, 255, 255]
+    description: "Green objects"
+  
+  blue:
+    lower: [100, 100, 100]
+    upper: [130, 255, 255]
+    description: "Blue objects"
+  
+  yellow:
+    lower: [20, 100, 100]
+    upper: [30, 255, 255]
+    description: "Yellow objects"
+
+# Image processing
+processing:
+  # Blur for noise reduction
+  blur_kernel: 5  # Must be odd (3, 5, 7, 9...)
+  
+  # Edge detection thresholds
+  canny_low: 100
+  canny_high: 200
+  
+  # Binary threshold
+  threshold_value: 127
+
+# Image saving
+save:
+  format: "jpg"  # jpg, png, bmp
+  quality: 90  # JPEG quality (0-100)
+  directory: "/home/robot/pathfinder/captured_images"
+  prefix: "snapshot_"  # Filename prefix
+
+# Display settings (for run_demo.py)
+display:
+  window_name: "Camera Vision"
+  show_fps: true
+  fps_color: [0, 255, 0]  # Green
+  info_color: [255, 255, 255]  # White
+
+# Troubleshooting:
+#
+# No camera found:
+#   - Check USB: lsusb
+#   - Check devices: ls /dev/video*
+#   - Try device: 1 or 2
+#
+# Permission denied:
+#   - Add to video group: sudo usermod -a -G video $USER
+#   - Re-login after group change
+#
+# Black screen:
+#   - Camera blocked/covered
+#   - Wrong device index
+#   - Check: v4l2-ctl --list-devices
+#
+# Low FPS:
+#   - Reduce resolution (320x240)
+#   - Increase lighting
+#   - Close other camera apps
+#
+# Color detection not working:
+#   - Adjust HSV ranges (lighting dependent)
+#   - Use run_demo.py to see live feed
+#   - Test with known-color object
