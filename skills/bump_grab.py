@@ -137,94 +137,90 @@ def scan_and_face(board, camera, detector, color=None):
 
 def drive_to_contact(board, camera, detector, color=None):
     """
-    Drive forward slowly watching block in forward camera.
-    Steer to keep block centered. When block vanishes = contact.
+    Drive forward using sonar to measure distance traveled.
+    Steer to keep block centered using camera.
+    Stop when distance traveled >= estimated block distance.
     
-    Simple and proven. No camera tilt — just forward view.
+    Sonar measures distance to WALL. 
+    distance_traveled = start_sonar - current_sonar.
     
     Returns:
-        True if contact detected (block vanished after growing).
+        True if we've driven to the block position.
     """
     print("PHASE 2: Drive to contact")
     print("-" * 40)
     
-    vanish_count = 0
-    max_area_seen = 0
-    
-    # Use sonar to track distance traveled
+    # Get starting sonar (distance to wall ahead)
     sonar = Sonar()
-    start_dist = sonar.getDistance()  # mm
-    if start_dist and start_dist < 5000:
-        print("  Sonar start: %.0fcm" % (start_dist / 10))
+    time.sleep(0.3)
+    start_dist = sonar.getDistance()  # mm from wall
+    if not start_dist or start_dist > 5000:
+        start_dist = 2000  # Default 200cm if no reading
     
-    for cycle in range(80):  # ~16 seconds max
-        # Stop briefly for clean frame
+    start_cm = start_dist / 10.0
+    print("  Sonar start: %.0fcm from wall" % start_cm)
+    
+    # Get estimated block distance from camera
+    frame = get_fresh_frame(camera)
+    target_travel = 30  # Default: drive 30cm
+    
+    if frame is not None:
+        colors = [color] if color else None
+        blocks = detector.detect(frame, colors=colors)
+        if blocks:
+            est_dist = blocks[0].estimated_distance_mm / 10.0
+            # Drive to ~5cm past the estimated block position
+            # (block estimate is rough, overshoot slightly to ensure contact)
+            target_travel = est_dist + 5
+            print("  Block estimated at %.0fcm, target travel: %.0fcm" % (est_dist, target_travel))
+    
+    print("  Driving...")
+    
+    for cycle in range(80):
+        # Stop briefly for clean frame + sonar
         stop(board)
         time.sleep(0.08)
         
-        frame = get_fresh_frame(camera, flush=2)
-        if frame is None:
-            continue
-        
-        colors = [color] if color else None
-        blocks = detector.detect(frame, colors=colors)
-        
-        if not blocks:
-            vanish_count += 1
-            if vanish_count >= VANISH_FRAMES:
-                # Block vanished from camera but we're not there yet.
-                # Drive forward a bit more to close the gap between
-                # "can't see it" (~36cm) and "can grab it" (~15cm).
-                stop(board)
-                contact_dist = sonar.getDistance()
-                contact_str = "%.0fcm" % (contact_dist / 10) if contact_dist and contact_dist < 5000 else "?"
-                print("  Cycle %d: Block vanished (sonar=%s) - driving closer..." % (
-                    cycle, contact_str))
-                
-                # Drive forward for ~1 second to close remaining gap
-                board.set_motor_duty([(1, DRIVE_POWER), (2, DRIVE_POWER),
-                                      (3, DRIVE_POWER), (4, DRIVE_POWER)])
-                time.sleep(0.8)
-                stop(board)
-                
-                final_dist = sonar.getDistance()
-                final_str = "%.0fcm" % (final_dist / 10) if final_dist and final_dist < 5000 else "?"
-                print("  CONTACT! (sonar=%s)" % final_str)
-                return True
+        # Check distance traveled via sonar
+        current_dist = sonar.getDistance()
+        if current_dist and current_dist < 5000:
+            current_cm = current_dist / 10.0
+            traveled = start_cm - current_cm
             
-            # Keep driving slowly
-            board.set_motor_duty([(1, DRIVE_POWER), (2, DRIVE_POWER),
-                                  (3, DRIVE_POWER), (4, DRIVE_POWER)])
-            time.sleep(0.08)
-            continue
+            if cycle % 5 == 0:
+                print("  Cycle %d: sonar=%.0fcm, traveled=%.0fcm/%.0fcm" % (
+                    cycle, current_cm, traveled, target_travel))
+            
+            if traveled >= target_travel:
+                stop(board)
+                print("  Cycle %d: Traveled %.0fcm - AT BLOCK!" % (cycle, traveled))
+                return True
         
-        vanish_count = 0
-        b = blocks[0]
-        max_area_seen = max(max_area_seen, b.area)
+        # Use camera to steer toward block
+        frame = get_fresh_frame(camera, flush=1)
+        if frame is not None:
+            colors = [color] if color else None
+            blocks = detector.detect(frame, colors=colors)
+            
+            if blocks:
+                offset = blocks[0].offset_from_center
+                
+                if abs(offset) > CENTER_TOLERANCE:
+                    # Rotate to center
+                    d = 1 if offset > 0 else -1
+                    board.set_motor_duty([(1, ROTATION_POWER * d), (2, -ROTATION_POWER * d),
+                                          (3, ROTATION_POWER * d), (4, -ROTATION_POWER * d)])
+                    time.sleep(0.06)
+                    stop(board)
+                    continue
         
-        if cycle % 5 == 0:
-            sonar_dist = sonar.getDistance()
-            sonar_str = "%.0fcm" % (sonar_dist / 10) if sonar_dist and sonar_dist < 5000 else "?"
-            print("  Cycle %d: %s (%d,%d) area=%d offset=%+d sonar=%s" % (
-                cycle, b.color, b.center_x, b.center_y, b.area, b.offset_from_center, sonar_str))
-        
-        # Steer to keep block centered
-        offset = b.offset_from_center
-        
-        if abs(offset) > CENTER_TOLERANCE:
-            d = 1 if offset > 0 else -1
-            board.set_motor_duty([(1, ROTATION_POWER * d), (2, -ROTATION_POWER * d),
-                                  (3, ROTATION_POWER * d), (4, -ROTATION_POWER * d)])
-            time.sleep(0.06)
-            stop(board)
-        else:
-            # Drive forward
-            board.set_motor_duty([(1, DRIVE_POWER), (2, DRIVE_POWER),
-                                  (3, DRIVE_POWER), (4, DRIVE_POWER)])
-            time.sleep(0.12)
+        # Drive forward
+        board.set_motor_duty([(1, DRIVE_POWER), (2, DRIVE_POWER),
+                              (3, DRIVE_POWER), (4, DRIVE_POWER)])
+        time.sleep(0.12)
     
     stop(board)
-    print("  Timeout - block not reached")
+    print("  Timeout")
     return False
 
 
