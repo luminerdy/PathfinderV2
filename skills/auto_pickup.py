@@ -110,7 +110,7 @@ def scan_for_block(board, camera, detector, color=None):
     move_arm(board, POS_CAMERA_FORWARD, 800)
     time.sleep(0.5)
     
-    for step in range(16):  # ~360 degrees
+    for step in range(24):  # Up to 24 steps to find and face block
         frame = get_fresh_frame(camera)
         if frame is None:
             continue
@@ -127,13 +127,27 @@ def scan_for_block(board, camera, detector, color=None):
             if abs(b.offset_from_center) < 100:
                 print("  FACING BLOCK")
                 return True
-        
-        # Rotate ~22 degrees
-        board.set_motor_duty([(1, ROTATION_POWER), (2, -ROTATION_POWER),
-                              (3, ROTATION_POWER), (4, -ROTATION_POWER)])
-        time.sleep(0.2)
-        stop(board)
-        time.sleep(0.3)
+            
+            # Rotate TOWARD the block
+            if b.offset_from_center < 0:
+                # Block is left, rotate left
+                board.set_motor_duty([(1, -ROTATION_POWER), (2, ROTATION_POWER),
+                                      (3, -ROTATION_POWER), (4, ROTATION_POWER)])
+            else:
+                # Block is right, rotate right
+                board.set_motor_duty([(1, ROTATION_POWER), (2, -ROTATION_POWER),
+                                      (3, ROTATION_POWER), (4, -ROTATION_POWER)])
+            duration = 0.10 if abs(b.offset_from_center) < 200 else 0.20
+            time.sleep(duration)
+            stop(board)
+            time.sleep(0.3)
+        else:
+            # No block visible — blind rotate to search
+            board.set_motor_duty([(1, ROTATION_POWER), (2, -ROTATION_POWER),
+                                  (3, ROTATION_POWER), (4, -ROTATION_POWER)])
+            time.sleep(0.25)
+            stop(board)
+            time.sleep(0.3)
     
     print("  No block found")
     return False
