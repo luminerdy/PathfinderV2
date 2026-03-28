@@ -57,8 +57,12 @@ python3 web/web_control.py
 - Servo sliders for arm positioning
 - Battery monitoring
 
+### 🔬 Beta (Working, Still Tuning)
+- Autonomous pickup (E5 — may need multiple attempts)
+- Line following (E6 — speed varies with battery voltage)
+
 ### ⚠️ In Progress
-- Full pickup → navigate → deliver → score cycle (E7)
+- E7: Full competition cycle (chain all skills into one routine)
 - Delivery sequence (navigate to zone, release block)
 - Workshop facilitator guide
 - Competition scoring system

@@ -1,7 +1,7 @@
 # PathfinderV2 - Project Status
 
-**Last Updated:** March 26, 2026 (Day 9)
-**Status:** 🔧 In Development — Navigation proven, pickup in progress
+**Last Updated:** March 27, 2026 (Day 10)
+**Status:** 🔧 In Development — Navigation proven, 9 workshop skills complete, line following working
 
 ---
 
@@ -39,25 +39,26 @@
 
 ## What's In Progress
 
-### Block Approach ⚠️
-- Manual block pickup achieved (Day 7 evening via web control)
-- Automated sequence not yet developed
-- Camera-down angle needed for floor block tracking
-- Blocks too low for sonar — vision only
-
 ### Block Detection ⚠️
-- Red: Working
-- Blue/Yellow: HSV tuning needed
+- Red/Blue/Yellow: All working via HSV pipeline (Day 10)
+- Confidence scoring filters false positives
+- Distance estimation from known block size
+- HSV ranges may need tuning per lighting environment
+
+### Competition Routine ⚠️
+- Individual skills proven (detect, approach, pickup, line follow)
+- Full chained cycle (E7) not yet built
+- Delivery sequence not yet implemented
 
 ---
 
 ## What's Not Done
 
-- Full pickup → navigate → deliver cycle
+- E7: Full pickup → navigate → deliver → score cycle
 - Competition scoring system
-- Gamepad control
-- Workshop curriculum
-- Blue/yellow block detection
+- Gamepad control (Logitech F710)
+- Workshop facilitator guide (curriculum wrapper)
+- Field layout documentation
 
 ---
 
@@ -110,15 +111,18 @@
 | 6 | Mar 23 EVE | 8-tag field, pose estimation, 87% tour |
 | 7 | Mar 24 | Centering skill, 100% tour, power analysis, web control |
 | 8 | Mar 25 | Block approach development |
+| 9 | Mar 26 | Pi 4 driver, platform auto-detect, power pivot |
+| 10 | Mar 27 | Mission control, 9 workshop skills, line following |
 
-**74 commits** across 8 days.
+**116 commits** across 10 days.
 
 ---
 
 ## Critical Path to Competition-Ready
 
 1. ✅ Navigate reliably (100% tag tour)
-2. → Drive to block (center and approach)
-3. → Pick up block (reliable grip sequence)
-4. → Deliver to zone (navigate with block)
-5. → Repeat within 30-min battery window
+2. ✅ Drive to block (visual servoing with target lock)
+3. ✅ Pick up block (3-phase autonomous: scan → approach → grab)
+4. ✅ Follow line to zone (lime green tape, weighted scan, curves)
+5. → Deliver to zone (release block at scoring area)
+6. → Full competition cycle (chain all skills, repeat within battery window)

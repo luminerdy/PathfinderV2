@@ -170,10 +170,11 @@ Robot locks onto a block and drives toward it using real-time camera feedback. T
 
 ---
 
-## Step 8: Autonomous Pickup (E5)
+## Step 8: Autonomous Pickup (E5) `[Beta]`
 
 **Time:** 15 minutes  
-**Requires:** Colored block on floor, clear workspace
+**Requires:** Colored block on floor, clear workspace  
+**Note:** Working but may need multiple attempts. Lighting and block placement affect reliability.
 
 ```bash
 python3 skills/autonomous_pickup/run_demo.py
@@ -189,10 +190,11 @@ The grand integration: robot scans for a block, drives to it, and picks it up. T
 
 ---
 
-## Step 9: Follow the Line (E6)
+## Step 9: Follow the Line (E6) `[Beta]`
 
 **Time:** 10 minutes  
-**Requires:** Lime green tape on floor
+**Requires:** Lime green tape on floor  
+**Note:** Working through straights and curves. Speed may need tuning based on battery voltage.
 
 ```bash
 # Test detection first (no driving)
