@@ -2,7 +2,24 @@
 """
 Line Following Controller
 
-Follows a lime green tape line using camera + mecanum drive.
+Follows a lime green tape line on the floor using camera feedback
+and proportional steering control.
+
+How it works:
+  1. Camera points down (arm repositioned)
+  2. Crop frame to ROI (top half — where tape appears ahead)
+  3. HSV threshold for lime green → binary mask
+  4. Split mask into 3 bands: far (top), mid, near (bottom)
+  5. Find centroid of each band
+  6. Weighted average: near=60%, mid=30%, far=10%
+     (steer by what's close, anticipate by what's far)
+  7. Proportional control: error * Kp = steering correction
+  8. Stop when green pixels drop below threshold (line ended)
+
+Why weighted bands instead of single centroid?
+  - Single centroid of full tape → turns too early on curves
+  - Near-weighted → reacts to what's actually close to the robot
+  - Still sees far ahead → can anticipate upcoming curves
 
 Usage:
     from skills.line_following.line_follower import LineFollower
@@ -128,18 +145,24 @@ class LineFollower:
                 ratio: green pixel ratio in ROI
                 mask: binary mask (for debugging)
         """
-        # Crop to ROI
+        # Crop to ROI (Region of Interest)
+        # Only look at top half of frame — that's where tape appears ahead.
+        # Bottom half shows floor directly under robot (no tape visible there).
         roi_top = int(self.FRAME_H * self.ROI_TOP_RATIO)
         roi_bottom = int(self.FRAME_H * self.ROI_BOTTOM_RATIO)
         roi = frame[roi_top:roi_bottom, :]
         
-        # Convert to HSV
+        # Convert BGR → HSV for color detection
+        # HSV separates color (Hue) from brightness (Value),
+        # so lime green stays "green" regardless of lighting
         hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
         
-        # Threshold for lime green
+        # Create binary mask: white where pixel is lime green, black elsewhere
         mask = cv2.inRange(hsv, self.HSV_LOWER, self.HSV_UPPER)
         
-        # Clean up
+        # Morphological cleanup:
+        #   OPEN (erode then dilate) removes small noise specks
+        #   CLOSE (dilate then erode) fills small gaps in the line
         mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, self.kernel)
         mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, self.kernel)
         
@@ -154,36 +177,46 @@ class LineFollower:
                 'error': 0, 'ratio': ratio, 'mask': mask
             }
         
-        # Weighted scan: split ROI into 3 bands (far/mid/near)
+        # === WEIGHTED SCAN LINES ===
+        # Instead of one centroid of all green pixels, we split the ROI
+        # into 3 horizontal bands and find where the line is in each.
+        # Then weight them: near matters most (60%), far least (10%).
+        #
+        # Why? A single centroid "averages" the whole tape. On a curve,
+        # the far-ahead part of the tape is already curving, pulling the
+        # centroid toward the turn before the robot reaches it.
+        # Near-weighting means: steer by what's close NOW.
         h = mask.shape[0]
         third = h // 3
         
-        far_band = mask[0:third, :]           # Top = far ahead
-        mid_band = mask[third:2*third, :]     # Middle
-        near_band = mask[2*third:, :]         # Bottom = closest to robot
+        far_band = mask[0:third, :]           # Top rows = far ahead
+        mid_band = mask[third:2*third, :]     # Middle rows
+        near_band = mask[2*third:, :]         # Bottom rows = closest to robot
         
         def band_cx(band):
+            """Find horizontal center of green pixels in a band."""
             M = cv2.moments(band)
-            if M['m00'] > 0:
-                return int(M['m10'] / M['m00'])
-            return None
+            if M['m00'] > 0:  # m00 = total white pixel area
+                return int(M['m10'] / M['m00'])  # m10/m00 = X centroid
+            return None  # No green pixels in this band
         
         far_cx = band_cx(far_band)
         mid_cx = band_cx(mid_band)
         near_cx = band_cx(near_band)
         
-        # Weighted average (prefer near, use available bands)
+        # Weighted average of band centroids
+        # Only include bands that actually have green pixels
         weighted_cx = 0
         total_weight = 0
         
         if near_cx is not None:
-            weighted_cx += near_cx * self.NEAR_WEIGHT
+            weighted_cx += near_cx * self.NEAR_WEIGHT   # 60%
             total_weight += self.NEAR_WEIGHT
         if mid_cx is not None:
-            weighted_cx += mid_cx * self.MID_WEIGHT
+            weighted_cx += mid_cx * self.MID_WEIGHT     # 30%
             total_weight += self.MID_WEIGHT
         if far_cx is not None:
-            weighted_cx += far_cx * self.FAR_WEIGHT
+            weighted_cx += far_cx * self.FAR_WEIGHT     # 10%
             total_weight += self.FAR_WEIGHT
         
         if total_weight == 0:
@@ -250,7 +283,10 @@ class LineFollower:
                 
                 lost_count = 0
                 
-                # Proportional steering
+                # Proportional steering: steer = error * Kp
+                # Positive error = line is right → steer right
+                # Negative error = line is left → steer left
+                # Clamp to MAX_STEER to prevent wild overcorrection
                 steer = detection['error'] * self.Kp
                 steer = max(-self.MAX_STEER, min(self.MAX_STEER, steer))
                 
