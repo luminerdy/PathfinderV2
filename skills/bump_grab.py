@@ -132,28 +132,41 @@ def scan_and_face(board, camera, detector, color=None):
     return False
 
 
-# === PHASE 2: DRIVE TO CONTACT ===
+# === PHASE 2: DRIVE WITH CAMERA TRACKING ===
 
-def drive_to_contact(board, camera, detector, color=None):
+# Camera tilt range (servo 5 = shoulder)
+TILT_FORWARD = 700     # Camera looks ahead (block far away)
+TILT_DOWN = 1200       # Camera looks at floor (block at robot)
+TILT_TARGET_Y = 300    # Keep block at this Y position by tilting
+
+# When servo 5 reaches this value AND block is centered, block is at gripper
+TILT_GRAB_READY = 1150
+
+
+def drive_with_tracking(board, camera, detector, color=None):
     """
-    Drive forward slowly while watching the block in forward camera.
-    When block vanishes from view = we've made contact (or passed it).
+    Drive toward block while gradually tilting camera down to keep
+    the block in view the entire approach.
     
-    While driving, also steer to keep block centered.
+    Two proportional controllers running together:
+      Horizontal: block offset → steer left/right (motors)
+      Vertical:   block Y position → tilt camera up/down (servo 5)
+    
+    When camera is tilted fully down AND block is centered = grab position.
     
     Returns:
-        True if contact detected (block vanished).
+        True if block is in grab position.
     """
-    print("PHASE 2: Drive to contact")
+    print("PHASE 2: Drive with camera tracking")
     print("-" * 40)
     
+    current_tilt = TILT_FORWARD  # Start looking ahead
     vanish_count = 0
-    last_area = 0
     
-    for cycle in range(80):  # ~16 seconds max at 0.2s per cycle
-        # Stop briefly, capture clean frame (reduce motion blur)
+    for cycle in range(100):  # ~20 seconds max
+        # Stop briefly for clean frame
         stop(board)
-        time.sleep(0.1)
+        time.sleep(0.08)
         
         frame = get_fresh_frame(camera, flush=2)
         if frame is None:
@@ -164,33 +177,60 @@ def drive_to_contact(board, camera, detector, color=None):
         
         if not blocks:
             vanish_count += 1
-            if vanish_count >= VANISH_FRAMES:
-                # Block gone from view = we've reached it!
+            if vanish_count >= 6:
+                # Block completely lost
                 stop(board)
-                print("  Cycle %d: Block vanished (%d frames) - CONTACT!" % (
-                    cycle, vanish_count))
-                return True
-            
-            # Keep driving slowly (block might be briefly occluded)
-            board.set_motor_duty([(1, DRIVE_POWER), (2, DRIVE_POWER),
-                                  (3, DRIVE_POWER), (4, DRIVE_POWER)])
-            time.sleep(0.1)
+                if current_tilt > TILT_GRAB_READY:
+                    # Camera was tilted far down — block is probably at robot
+                    print("  Cycle %d: Block vanished at tilt %d - CONTACT!" % (
+                        cycle, current_tilt))
+                    return True
+                else:
+                    print("  Cycle %d: Block lost (tilt=%d, not close enough)" % (
+                        cycle, current_tilt))
+                    # Tilt back up to try to find it
+                    current_tilt = max(TILT_FORWARD, current_tilt - 100)
+                    board.set_servo_position(300, [(5, current_tilt)])
+                    time.sleep(0.3)
+            else:
+                # Brief loss — keep driving slowly
+                board.set_motor_duty([(1, DRIVE_POWER), (2, DRIVE_POWER),
+                                      (3, DRIVE_POWER), (4, DRIVE_POWER)])
+                time.sleep(0.08)
             continue
         
         vanish_count = 0
         b = blocks[0]
         
+        # === VERTICAL: Tilt camera to keep block at target Y ===
+        # Block too low in frame (y > target) → tilt down more
+        # Block too high in frame (y < target) → tilt up
+        y_error = b.center_y - TILT_TARGET_Y
+        tilt_adjust = int(y_error * 0.8)  # Proportional gain for tilt
+        
+        new_tilt = current_tilt + tilt_adjust
+        new_tilt = max(TILT_FORWARD, min(TILT_DOWN, new_tilt))
+        
+        if abs(new_tilt - current_tilt) > 10:
+            current_tilt = new_tilt
+            board.set_servo_position(200, [(5, current_tilt)])
+        
         if cycle % 5 == 0:
-            print("  Cycle %d: %s at (%d,%d) area=%d offset=%+d" % (
-                cycle, b.color, b.center_x, b.center_y, b.area, b.offset_from_center))
+            print("  Cycle %d: %s (%d,%d) area=%d tilt=%d" % (
+                cycle, b.color, b.center_x, b.center_y, b.area, current_tilt))
         
-        last_area = b.area
+        # === CHECK: Grab ready? ===
+        # Camera tilted down far enough AND block centered = in position
+        if current_tilt >= TILT_GRAB_READY and abs(b.offset_from_center) < CENTER_TOLERANCE:
+            stop(board)
+            print("  Cycle %d: GRAB READY (tilt=%d, offset=%+d)" % (
+                cycle, current_tilt, b.offset_from_center))
+            return True
         
-        # Steer to keep block centered while approaching
+        # === HORIZONTAL: Steer to center block ===
         offset = b.offset_from_center
         
         if abs(offset) > CENTER_TOLERANCE:
-            # Rotate to re-center
             d = 1 if offset > 0 else -1
             board.set_motor_duty([(1, ROTATION_POWER * d), (2, -ROTATION_POWER * d),
                                   (3, ROTATION_POWER * d), (4, -ROTATION_POWER * d)])
@@ -200,7 +240,7 @@ def drive_to_contact(board, camera, detector, color=None):
             # Drive forward
             board.set_motor_duty([(1, DRIVE_POWER), (2, DRIVE_POWER),
                                   (3, DRIVE_POWER), (4, DRIVE_POWER)])
-            time.sleep(0.15)
+            time.sleep(0.12)
     
     stop(board)
     print("  Timeout - block not reached")
@@ -293,8 +333,8 @@ def bump_grab(color=None):
             return False
         print()
         
-        # Phase 2: Drive to contact
-        if not drive_to_contact(board, camera, detector, color):
+        # Phase 2: Drive with camera tracking (tilts down as we approach)
+        if not drive_with_tracking(board, camera, detector, color):
             print("\nFAILED: Could not reach block")
             return False
         print()
