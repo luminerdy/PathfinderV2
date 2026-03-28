@@ -188,13 +188,11 @@ def approach_block(board, camera, detector, color=None):
         colors = [color] if color else None
         blocks = detector.detect(frame, colors=colors)
         # Filter false positives in camera-down view:
-        #   - Ignore top of frame (walls/far objects)
-        #   - Require higher confidence (floor gives low-conf noise)
-        #   - Require minimum size (real blocks are bigger up close)
+        #   - Ignore very top of frame (walls/far objects above y=30)
+        #   - Require minimum confidence (floor gives low-conf noise)
         blocks = [b for b in blocks
-                  if b.center_y > DOWN_VIEW_MIN_Y
-                  and b.confidence >= 0.5
-                  and b.area >= 100]
+                  if b.center_y > 30
+                  and b.confidence >= 0.3]
 
         if not blocks:
             lost_count += 1
@@ -232,15 +230,17 @@ def approach_block(board, camera, detector, color=None):
             time.sleep(0.06)
             stop(board)
         elif error_y > 0:
-            # Drive forward (shorter bursts when closer)
+            # Drive forward (shorter bursts when closer to target)
+            # Block at top of frame = far → longer burst
+            # Block near target Y = close → tiny burst
             if b.center_y > 300:
-                dur = 0.08
+                dur = 0.08  # Very close, tiny adjustment
             elif b.center_y > 200:
                 dur = 0.15
             elif b.center_y > 100:
-                dur = 0.25
+                dur = 0.30  # Moderate distance
             else:
-                dur = 0.4
+                dur = 0.50  # Block at top of frame, drive more
             board.set_motor_duty([(1, MOTOR_POWER), (2, MOTOR_POWER),
                                   (3, MOTOR_POWER), (4, MOTOR_POWER)])
             time.sleep(dur)
@@ -284,8 +284,11 @@ def find_green_line(board, camera, follower):
     """
     print("  Searching for green line...")
     
-    # Position camera down to see the floor
-    move_arm(board, LineFollower.ARM_CAMERA_DOWN, 800)
+    # Position camera down to see the floor.
+    # Keep gripper closed (servo 1 = 1475) while repositioning other servos.
+    # This lets us look at the floor while still holding the block.
+    camera_down_with_block = [(1, 1475), (3, 590), (4, 2450), (5, 1214), (6, 1500)]
+    move_arm(board, camera_down_with_block, 800)
     time.sleep(1.0)
 
     for step in range(16):  # ~360 degrees
@@ -392,6 +395,31 @@ def competition_cycle(color=None, verbose=True):
             result['details'] = 'no_block_found'
             return result
 
+        # Drive toward block before switching to camera-down.
+        # Camera-down only sees ~30cm ahead, but blocks may be 50-100cm away.
+        # Use forward camera to close the gap first.
+        result['phase_reached'] = 'close_gap'
+        if verbose:
+            print("  Closing distance (forward camera)...")
+        
+        # Drive forward for a bit based on detected distance
+        frame_check = get_fresh_frame(camera)
+        if frame_check is not None:
+            colors_check = [color] if color else None
+            blocks_check = detector.detect(frame_check, colors=colors_check)
+            if blocks_check:
+                dist_cm = blocks_check[0].estimated_distance_mm / 10
+                # Drive forward to get within ~25cm (camera-down range)
+                drive_time = max(0, (dist_cm - 30) / 40)  # Conservative: 40cm/sec
+                drive_time = min(drive_time, 1.5)  # Cap at 1.5s (don't overshoot!)
+                if drive_time > 0.2:
+                    print("    Block at %.0fcm, driving %.1fs to close gap..." % (dist_cm, drive_time))
+                    board.set_motor_duty([(1, MOTOR_POWER), (2, MOTOR_POWER),
+                                          (3, MOTOR_POWER), (4, MOTOR_POWER)])
+                    time.sleep(drive_time)
+                    stop(board)
+                    time.sleep(0.3)
+
         result['phase_reached'] = 'approach'
         if not approach_block(board, camera, detector, color):
             result['details'] = 'approach_failed'
@@ -425,6 +453,9 @@ def competition_cycle(color=None, verbose=True):
                 print("    cx=%3d err=%+4d steer=%+5.1f" % (
                     detection['cx'], detection['error'], steer))
 
+        # Override follower's arm position to keep gripper closed while following
+        follower.ARM_CAMERA_DOWN = [(1, 1475), (3, 590), (4, 2450), (5, 1214), (6, 1500)]
+        
         follow_result = follower.follow(
             timeout=20,
             position_camera=False,  # Already in camera-down from find_line
