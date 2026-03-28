@@ -174,54 +174,22 @@ def drive_to_contact(board, camera, detector, color=None):
             target_travel = est_dist + 5
             print("  Block estimated at %.0fcm, target travel: %.0fcm" % (est_dist, target_travel))
     
-    print("  Driving...")
+    # Simple approach: drive straight for estimated time.
+    # At DRIVE_POWER=35 and 8V battery, ~15cm/sec.
+    # Add 5cm overshoot to ensure we reach/bump the block.
+    drive_time = (target_travel + 5) / 15.0  # seconds
+    drive_time = max(0.5, min(drive_time, 5.0))  # Clamp 0.5-5s
     
-    for cycle in range(80):
-        # Stop briefly for clean frame + sonar
-        stop(board)
-        time.sleep(0.08)
-        
-        # Check distance traveled via sonar
-        current_dist = sonar.getDistance()
-        if current_dist and current_dist < 5000:
-            current_cm = current_dist / 10.0
-            traveled = start_cm - current_cm
-            
-            if cycle % 5 == 0:
-                print("  Cycle %d: sonar=%.0fcm, traveled=%.0fcm/%.0fcm" % (
-                    cycle, current_cm, traveled, target_travel))
-            
-            if traveled >= target_travel:
-                stop(board)
-                print("  Cycle %d: Traveled %.0fcm - AT BLOCK!" % (cycle, traveled))
-                return True
-        
-        # Use camera to steer toward block
-        frame = get_fresh_frame(camera, flush=1)
-        if frame is not None:
-            colors = [color] if color else None
-            blocks = detector.detect(frame, colors=colors)
-            
-            if blocks:
-                offset = blocks[0].offset_from_center
-                
-                if abs(offset) > CENTER_TOLERANCE:
-                    # Rotate to center
-                    d = 1 if offset > 0 else -1
-                    board.set_motor_duty([(1, ROTATION_POWER * d), (2, -ROTATION_POWER * d),
-                                          (3, ROTATION_POWER * d), (4, -ROTATION_POWER * d)])
-                    time.sleep(0.06)
-                    stop(board)
-                    continue
-        
-        # Drive forward
-        board.set_motor_duty([(1, DRIVE_POWER), (2, DRIVE_POWER),
-                              (3, DRIVE_POWER), (4, DRIVE_POWER)])
-        time.sleep(0.12)
-    
+    # Buddy drifts RIGHT when driving "straight" — compensate with left bias
+    # Left motors slightly slower = gentle left pull
+    DRIFT_COMPENSATION = 3  # Reduce right motors by this amount
+    print("  Driving straight %.1fs (est %.0fcm, drift comp=%d)..." % (drive_time, target_travel, DRIFT_COMPENSATION))
+    board.set_motor_duty([(1, DRIVE_POWER), (2, DRIVE_POWER - DRIFT_COMPENSATION),
+                          (3, DRIVE_POWER), (4, DRIVE_POWER - DRIFT_COMPENSATION)])
+    time.sleep(drive_time)
     stop(board)
-    print("  Timeout")
-    return False
+    print("  CONTACT (timed drive)")
+    return True
 
 
 # === PHASE 3: BACKUP AND GRAB ===
