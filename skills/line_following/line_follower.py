@@ -235,13 +235,44 @@ class LineFollower:
             'error': error, 'ratio': ratio, 'mask': mask
         }
     
-    def follow(self, timeout=30, position_camera=True, callback=None):
+    def _search_for_line(self, max_rotations=12):
+        """Rotate in place to find the green line before driving.
+        
+        Solves the problem where Buddy isn't pointed at the tape
+        after being repositioned or backed up.
+        
+        Args:
+            max_rotations: Max rotation steps (~30deg each, 12 = 360deg)
+            
+        Returns:
+            True if line found, False if not found after full rotation
+        """
+        for step in range(max_rotations):
+            # Capture and check
+            ret, frame = self.camera.read()
+            if not ret:
+                continue
+            
+            detection = self.detect_line(frame)
+            if detection['found']:
+                return True
+            
+            # Rotate ~30 degrees and look again
+            self.board.set_motor_duty([(1, 28), (2, -28), (3, 28), (4, -28)])
+            time.sleep(0.15)
+            self.board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
+            time.sleep(0.3)
+        
+        return False
+    
+    def follow(self, timeout=30, position_camera=True, search_first=True, callback=None):
         """
         Follow the lime green line.
         
         Args:
             timeout: Max seconds to follow
             position_camera: Move arm to camera-down position first
+            search_first: Rotate to find line before driving (recommended)
             callback: Function(detection_dict, steer_value) called each frame
             
         Returns:
@@ -251,6 +282,17 @@ class LineFollower:
         
         if position_camera:
             self._position_camera()
+        
+        # Search for the line before driving (rotate until we see green)
+        if search_first:
+            if not self._search_for_line():
+                self._stop()
+                return {
+                    'success': False,
+                    'reason': 'line_not_found',
+                    'frames': 0,
+                    'duration': 0
+                }
         
         start = time.time()
         frames = 0
