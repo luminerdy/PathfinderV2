@@ -196,14 +196,20 @@ def approach_block(board, camera, detector, color=None):
 
         if not blocks:
             lost_count += 1
-            if lost_count > 5:
-                # Search by rotating slowly
-                print("    Cycle %d: Lost block, searching..." % cycle)
-                board.set_motor_duty([(1, ROTATION_POWER), (2, -ROTATION_POWER),
-                                      (3, ROTATION_POWER), (4, -ROTATION_POWER)])
-                time.sleep(0.15)
+            if lost_count > 3:
+                # Search by rotating — alternate direction every other search
+                direction = 1 if (lost_count // 3) % 2 == 0 else -1
+                if lost_count % 3 == 0:
+                    print("    Cycle %d: Lost block, searching..." % cycle)
+                board.set_motor_duty([(1, ROTATION_POWER * direction),
+                                      (2, -ROTATION_POWER * direction),
+                                      (3, ROTATION_POWER * direction),
+                                      (4, -ROTATION_POWER * direction)])
+                time.sleep(0.20)
                 stop(board)
-                lost_count = 0
+                time.sleep(0.3)
+                if lost_count > 15:
+                    lost_count = 0  # Reset to keep trying
             continue
 
         lost_count = 0
@@ -224,10 +230,13 @@ def approach_block(board, camera, detector, color=None):
         # DRIVE (short burst based on distance)
         if abs(error_x) > DOWN_VIEW_X_TOL:
             # Rotate to center block horizontally
+            # Scale rotation duration by how far off-center the block is
             d = 1 if error_x > 0 else -1
-            board.set_motor_duty([(1, MOTOR_POWER * d), (2, -MOTOR_POWER * d),
-                                  (3, MOTOR_POWER * d), (4, -MOTOR_POWER * d)])
-            time.sleep(0.06)
+            rot_duration = min(0.20, abs(error_x) / 1500.0)  # Longer for bigger offsets
+            rot_duration = max(0.06, rot_duration)
+            board.set_motor_duty([(1, ROTATION_POWER * d), (2, -ROTATION_POWER * d),
+                                  (3, ROTATION_POWER * d), (4, -ROTATION_POWER * d)])
+            time.sleep(rot_duration)
             stop(board)
         elif error_y > 0:
             # Drive forward (shorter bursts when closer to target)
@@ -385,48 +394,34 @@ def competition_cycle(color=None, verbose=True):
 
     try:
         # === PHASE 1: PICKUP ===
+        # Use the proven auto_pickup module which handles the full
+        # scan → face → camera-down → stop-look-drive → grab sequence.
+        # It was tuned on real hardware and handles the camera-down
+        # field of view limitations better than our custom approach.
         if verbose:
             print()
-            print("PHASE 1: PICKUP")
+            print("PHASE 1: PICKUP (using auto_pickup)")
             print("-" * 40)
 
-        result['phase_reached'] = 'scan'
-        if not scan_for_block(board, camera, detector, color):
-            result['details'] = 'no_block_found'
-            return result
-
-        # Drive toward block before switching to camera-down.
-        # Camera-down only sees ~30cm ahead, but blocks may be 50-100cm away.
-        # Use forward camera to close the gap first.
-        result['phase_reached'] = 'close_gap'
-        if verbose:
-            print("  Closing distance (forward camera)...")
+        result['phase_reached'] = 'pickup'
         
-        # Drive forward for a bit based on detected distance
-        frame_check = get_fresh_frame(camera)
-        if frame_check is not None:
-            colors_check = [color] if color else None
-            blocks_check = detector.detect(frame_check, colors=colors_check)
-            if blocks_check:
-                dist_cm = blocks_check[0].estimated_distance_mm / 10
-                # Drive forward to get within ~25cm (camera-down range)
-                drive_time = max(0, (dist_cm - 30) / 40)  # Conservative: 40cm/sec
-                drive_time = min(drive_time, 1.5)  # Cap at 1.5s (don't overshoot!)
-                if drive_time > 0.2:
-                    print("    Block at %.0fcm, driving %.1fs to close gap..." % (dist_cm, drive_time))
-                    board.set_motor_duty([(1, MOTOR_POWER), (2, MOTOR_POWER),
-                                          (3, MOTOR_POWER), (4, MOTOR_POWER)])
-                    time.sleep(drive_time)
-                    stop(board)
-                    time.sleep(0.3)
-
-        result['phase_reached'] = 'approach'
-        if not approach_block(board, camera, detector, color):
-            result['details'] = 'approach_failed'
+        # Release shared camera — auto_pickup manages its own
+        camera.release()
+        
+        from skills.auto_pickup import auto_pickup as run_pickup
+        pickup_ok = run_pickup(color=color)
+        
+        # Reopen camera for phases 2-4
+        camera = cv2.VideoCapture(0)
+        camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+        camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+        time.sleep(1.0)
+        follower.camera = camera
+        
+        if not pickup_ok:
+            result['details'] = 'pickup_failed'
             return result
-
-        result['phase_reached'] = 'grab'
-        pickup_block(board)
+        
         result['color'] = color or 'unknown'
 
         # === PHASE 2: FIND LINE ===
