@@ -31,11 +31,12 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'
 
 from lib.board import get_board, PLATFORM
 from skills.block_detect import BlockDetector
+from sdk.common.sonar import Sonar
 
 # === CONFIG ===
 
 ROTATION_POWER = 35
-DRIVE_POWER = 30          # Slow and steady (tune based on battery voltage)
+DRIVE_POWER = 35          # Enough to reach block, not too fast to overshoot
 CENTER_TOLERANCE = 80     # Pixels from center to count as "centered"
 VANISH_FRAMES = 4         # Frames without detection = "contact"
 BACKUP_TIME = 0.25        # Seconds to back up after contact (~1 inch)
@@ -150,6 +151,12 @@ def drive_to_contact(board, camera, detector, color=None):
     vanish_count = 0
     max_area_seen = 0
     
+    # Use sonar to track distance traveled
+    sonar = Sonar()
+    start_dist = sonar.getDistance()  # mm
+    if start_dist and start_dist < 5000:
+        print("  Sonar start: %.0fcm" % (start_dist / 10))
+    
     for cycle in range(80):  # ~16 seconds max
         # Stop briefly for clean frame
         stop(board)
@@ -165,9 +172,24 @@ def drive_to_contact(board, camera, detector, color=None):
         if not blocks:
             vanish_count += 1
             if vanish_count >= VANISH_FRAMES:
+                # Block vanished from camera but we're not there yet.
+                # Drive forward a bit more to close the gap between
+                # "can't see it" (~36cm) and "can grab it" (~15cm).
                 stop(board)
-                print("  Cycle %d: Block vanished (%d frames) - CONTACT!" % (
-                    cycle, vanish_count))
+                contact_dist = sonar.getDistance()
+                contact_str = "%.0fcm" % (contact_dist / 10) if contact_dist and contact_dist < 5000 else "?"
+                print("  Cycle %d: Block vanished (sonar=%s) - driving closer..." % (
+                    cycle, contact_str))
+                
+                # Drive forward for ~1 second to close remaining gap
+                board.set_motor_duty([(1, DRIVE_POWER), (2, DRIVE_POWER),
+                                      (3, DRIVE_POWER), (4, DRIVE_POWER)])
+                time.sleep(0.8)
+                stop(board)
+                
+                final_dist = sonar.getDistance()
+                final_str = "%.0fcm" % (final_dist / 10) if final_dist and final_dist < 5000 else "?"
+                print("  CONTACT! (sonar=%s)" % final_str)
                 return True
             
             # Keep driving slowly
@@ -181,8 +203,10 @@ def drive_to_contact(board, camera, detector, color=None):
         max_area_seen = max(max_area_seen, b.area)
         
         if cycle % 5 == 0:
-            print("  Cycle %d: %s (%d,%d) area=%d offset=%+d" % (
-                cycle, b.color, b.center_x, b.center_y, b.area, b.offset_from_center))
+            sonar_dist = sonar.getDistance()
+            sonar_str = "%.0fcm" % (sonar_dist / 10) if sonar_dist and sonar_dist < 5000 else "?"
+            print("  Cycle %d: %s (%d,%d) area=%d offset=%+d sonar=%s" % (
+                cycle, b.color, b.center_x, b.center_y, b.area, b.offset_from_center, sonar_str))
         
         # Steer to keep block centered
         offset = b.offset_from_center
@@ -214,11 +238,11 @@ def backup_and_grab(board):
     print("PHASE 3: Backup and grab")
     print("-" * 40)
     
-    # Back up ~1 inch to create clearance for gripper
-    print("  Backing up...")
+    # Tiny backup — just enough for gripper clearance, not enough to lose the block
+    print("  Tiny backup...")
     board.set_motor_duty([(1, -BACKUP_POWER), (2, -BACKUP_POWER),
                           (3, -BACKUP_POWER), (4, -BACKUP_POWER)])
-    time.sleep(BACKUP_TIME)
+    time.sleep(0.12)  # Very short — ~5mm
     stop(board)
     time.sleep(0.3)
     
@@ -226,6 +250,44 @@ def backup_and_grab(board):
     print("  Lowering arm (gripper open)...")
     move_arm(board, POS_PICKUP_DOWN, 1000)
     time.sleep(0.5)
+    
+    # Visual alignment: the block appears ~290px right of gripper center
+    # in the pickup view. Rotate right to compensate before grabbing.
+    print("  Visual alignment...")
+    cam = cv2.VideoCapture(0)
+    time.sleep(0.5)
+    
+    detector = BlockDetector()
+    for adjust in range(8):
+        for _ in range(3): cam.read()
+        ret, frame = cam.read()
+        if not ret:
+            break
+        
+        blocks = detector.detect(frame)
+        if blocks:
+            b = blocks[0]
+            offset = b.offset_from_center
+            print("    Block at (%d,%d) offset=%+d" % (b.center_x, b.center_y, offset))
+            
+            if abs(offset) < 80:
+                print("    Aligned!")
+                break
+            
+            # Rotate to center the block under gripper
+            d = 1 if offset > 0 else -1
+            rot_time = min(0.15, abs(offset) / 2000.0)
+            rot_time = max(0.05, rot_time)
+            board.set_motor_duty([(1, 35 * d), (2, -35 * d),
+                                  (3, 35 * d), (4, -35 * d)])
+            time.sleep(rot_time)
+            board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
+            time.sleep(0.3)
+        else:
+            print("    No block visible")
+            break
+    
+    cam.release()
     
     # Close gripper around block
     print("  Grabbing...")
