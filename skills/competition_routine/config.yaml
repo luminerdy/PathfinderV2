@@ -1,0 +1,59 @@
+# Competition Routine Configuration (E7)
+
+# Target blocks
+target:
+  colors: [red, blue, yellow]  # Competition block colors
+  default: null                # null = any color, or specify one
+
+# Motor speeds
+motors:
+  drive_power: 30              # Forward/strafe speed
+  rotation_power: 28           # Rotation speed for scanning
+
+# Phase 1: Pickup
+pickup:
+  scan_steps: 16               # Rotation steps for block scan (16 = 360deg)
+  scan_tolerance: 100          # Max pixel offset to consider "facing" block
+  approach_cycles: 40          # Max stop-look-drive iterations
+  down_view_center_x: 350     # Calibrated center X in camera-down view
+  down_view_target_y: 350     # Target Y for "arrived at block"
+  x_tolerance: 80             # Horizontal arrival tolerance (pixels)
+  y_tolerance: 50             # Vertical arrival tolerance (pixels)
+  min_y: 50                   # Ignore detections above this (false positives)
+
+# Phase 2: Find line
+find_line:
+  search_steps: 16             # Rotation steps to find green tape (16 = 360deg)
+
+# Phase 3: Follow line
+follow:
+  timeout: 20                  # Max seconds to follow line
+  # Line follower uses its own config (line_following/config.yaml)
+
+# Phase 4: Deliver
+deliver:
+  backup_time: 1.5             # Seconds to back up after releasing block
+  backup_speed: 30             # Motor speed for backup
+
+# Arm positions (servo PWM values, tested on hardware)
+# Format: [gripper, wrist, elbow, shoulder, base]
+arm:
+  camera_forward: [2500, 590, 2450, 700, 1500]
+  camera_down:    [2500, 590, 2450, 1214, 1500]
+  pickup_ready:   [1558, 830, 2170, 2410, 1500]
+  pickup_grab:    [1475, 830, 2170, 2410, 1500]
+  pickup_lift:    [1475, 590, 2450, 700, 1500]
+  carry:          [1558, 569, 2400, 809, 1500]
+
+# Safety
+safety:
+  battery_min_pi4: 7.0
+  battery_min_pi5: 8.1
+  cycle_timeout: 120           # Max seconds per full cycle
+
+# Scoring (for workshop competition)
+scoring:
+  points_per_block: 10
+  bonus_correct_zone: 5        # Extra points for correct color zone
+  penalty_drop: -3             # Points lost if block dropped
+  time_bonus: true             # Faster = more points
