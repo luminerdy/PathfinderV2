@@ -52,8 +52,8 @@ BATTERY_MIN = 7.0 if PLATFORM == 'pi4' else 8.1
 # Arm positions (tested on real hardware)
 POS_CAMERA_FORWARD = [(1, 2500), (3, 590), (4, 2450), (5, 700), (6, 1500)]
 POS_CAMERA_DOWN    = [(1, 2500), (3, 590), (4, 2450), (5, 1214), (6, 1500)]
-POS_PICKUP_READY   = [(1, 1558), (3, 830), (4, 2170), (5, 2410), (6, 1500)]
-POS_PICKUP_GRAB    = [(1, 1475), (3, 830), (4, 2170), (5, 2410), (6, 1500)]
+POS_PICKUP_READY   = [(1, 2500), (3, 830), (4, 2170), (5, 2410), (6, 1500)]  # Gripper OPEN while lowering
+POS_PICKUP_GRAB    = [(1, 1475), (3, 830), (4, 2170), (5, 2410), (6, 1500)]  # Then close to grab
 POS_PICKUP_LIFT    = [(1, 1475), (3, 590), (4, 2450), (5, 700), (6, 1500)]
 POS_CARRY          = [(1, 1558), (3, 569), (4, 2400), (5, 809), (6, 1500)]
 
