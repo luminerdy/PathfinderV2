@@ -1,124 +1,139 @@
 # PathfinderV2
 
-**Status: 🔧 IN DEVELOPMENT**
-**Latest Update:** March 26, 2026
+**Status: 🔧 IN DEVELOPMENT**  
+**Latest Update:** March 27, 2026 (Day 10)
 
 A Python framework for educational mobile robots with mecanum drive and robotic arms, running on Raspberry Pi 4 or Pi 5.
 
-Built for STEM education, hands-on robotics workshops, and autonomous competition scenarios.
-
-## What Works Today
-
-### ✅ Autonomous Navigation — Proven
-- **100% success rate** on 8-tag AprilTag tour (tag36h11 family)
-- Proportional centering with damping (handles any angle)
-- Speed control (adaptive based on distance)
-- Sonar safety (collision avoidance)
-- Re-search recovery (finds lost tags)
-- 360° sonar scan for field mapping
-- Calibrated turns (90° = 0.87s at power 30)
-
-### ✅ Vision System — Working
-- AprilTag detection with pose estimation (distance, angle)
-- Red block detection (HSV color filtering)
-- Real-time camera feed (640x480 @ 30fps)
-
-### ✅ Manual Control — Complete
-- Web interface with live video, drive controls, servo sliders
-- Adjustable motor power
-- Save/load arm positions
-- Battery monitoring
-
-### ✅ Hardware — Verified
-- Mecanum omnidirectional drive
-- 5-DOF robotic arm (Claw, Wrist, Elbow, Shoulder, Base)
-- Sonar distance sensor
-- USB camera
-
-### ⚠️ In Progress
-- Block approach (drive to block on floor)
-- Automated pickup sequence
-- Blue/yellow block detection (HSV tuning needed)
-- Green line following (1/2 inch green tape, unlocks bonus zone)
-
-### ❌ Not Yet Implemented
-- Full pickup → navigate → deliver cycle
-- Competition scoring system
-- Gamepad control (Logitech F710)
-- Workshop curriculum
+Built for STEM workshops, hands-on robotics learning, and autonomous competition scenarios.
 
 ## Quick Start
 
 ```bash
-cd /home/robot/code/pathfinder
+# Clone the repo
+git clone https://github.com/luminerdy/PathfinderV2.git
+cd PathfinderV2
+
+# Install dependencies
 pip3 install -r requirements.txt
-```
 
-### Check Battery First!
-```bash
+# Check battery first!
 python3 scripts/tools/check_battery.py
-```
 
-**Battery Requirements:**
-- **Pi 4 (competition): >7.0V** for reliable operation
-- **Pi 5 (development): >8.2V** (Pi 5 draws more power)
-- Below 7.0V: Replace batteries immediately
-
-### Run the Web Control Interface
-```bash
+# Run the web control interface
 python3 web/web_control.py
-# Open in browser: http://10.10.10.134:8080
+# Open in browser: http://<robot-ip>:8080
 ```
 
-### Run the 8-Tag Tour
-```bash
-python3 scripts/navigation/tour_all_8_tags.py
-```
+**New to PathfinderV2?** Start with the [Getting Started Guide](START_HERE.md).
+
+## What Works Today
+
+### ✅ Navigation — Proven
+- **100% success** on 8-tag AprilTag tour (tag36h11 family)
+- Proportional centering with damping
+- Sonar collision avoidance
+- Calibrated turns (90° = 0.87s at power 30)
+
+### ✅ Vision — Working
+- AprilTag detection with pose estimation
+- Block detection (red, blue, yellow via HSV filtering)
+- Color space processing (BGR, RGB, HSV, Grayscale)
+- Distance estimation from known object size
+
+### ✅ Manipulation — Working
+- 5-servo arm control (gripper, wrist, elbow, shoulder, base)
+- Action group playback (pre-recorded sequences)
+- Autonomous pickup (scan → approach → grab)
+- Visual servoing with target lock
+
+### ✅ Line Following — Working
+- Lime green tape tracking with weighted scan
+- Proportional steering through curves
+- End-of-line detection
+
+### ✅ Manual Control — Complete
+- Web interface with live video and drive controls
+- Servo sliders for arm positioning
+- Battery monitoring
+
+### ⚠️ In Progress
+- Full pickup → navigate → deliver → score cycle (E7)
+- Delivery sequence (navigate to zone, release block)
+- Workshop facilitator guide
+- Competition scoring system
+
+## Workshop Skills
+
+PathfinderV2 includes **9 complete workshop skills**, each with:
+- **SKILL.md** — 4 sections (Overview, Quick Start, Implementation, Deep Dive)
+- **run_demo.py** — Executable demonstration
+- **config.yaml** — Tunable parameters
+- **README.md** — Quick reference card
+
+**Dual-purpose design:** Same materials work for students (skip to Quick Start) and engineers (read Deep Dive).
+
+### Hardware Foundation (D-Series)
+
+| Skill | What You Learn | Demo |
+|-------|---------------|------|
+| [D1: Mecanum Drive](skills/mecanum_drive/) | Omnidirectional movement, 8 patterns | `python3 skills/mecanum_drive/run_demo.py` |
+| [D2: Sonar Sensors](skills/sonar_sensors/) | Distance measurement, RGB feedback, obstacle avoidance | `python3 skills/sonar_sensors/run_demo.py` |
+| [D3: Robotic Arm](skills/robotic_arm/) | Servo control, action groups, named positions | `python3 skills/robotic_arm/run_demo.py` |
+| [D4: Camera Vision](skills/camera_vision/) | Capture, color spaces, HSV thresholding | `python3 skills/camera_vision/run_demo.py` |
+
+### Integration Skills (E-Series)
+
+| Skill | What You Learn | Demo |
+|-------|---------------|------|
+| [E2: AprilTag Navigation](skills/apriltag_navigation/) | Tag detection, pose estimation, autonomous tour | `python3 skills/apriltag_navigation/run_demo.py` |
+| [E3: Block Detection](skills/block_detection/) | HSV pipeline, distance estimation, confidence scoring | `python3 skills/block_detection/run_demo.py` |
+| [E4: Visual Servoing](skills/visual_servoing/) | Closed-loop control, target locking, approach | `python3 skills/visual_servoing/run_demo.py` |
+| [E5: Autonomous Pickup](skills/autonomous_pickup/) | State machine, camera switching, pick-and-place | `python3 skills/autonomous_pickup/run_demo.py` |
+| [E6: Line Following](skills/line_following/) | Weighted scan, proportional steering, curves | `python3 skills/line_following/run_demo.py` |
+
+**Progression:** D1-D4 teach individual subsystems → E2-E6 combine them into autonomous behaviors.
 
 ## Architecture
 
 ```
-pathfinder/
+PathfinderV2/
 ├── lib/                   # Core libraries
 │   ├── board.py           # Platform auto-detect (Pi 4 I2C / Pi 5 serial)
+│   ├── board_pi4.py       # Pi 4 I2C driver
 │   ├── i2c_sonar.py       # Sonar sensor driver
 │   ├── mecanum_kinematics.py
-│   ├── arm_inverse_kinematics.py
 │   └── movement.py        # Calibrated movement functions
 │
-├── hardware/              # Hardware abstraction
-│   ├── board.py           # Board wrapper
-│   ├── chassis.py         # Mecanum drive
-│   ├── arm.py             # 5-DOF arm with IK
-│   ├── camera.py          # OpenCV capture
-│   └── sonar.py           # Ultrasonic sensor
+├── skills/                # Workshop skills (start here!)
+│   ├── mecanum_drive/     # D1: Omnidirectional movement
+│   ├── sonar_sensors/     # D2: Distance sensing + RGB
+│   ├── robotic_arm/       # D3: Arm control + action groups
+│   ├── camera_vision/     # D4: Camera + color processing
+│   ├── apriltag_navigation/ # E2: Tag-based navigation
+│   ├── block_detection/   # E3: Color block finding
+│   ├── visual_servoing/   # E4: Vision-guided approach
+│   ├── autonomous_pickup/ # E5: Full pickup cycle
+│   ├── line_following/    # E6: Tape line tracking
+│   ├── strafe_nav.py      # Mecanum navigation engine
+│   ├── block_detect.py    # Block detection engine
+│   ├── block_approach.py  # Visual approach with target lock
+│   ├── auto_pickup.py     # Autonomous pickup state machine
+│   └── centering.py       # Proportional centering controller
 │
-├── skills/                # Autonomous behaviors
-│   ├── strafe_nav.py      # Mecanum navigation (strafe + forward)
-│   ├── block_detect.py    # Color block detection (Red, Blue, Yellow)
-│   ├── block_approach.py  # Drive to block with target locking
-│   ├── arm_control.py     # Smooth multi-servo arm control
-│   ├── auto_pickup.py     # Full autonomous pickup cycle
-│   └── centering.py       # Proportional target centering
-│
-├── scripts/               # Runnable scripts
-│   ├── calibration/       # Motor/rotation/arm calibration
-│   ├── exploration/       # Sensor exploration
+├── scripts/               # Runnable utilities
+│   ├── calibration/       # Motor/rotation calibration
 │   ├── navigation/        # Navigation demos and tours
-│   ├── testing/           # Hardware and feature tests
-│   └── tools/             # Utilities (battery, camera, arm positioning)
+│   ├── testing/           # Hardware tests
+│   └── tools/             # Battery, camera, arm tools
 │
 ├── web/                   # Web control interface
 │   ├── web_control.py     # Flask server
 │   └── templates/         # HTML interface
 │
-├── demos/                 # Workshop demos (progressive learning)
-│   ├── d1_basic_drive.py
-│   ├── d2_sonar.py
-│   ├── d3_arm_basics.py
-│   └── e2_apriltag.py
+├── demos/                 # Legacy demos (D1-E2)
 │
-├── sdk/                   # Embedded hardware SDK
+├── sdk/                   # Vendor board communication layer
 │   ├── common/            # Board control, mecanum, sonar
 │   └── kinematics/        # Arm inverse kinematics
 │
@@ -129,75 +144,67 @@ pathfinder/
 │   └── reference/         # Technical reference
 │
 ├── config.yaml            # Robot configuration
-├── robot_startup.py       # Boot initialization
-└── pathfinder.py          # Main entry point
+├── START_HERE.md          # Getting started guide
+└── PROJECT_STATUS.md      # What works, what doesn't
 ```
 
-## Hardware
+**Note:** `sdk/` contains adapted vendor libraries for board communication (Hiwonder). All `skills/`, `lib/`, and `scripts/` code is original.
 
-### AprilTag Field Setup
-- **Family:** tag36h11
-- **Tag IDs:** 578-585 (8 tags, 2 per wall)
-- **Size:** 10" × 10" (254mm)
-- **Layout:** Clockwise — North (578,579), East (580,581), South (582,583), West (584,585)
-- **Spacing:** ±12" from wall center
+## Platform
 
-### Servo Mapping
-| Servo | Function | Range |
-|-------|----------|-------|
-| 1 | Claw (Gripper) | 1475 (closed) – 2500 (open) |
-| 3 | Wrist | 500 – 2500 |
-| 4 | Elbow | 500 – 2500 |
-| 5 | Shoulder | 500 – 2500 |
-| 6 | Base (rotation) | 500 – 2500 (1500 = center) |
+### Recommended Setup
+- **Competition robot:** Raspberry Pi 4 (lower power draw, proven reliability)
+- **Development/mission control:** Raspberry Pi 5 or Pi 500 (more processing power)
+- **Why Pi 4 for competition?** 15W vs Pi 5's 25W — batteries last 2x longer
 
-Note: Servo 2 does not exist on this platform.
+### Hardware
+- **Drive:** Mecanum wheels (omnidirectional — forward, strafe, rotate, diagonal)
+- **Arm:** 5 servos (gripper + 4-DOF: base, shoulder, elbow, wrist)
+- **Vision:** USB camera (640x480 @ 30fps)
+- **Sensors:** Ultrasonic sonar with RGB LED indicators
+- **Power:** 2× 18650 batteries (7.4V nominal, 30-45 min runtime)
 
-### Power Requirements
-- **Battery:** 2× 18650 (3.7V nominal, 8.4V fully charged)
-- **Minimum voltage:** >7.0V (Pi 4, recommended) or >8.2V (Pi 5)
-- **Note:** Pi 4 recommended for competition (better battery life, no throttling)
+### Battery Safety
+- **Minimum voltage:** 7.0V (Pi 4) or 8.2V (Pi 5)
+- **Full charge:** 8.4V
 - **Runtime:** 30-45 minutes per charge
-- **Motor minimum power:** 30 (below ~25, static friction wins)
+- **Motor threshold:** Power 28+ needed to overcome friction
 
-See [Power Requirements](docs/calibration/POWER_REQUIREMENTS.md) for detailed analysis.
+See [Battery Safety](BATTERY_SAFETY.md) for details.
 
-## Documentation
+### AprilTag Field
+- **Family:** tag36h11
+- **Tags:** 578-585 (8 tags, 2 per wall)
+- **Size:** 10" × 10" (254mm)
+- **Layout:** Clockwise — North, East, South, West
 
-### Setup
-- [A1: Robot Pi OS Build](docs/setup/A1_ROBOT_PI_OS_BUILD.md) — Complete SD card image creation
-- [Installation Guide](INSTALL.md) — Quick install reference
-- [Battery Safety](BATTERY_SAFETY.md) — Voltage requirements and charging
+## Workshop Context
 
-### Calibration
-- [Movement Calibration](docs/calibration/MOVEMENT_CALIBRATION.md) — Rotation and drive rates
-- [Rotation Calibration](docs/calibration/ROTATION_CALIBRATION_RESULTS.md) — Detailed test results
-- [Power Requirements](docs/calibration/POWER_REQUIREMENTS.md) — Voltage thresholds
+**2024:** [AutonomousEdgeRobotics](https://github.com/stemoutreach/AutonomousEdgeRobotics) — Intro workshop (assembly, Python, OpenCV)  
+**2025:** PathfinderBot V1 — Team competition (navigation, challenges)  
+**2026:** PathfinderV2 — Full autonomous competition (detect, grab, score, line follow)
 
-### Competition
-- [Competition Design](docs/competition/COMPETITION_DESIGN.md) — Multi-robot team competition rules
+**Target event:** 6-hour workshop + competition (July 28-29, 2026)  
+**Audience:** Mixed — students and professional engineers  
 
-## Competition Context
+## Development Timeline
 
-Designed for 6-hour STEM events:
-- 30-45 minute battery cycles
-- 8-12 battery swaps per event
-- Tasks must fit in 30-minute windows
-- Teams build, calibrate, and compete
-
-## Development
-
-**Day 0-4:** Framework, hardware, motor/servo breakthroughs
-**Day 5-6:** AprilTag navigation, 8-tag field, smart approach (87% to 100%)
-**Day 7:** Centering skill, power analysis, movement calibration, web control
-**Day 8:** Repo cleanup, strafe navigation, block detection, competition design
-**Day 9:** Pi 4 driver, Buddy robot, platform auto-detect, documentation cleanup
+| Day | Milestone |
+|-----|-----------|
+| 0 | Framework built from scratch (3-layer architecture) |
+| 1-2 | Hardware bring-up, motor debugging (UART config fix) |
+| 3-4 | Servo protocol, first autonomous navigation |
+| 5-6 | Pose estimation, 8-tag field, 100% tour success |
+| 7-8 | Web control, block detection, competition design |
+| 9 | Pi 4 driver, platform auto-detect, power pivot |
+| 10 | Mission control architecture, 9 workshop skills, line following |
 
 ## Credits
 
 - **PathfinderV2:** Scotty (2026)
-- **PathfinderBot Workshop:** STEM Outreach Initiative (2024)
+- **Previous workshops:** STEM Outreach Initiative (2024-2025)
 - **AprilTag:** MIT
+- **Development partner:** OpenClaw + Claude
 
 ## License
 
