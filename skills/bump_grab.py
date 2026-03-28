@@ -39,8 +39,12 @@ ROTATION_POWER = 35
 DRIVE_POWER = 35          # Enough to reach block, not too fast to overshoot
 CENTER_TOLERANCE = 80     # Pixels from center to count as "centered"
 VANISH_FRAMES = 4         # Frames without detection = "contact"
-BACKUP_TIME = 0.25        # Seconds to back up after contact (~1 inch)
+BACKUP_TIME = 0.12        # Seconds to back up after contact (~5mm)
 BACKUP_POWER = 30
+
+# Delivery positions (reverse of pickup)
+POS_PLACE_DOWN = [(1, 1475), (3, 830), (4, 2170), (5, 2410), (6, 1500)]  # Lower with block
+POS_PLACE_OPEN = [(1, 2500), (3, 830), (4, 2170), (5, 2410), (6, 1500)]  # Open gripper gently
 
 BATTERY_MIN = 7.0 if PLATFORM == 'pi4' else 8.1
 
@@ -63,6 +67,30 @@ def stop(board):
 def move_arm(board, position, duration_ms=800):
     board.set_servo_position(duration_ms, position)
     time.sleep(duration_ms / 1000.0 + 0.2)
+
+
+def gentle_place(board):
+    """Place block gently by reversing the pickup sequence.
+    Lower arm with block, open gripper at ground level, retract arm.
+    No bounce — block placed, not dropped.
+    """
+    print("  Placing block gently...")
+    
+    # Lower arm slowly with block still gripped
+    print("    Lowering...")
+    move_arm(board, POS_PLACE_DOWN, 1200)  # Slow descent
+    time.sleep(0.3)
+    
+    # Open gripper at ground level (block rests on floor)
+    print("    Releasing...")
+    move_arm(board, POS_PLACE_OPEN, 500)
+    time.sleep(0.3)
+    
+    # Retract arm (block stays on floor)
+    print("    Retracting arm...")
+    move_arm(board, POS_CAMERA_FORWARD, 1000)
+    
+    print("    PLACED!")
 
 
 def get_fresh_frame(camera, flush=3):

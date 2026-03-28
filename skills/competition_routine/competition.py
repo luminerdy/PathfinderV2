@@ -325,13 +325,23 @@ def find_green_line(board, camera, follower):
 # === PHASE 3: DELIVER ===
 
 def deliver_block(board):
-    """Open gripper to release block, then back up."""
+    """Place block gently by lowering arm, then back up."""
     print("  Delivering block...")
 
-    # Open gripper to release
-    print("    Opening gripper...")
+    # Lower arm slowly with block still gripped (reverse of pickup)
+    print("    Lowering arm...")
+    POS_PLACE = [(1, 1475), (3, 830), (4, 2170), (5, 2410), (6, 1500)]
+    move_arm(board, POS_PLACE, 1200)
+    time.sleep(0.3)
+
+    # Open gripper at ground level — block rests on floor, no bounce
+    print("    Releasing gently...")
     board.set_servo_position(500, [(1, 2500)])
-    time.sleep(0.8)
+    time.sleep(0.5)
+
+    # Retract arm before backing up
+    print("    Retracting arm...")
+    move_arm(board, POS_CAMERA_FORWARD, 1000)
 
     # Back up from scoring zone
     print("    Backing up...")
@@ -339,9 +349,6 @@ def deliver_block(board):
                           (3, -MOTOR_POWER), (4, -MOTOR_POWER)])
     time.sleep(1.5)
     stop(board)
-
-    # Return arm to rest
-    move_arm(board, POS_CAMERA_FORWARD, 800)
 
     print("    DELIVERY COMPLETE")
 
