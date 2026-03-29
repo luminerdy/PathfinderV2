@@ -370,4 +370,14 @@ if __name__ == '__main__':
             print("Usage: python3 color_delivery.py [red|blue|yellow]")
             sys.exit(1)
 
-    color_delivery(target_color=color)
+    try:
+        color_delivery(target_color=color)
+    except Exception as e:
+        print("ERROR: %s" % e)
+    finally:
+        # ALWAYS stop motors on exit (safety)
+        try:
+            board = get_board()
+            stop(board)
+        except:
+            pass
