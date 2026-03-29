@@ -342,33 +342,27 @@ Teams are encouraged to use GenAI tools (ChatGPT, Claude, Copilot, etc.) during 
 
 ---
 
-## Schedule
+## Schedule (6 Hours)
 
-### Workshop Day 1 (6 hours)
-| Time | Activity |
-|------|----------|
-| 0:00-0:30 | Welcome, team formation, overview |
-| 0:30-1:30 | Robot assembly + Pi 500 setup (parallel) |
-| 1:30-2:00 | Connect and test (SSH, battery, motors) |
-| 2:00-3:00 | Core skills (D1-D4: drive, sonar, arm, camera) |
-| 3:00-3:15 | Break |
-| 3:15-4:15 | Integration skills (E2-E6: navigation, detection, pickup, line follow) |
-| 4:15-5:00 | Strategy planning + code customization |
-| 5:00-6:00 | Practice matches (informal, test the field) |
+GenAI is the force multiplier. Teams don't need to learn Python from scratch — they ask AI to write scripts, explain code, and debug issues. This compresses learning so more time goes to competing.
 
-### Workshop Day 2 (6 hours)
-| Time | Activity |
-|------|----------|
-| 0:00-0:30 | Recap, final prep, battery check |
-| 0:30-1:30 | Code refinement + robot modifications |
-| 1:30-2:00 | Qualifying Round 1 (10 min per team) |
-| 2:00-2:30 | Qualifying Round 2 |
-| 2:30-2:45 | Break + scores announced |
-| 2:45-3:30 | Semi-finals |
-| 3:30-4:00 | Code iteration + strategy adjustment |
-| 4:00-4:45 | FINALS |
-| 4:45-5:15 | Awards + debrief |
-| 5:15-6:00 | Open play + cleanup |
+| Time | Activity | GenAI Role |
+|------|----------|-----------|
+| 0:00-0:15 | Welcome, teams, rules overview | "Analyze these rules, what's the best strategy?" |
+| 0:15-1:00 | Robot assembly + Pi 500 setup (parallel) | — |
+| 1:00-1:20 | Connect and test (SSH, battery, motors) | "Why won't my robot connect?" |
+| 1:20-2:00 | Explore skills (D1-D4: drive, sonar, arm, camera) | "Explain what this script does" |
+| 2:00-2:15 | Break | |
+| 2:15-2:45 | Integration skills (navigation, detection, pickup) | "Write a script to pick up red blocks" |
+| 2:45-3:15 | Strategy + robot modifications + code customization | "Design a storage bin for 3 blocks" |
+| 3:15-3:45 | Practice match (10 min, informal) | "My robot drifts right, how do I fix it?" |
+| 3:45-4:00 | Break + strategy revision | |
+| 4:00-4:30 | **QUALIFYING ROUND** (10 min match) | |
+| 4:30-5:00 | Code iteration + battery swap + modifications | "Optimize my delivery route" |
+| 5:00-5:30 | **FINALS** (10 min match) | |
+| 5:30-6:00 | Scoring, awards, debrief | |
+
+**Key insight:** Teams that use GenAI effectively will iterate faster, debug quicker, and have more polished autonomous routines by competition time.
 
 ---
 
