@@ -17,24 +17,25 @@ Your team runs a logistics operation. Colored packages (blocks) must be sorted a
 ```
               10 ft
     ┌─────────────────────────┐
-    │                         │
-    │   🧺B  🧺Y  🧺R        │  DELIVERY ZONE
-    │   578   579   580       │  Colored baskets under AprilTags
-    │                         │
+    │  ╔═══════════════════╗  │
+    │  ║  SCORING AREA     ║  │  Judges count blocks here
+    │  ║  🧺B  🧺Y  🧺R   ║  │  at end of match
+    │  ║  578   579   580  ║  │  Colored baskets under AprilTags
+    │  ╚═══════════════════╝  │
     │─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│
     │                         │
     │  ╔═══╗     ┌────┐       │
     │  ║   ║     │    │       │  BARRIERS + PASSAGE
 10  │  ║   ║ ▓▓▓ │    │       │  Green tape through narrow gap
-ft  │  ╚═══╝     └────┘       │
+ft  │  ╚═══╝     └────┘       │  (~14" wide)
     │                         │
     │─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─│
     │                         │
     │   🔴 🟡 🔵  🔴 🟡 🔵   │  BLOCK ZONE
     │      🔴 🟡  🔵         │  9 blocks (3 per color)
-    │                         │
-    │  ┌─────┐┌─────┐┌─────┐ │  START ZONES
-    │  │ ST1 ││ ST2 ││ ST3 │ │  One per active robot
+    │                         │  scattered randomly
+    │  ┌─────┐┌─────┐┌─────┐ │  START / SWAP ZONES
+    │  │ ST1 ││ ST2 ││ ST3 │ │  Robots enter/exit here
     └──┴─────┴┴─────┴┴─────┴──┘
 
     SOUTH WALL (Tags 582, 583)
@@ -136,13 +137,17 @@ Teams choose how to control their robots:
 
 ### Block Delivery (Scored at End of Match)
 
+Blocks are counted in the **Scoring Area** — the baskets along the north wall.
+
 | Action | Points |
 |--------|--------|
-| Block in **any** basket | 5 pts |
 | Block in **correct color** basket | 15 pts (5 base + 10 color bonus) |
-| Block **stored on robot** at buzzer | 2 pts |
-| Block in **wrong color** basket | 3 pts |
+| Block in **any** basket (wrong color) | 3 pts |
+| Block **stored on robot** at buzzer | 2 pts per block on robot |
+| Block **in robot's storage bin** at buzzer | 2 pts per block |
 | Block on field (not delivered) | 0 pts |
+
+**Counting method:** At the buzzer, judges count blocks in each basket by color. Blocks on robots (in gripper or storage bin) count as "stored." Simple — no live scoring technology needed.
 
 ### Navigation Points
 
@@ -205,6 +210,13 @@ Teams choose how to control their robots:
 - 15 pts per block + possible full sort bonus
 - Needs vision + navigation + arm integration
 
+### Advanced+: "The Hoarder"
+- Modify robot with storage bin on back
+- Pick up 2-3 blocks per trip (load onto back)
+- One delivery trip drops all blocks at once
+- Fewer trips = more time for collecting
+- Needs creative arm sequencing (pick up → load to back → repeat)
+
 ### Expert: "Full Auto Fleet"
 - Autonomous robots running scripts
 - Tag-team swaps for battery management
@@ -218,6 +230,12 @@ Teams choose how to control their robots:
 - Block opponents (carefully — no ramming)
 - Extra navigation points
 
+### Meta: "The Specialist Fleet"
+- Robot 1: "Bulldozer" — pushes blocks to baskets (no arm needed)
+- Robot 2: "Precision" — picks up and color-sorts
+- Robot 3: "Storage" — back bin, collects multiple blocks per trip
+- Different modifications on different robots!
+
 ---
 
 ## Rules of Play
@@ -229,9 +247,24 @@ Teams choose how to control their robots:
 4. Robots may be controlled by any legal method
 5. Multiple team members can operate different robots simultaneously
 
+### Robot Modifications
+1. Teams are **encouraged** to modify their robots!
+2. Approved modifications:
+   - **Storage bin** on back (carry multiple blocks per trip)
+   - **Bumper/scoop** on front (better bulldozing)
+   - **Block guide rails** (help align blocks for pickup)
+   - **Flag/marker** (team identification)
+3. Materials provided: tape, cardboard, zip ties, rubber bands, 3D printed parts
+4. Modifications must not:
+   - Exceed 12" × 12" × 12" total robot size
+   - Include projectiles or sharp edges
+   - Damage the field or other robots
+
+**Storage strategy:** A robot with a back bin can pick up 2-3 blocks before making one delivery trip — fewer trips = more time!
+
 ### Robot Rules
 1. Robots must start in a start zone
-2. Robots must fit within the start zone at match start
+2. Robots must fit within the start zone at match start (including modifications)
 3. No weapons, no intentional damage to other robots or field
 4. Robots may push moveable barriers and blocks
 5. Robots may NOT push other teams' robots intentionally
