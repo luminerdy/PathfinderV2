@@ -1,7 +1,7 @@
 # PathfinderV2
 
 **Status: 🔧 IN DEVELOPMENT**  
-**Latest Update:** March 27, 2026 (Day 10)
+**Latest Update:** March 29, 2026 (Day 12)
 
 A two-device robotics platform: **Raspberry Pi 500** as the control hub, **Raspberry Pi 4** as the mobile competition robot. Built for STEM workshops with mecanum drive, robotic arm, and computer vision.
 
@@ -220,6 +220,8 @@ See [Battery Safety](BATTERY_SAFETY.md) for details.
 | 7-8 | Web control, block detection, competition design |
 | 9 | Pi 4 driver, platform auto-detect, power pivot |
 | 10 | Mission control architecture, 9 workshop skills, line following |
+| 11 | First competition score! Bump-grab, line follow, gentle place |
+| 12 | Color-matched basket delivery, Pi 500 integration |
 
 ## Credits
 

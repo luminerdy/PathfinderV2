@@ -1,7 +1,7 @@
 # PathfinderV2 - Project Status
 
-**Last Updated:** March 27, 2026 (Day 10)
-**Status:** 🔧 In Development — Navigation proven, 9 workshop skills complete, line following working
+**Last Updated:** March 29, 2026 (Day 12)
+**Status:** 🔧 In Development — Competition cycle proven, color-matched delivery working, Pi 500 integrated
 
 ---
 
@@ -46,19 +46,20 @@
 - HSV ranges may need tuning per lighting environment
 
 ### Competition Routine ⚠️
-- Individual skills proven (detect, approach, pickup, line follow)
-- Full chained cycle (E7) not yet built
-- Delivery sequence not yet implemented
+- Full cycle proven: grab → line follow → gentle place on scoring zone ✅
+- Color-matched delivery: block → matching colored basket via AprilTag ✅
+- Autonomous approach still inconsistent (~50% from distance)
+- Pre-positioned pickup reliable (100%)
 
 ---
 
 ## What's Not Done
 
-- E7: Full pickup → navigate → deliver → score cycle
-- Competition scoring system
+- Reliable autonomous block approach from any distance
+- Competition scoring system (automated)
 - Gamepad control (Logitech F710)
 - Workshop facilitator guide (curriculum wrapper)
-- Field layout documentation
+- Multi-robot support
 
 ---
 
@@ -113,8 +114,10 @@
 | 8 | Mar 25 | Block approach development |
 | 9 | Mar 26 | Pi 4 driver, platform auto-detect, power pivot |
 | 10 | Mar 27 | Mission control, 9 workshop skills, line following |
+| 11 | Mar 28 | First competition score, bump-grab, gentle place |
+| 12 | Mar 29 | Color-matched basket delivery, Pi 500 integration |
 
-**116 commits** across 10 days.
+**130+ commits** across 12 days.
 
 ---
 
@@ -122,7 +125,8 @@
 
 1. ✅ Navigate reliably (100% tag tour)
 2. ✅ Drive to block (visual servoing with target lock)
-3. ✅ Pick up block (3-phase autonomous: scan → approach → grab)
+3. ✅ Pick up block (bump-grab from sweet spot, 3-phase autonomous)
 4. ✅ Follow line to zone (lime green tape, weighted scan, curves)
-5. → Deliver to zone (release block at scoring area)
-6. → Full competition cycle (chain all skills, repeat within battery window)
+5. ✅ Deliver to zone (gentle place — lower arm, release at floor)
+6. ✅ Color-matched delivery (block → matching colored basket via AprilTag)
+7. → Reliable autonomous approach from any distance
