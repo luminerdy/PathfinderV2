@@ -46,12 +46,12 @@ TAG_TO_COLOR = {v: k for k, v in BASKET_TAGS.items()}
 
 # === CONFIG ===
 ROTATION_POWER = 35
-DRIVE_POWER = 35
-APPROACH_SPEED = 28       # Slower when close to basket
+DRIVE_POWER = 40
+APPROACH_SPEED = 35       # Slower when close to basket
 
 # How close to drive to the tag before dropping (target area in pixels)
-# Larger area = closer. ~8000-12000 = about 20-30cm from wall
-TARGET_TAG_AREA = 8000
+# Larger area = closer. ~4000 = about 30-40cm from wall
+TARGET_TAG_AREA = 3000
 
 # Arm positions
 POS_CAMERA_FORWARD = [(1, 2500), (3, 590), (4, 2450), (5, 700), (6, 1500)]
@@ -119,7 +119,7 @@ def navigate_to_tag(board, camera, target_tag_id):
     print("  Navigating to Tag %d..." % target_tag_id)
 
     FRAME_CENTER = 320
-    CENTER_TOL = 60
+    CENTER_TOL = 100  # Wider tolerance — basket is big, don't need pixel-perfect
 
     for cycle in range(100):
         stop(board)
@@ -299,7 +299,7 @@ def color_delivery(target_color=None):
         return {'success': False, 'details': 'no_block_found'}
 
     target_tag = BASKET_TAGS[block_color]
-    print("  Block: %s → Basket: Tag %d" % (block_color.upper(), target_tag))
+    print("  Block: %s -> Basket: Tag %d" % (block_color.upper(), target_tag))
 
     # === PHASE 2: PICK UP BLOCK ===
     print()
@@ -350,7 +350,7 @@ def color_delivery(target_color=None):
 
     print()
     print("=" * 60)
-    print("SUCCESS! %s block → %s basket (Tag %d)" % (
+    print("SUCCESS! %s block -> %s basket (Tag %d)" % (
         block_color.upper(), block_color, target_tag))
     print("=" * 60)
 
