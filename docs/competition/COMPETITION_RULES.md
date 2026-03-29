@@ -192,49 +192,19 @@ Blocks are counted in the **Scoring Area** — the baskets along the north wall.
 
 ## Strategies
 
-### Beginner: "The Bulldozer"
-- Just push blocks toward baskets
-- No arm skill needed
-- 5 pts per block (any basket)
-- Easy but slow and imprecise
+### Strategy Is Up to You
 
-### Intermediate: "Pick and Place"
-- Use arm to grab blocks
-- Carry to any nearby basket
-- 5-15 pts per block depending on color match
-- Needs arm calibration
+There are many ways to score points. Some require code. Some require building. Some require both. Some require neither.
 
-### Advanced: "Color Sorter"
-- Identify block color before picking up
-- Navigate to matching basket via AprilTag
-- 15 pts per block + possible full sort bonus
-- Needs vision + navigation + arm integration
+Read the scoring table carefully. Think about:
+- What scores the most points?
+- What can your team do in 10 minutes?
+- How do 3 robots work together?
+- When should you swap a robot?
+- Is it better to deliver fast or deliver accurately?
+- What role does the passage play?
 
-### Advanced+: "The Hoarder"
-- Modify robot with storage bin on back
-- Pick up 2-3 blocks per trip (load onto back)
-- One delivery trip drops all blocks at once
-- Fewer trips = more time for collecting
-- Needs creative arm sequencing (pick up → load to back → repeat)
-
-### Expert: "Full Auto Fleet"
-- Autonomous robots running scripts
-- Tag-team swaps for battery management
-- Multiple robots operating simultaneously
-- +10 pts per autonomous delivery
-- Maximum possible score
-
-### Meta: "The Passage Master"
-- Control the narrow passage
-- Line follow through quickly while others go around
-- Block opponents (carefully — no ramming)
-- Extra navigation points
-
-### Meta: "The Specialist Fleet"
-- Robot 1: "Bulldozer" — pushes blocks to baskets (no arm needed)
-- Robot 2: "Precision" — picks up and color-sorts
-- Robot 3: "Storage" — back bin, collects multiple blocks per trip
-- Different modifications on different robots!
+**Tip:** Use GenAI to analyze the scoring rules and help develop your strategy.
 
 ---
 
@@ -248,19 +218,14 @@ Blocks are counted in the **Scoring Area** — the baskets along the north wall.
 5. Multiple team members can operate different robots simultaneously
 
 ### Robot Modifications
-1. Teams are **encouraged** to modify their robots!
-2. Approved modifications:
-   - **Storage bin** on back (carry multiple blocks per trip)
-   - **Bumper/scoop** on front (better bulldozing)
-   - **Block guide rails** (help align blocks for pickup)
-   - **Flag/marker** (team identification)
-3. Materials provided: tape, cardboard, zip ties, rubber bands, 3D printed parts
-4. Modifications must not:
-   - Exceed 12" × 12" × 12" total robot size
-   - Include projectiles or sharp edges
-   - Damage the field or other robots
-
-**Storage strategy:** A robot with a back bin can pick up 2-3 blocks before making one delivery trip — fewer trips = more time!
+1. Teams are **encouraged** to modify their robots
+2. Materials provided: tape, cardboard, zip ties, rubber bands, foam board
+3. How you use them is up to you
+4. Constraints:
+   - Must fit within 12" × 12" × 12" (including modifications)
+   - No sharp edges or projectiles
+   - Must not damage the field or other robots
+   - Must still fit in start zone
 
 ### Robot Rules
 1. Robots must start in a start zone
