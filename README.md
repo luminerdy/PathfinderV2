@@ -3,7 +3,7 @@
 **Status: 🔧 IN DEVELOPMENT**  
 **Latest Update:** March 27, 2026 (Day 10)
 
-A Python framework for educational mobile robots with mecanum drive and robotic arms, running on Raspberry Pi 4 or Pi 5.
+A two-device robotics platform: **Raspberry Pi 500** as the control hub, **Raspberry Pi 4** as the mobile competition robot. Built for STEM workshops with mecanum drive, robotic arm, and computer vision.
 
 Built for STEM workshops, hands-on robotics learning, and autonomous competition scenarios.
 
