@@ -354,5 +354,5 @@ sudo systemctl start pathfinder-startup.service
 
 ---
 
-*This guide was created while setting up a Pi 4 buddy robot on March 25, 2026.*
+*This guide was created while setting up a Pi 4 robot on March 25, 2026.*
 *Steps verified on Raspberry Pi 4 Model B Rev 1.5 with Raspberry Pi OS Bookworm 64-bit.*

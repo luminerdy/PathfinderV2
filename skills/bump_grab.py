@@ -208,7 +208,7 @@ def drive_to_contact(board, camera, detector, color=None):
     drive_time = (target_travel + 5) / 15.0  # seconds
     drive_time = max(0.5, min(drive_time, 5.0))  # Clamp 0.5-5s
     
-    # Buddy drifts RIGHT when driving "straight" — compensate with left bias
+    # Robot drifts RIGHT when driving "straight" — compensate with left bias
     # Left motors slightly slower = gentle left pull
     DRIFT_COMPENSATION = 3  # Reduce right motors by this amount
     print("  Driving straight %.1fs (est %.0fcm, drift comp=%d)..." % (drive_time, target_travel, DRIFT_COMPENSATION))

@@ -238,7 +238,7 @@ class LineFollower:
     def _search_for_line(self, max_rotations=12):
         """Rotate in place to find the green line before driving.
         
-        Solves the problem where Buddy isn't pointed at the tape
+        Solves the problem where robot isn't pointed at the tape
         after being repositioned or backed up.
         
         Args:
