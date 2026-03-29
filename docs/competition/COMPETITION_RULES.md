@@ -344,25 +344,58 @@ Teams are encouraged to use GenAI tools (ChatGPT, Claude, Copilot, etc.) during 
 
 ## Schedule (6 Hours)
 
-GenAI is the force multiplier. Teams don't need to learn Python from scratch — they ask AI to write scripts, explain code, and debug issues. This compresses learning so more time goes to competing.
+Robot assembly takes ~2 hours. GenAI compresses everything else so teams maximize competition time. No formal lectures — learn by doing.
+
+**Pre-work (facilitator):** SD cards pre-imaged, WiFi configured, batteries charged.
+
+### Phase 1: Build (2 hours)
+
+| Time | Group A (3-4 people) | Group B (2-3 people) |
+|------|---------------------|---------------------|
+| 0:00-0:15 | Welcome, team formation, hand out rules | Same |
+| 0:15-2:00 | **Robot assembly** (B1 guide) | **Pi 500 setup** + study rules with GenAI |
+| | Follow assembly instructions | "Analyze these rules — what's our strategy?" |
+| | Mechanical build, wiring, servos | Set up SSH, explore repo, run demos |
+
+**While building:** Group B uses GenAI to understand rules, plan strategy, and start writing code. By the time the robot is assembled, they have a plan.
+
+### Phase 2: Connect + Explore (45 min)
 
 | Time | Activity | GenAI Role |
 |------|----------|-----------|
-| 0:00-0:15 | Welcome, teams, rules overview | "Analyze these rules, what's the best strategy?" |
-| 0:15-1:00 | Robot assembly + Pi 500 setup (parallel) | — |
-| 1:00-1:20 | Connect and test (SSH, battery, motors) | "Why won't my robot connect?" |
-| 1:20-2:00 | Explore skills (D1-D4: drive, sonar, arm, camera) | "Explain what this script does" |
-| 2:00-2:15 | Break | |
-| 2:15-2:45 | Integration skills (navigation, detection, pickup) | "Write a script to pick up red blocks" |
-| 2:45-3:15 | Strategy + robot modifications + code customization | "Design a storage bin for 3 blocks" |
-| 3:15-3:45 | Practice match (10 min, informal) | "My robot drifts right, how do I fix it?" |
-| 3:45-4:00 | Break + strategy revision | |
-| 4:00-4:30 | **QUALIFYING ROUND** (10 min match) | |
-| 4:30-5:00 | Code iteration + battery swap + modifications | "Optimize my delivery route" |
-| 5:00-5:30 | **FINALS** (10 min match) | |
-| 5:30-6:00 | Scoring, awards, debrief | |
+| 2:00-2:15 | Connect Pi 500 to robot (SSH, battery check) | "Why won't SSH connect?" |
+| 2:15-2:45 | Explore robot skills — run demos, test hardware | "Explain this script" / "Make it faster" |
 
-**Key insight:** Teams that use GenAI effectively will iterate faster, debug quicker, and have more polished autonomous routines by competition time.
+Teams run through START_HERE.md skills at their own pace. Fast teams jump ahead to autonomous scripts. Slower teams focus on manual control.
+
+### Phase 3: Prepare to Compete (45 min)
+
+| Time | Activity | GenAI Role |
+|------|----------|-----------|
+| 2:45-3:00 | **Robot modifications** (storage bin, funnel, bumper) | "Design a V-funnel for block pickup" |
+| 3:00-3:15 | **Strategy + code customization** | "Write a script to sort red blocks to tag 580" |
+| 3:15-3:30 | **Practice match** (10 min, informal, test the field) | "My robot missed the block — debug this" |
+
+### Phase 4: Competition! (2 hours)
+
+| Time | Activity |
+|------|----------|
+| 3:30-3:45 | Break + final strategy |
+| 3:45-4:15 | **QUALIFYING ROUND 1** (10 min match) |
+| 4:15-4:45 | Score + code iteration + mods + battery swap |
+| 4:45-5:15 | **QUALIFYING ROUND 2 / FINALS** (10 min match) |
+| 5:15-5:45 | Final scoring, awards ceremony |
+| 5:45-6:00 | Debrief + cleanup |
+
+### GenAI Throughout
+
+**GenAI isn't a bonus — it's how teams keep pace.** In 6 hours, there's no time to learn Python from scratch. Teams that prompt well:
+- Understand rules faster (strategy from minute 1)
+- Write code faster (scripts generated, not hand-coded)
+- Debug faster ("why does my robot drift right?")
+- Iterate between rounds ("optimize for speed, not accuracy")
+
+**Teams that don't use GenAI** will spend most of their time on manual control. That's fine — bulldozing still scores points. But autonomous deliveries (+10 pts each) require code, and code requires either experience or a good AI partner.
 
 ---
 
