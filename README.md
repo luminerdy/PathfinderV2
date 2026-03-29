@@ -7,22 +7,33 @@ A Python framework for educational mobile robots with mecanum drive and robotic 
 
 Built for STEM workshops, hands-on robotics learning, and autonomous competition scenarios.
 
+## How It Works
+
+PathfinderV2 uses two devices:
+
+| Device | Role | What It Does |
+|--------|------|-------------|
+| **Pi 500** | Control Hub | Write code, run scripts, monitor camera, debug |
+| **Robot (Pi 4)** | Mobile Platform | Drive, grab blocks, sense environment |
+
+You sit at the Pi 500 and control the robot over SSH/WiFi. The robot runs headless.
+
 ## Quick Start
 
-```bash
-# Clone the repo
-git clone https://github.com/luminerdy/PathfinderV2.git
-cd PathfinderV2
+**First time?** Follow the [setup guides](docs/setup/) to image SD cards and connect.
 
-# Install dependencies
-pip3 install -r requirements.txt
+**Already set up?** Connect from your Pi 500:
+```bash
+# SSH into robot from Pi 500
+ssh robot@<ROBOT_IP>
 
 # Check battery first!
+cd /home/robot/pathfinder
 python3 scripts/tools/check_battery.py
 
 # Run the web control interface
 python3 web/web_control.py
-# Open in browser: http://<robot-ip>:8080
+# Open browser on Pi 500: http://<robot-ip>:8080
 ```
 
 **New to PathfinderV2?** Start with the [Getting Started Guide](START_HERE.md).
@@ -156,10 +167,17 @@ PathfinderV2/
 
 ## Platform
 
-### Recommended Setup
-- **Competition robot:** Raspberry Pi 4 (lower power draw, proven reliability)
-- **Development/mission control:** Raspberry Pi 5 or Pi 500 (more processing power)
-- **Why Pi 4 for competition?** 15W vs Pi 5's 25W — batteries last 2x longer
+### Two-Device Setup
+- **Pi 500 (Control Hub):** Raspberry Pi 500 keyboard computer — your desk, your code, your monitor
+- **Robot (Pi 4):** Mobile platform on the field — motors, arm, camera, sonar
+- **Connection:** SSH over WiFi (both devices on same network)
+- **Why Pi 4 for robot?** 15W vs Pi 5's 25W — batteries last 2x longer
+
+### Setup Guides
+- [A1: Pi 500 OS Build](docs/setup/A1_PI500_OS_BUILD.md) — Image the control hub
+- [A2: Robot Pi OS Build](docs/setup/A1_ROBOT_PI_OS_BUILD.md) — Image the robot
+- [C1: Pi 500 Setup](docs/setup/C1_PI500_SETUP.md) — Connect monitor, WiFi
+- [C2: Connect and Test](docs/setup/C2_CONNECT_AND_TEST.md) — SSH to robot, verify hardware
 
 ### Hardware
 - **Drive:** Mecanum wheels (omnidirectional — forward, strafe, rotate, diagonal)

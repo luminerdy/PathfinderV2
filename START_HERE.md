@@ -6,27 +6,71 @@ Welcome! This guide walks you through PathfinderV2 from first power-on to autono
 
 ---
 
+## How It Works: Two Devices
+
+PathfinderV2 uses a **two-device architecture:**
+
+```
+┌──────────────────┐     WiFi/SSH      ┌──────────────────┐
+│  Pi 500 (You)    │ ───────────────── │  Robot (Pi 4)     │
+│  Control Hub      │                   │  Mobile Platform  │
+│                   │                   │                   │
+│  Write code       │  SSH commands ──► │  Motors + wheels  │
+│  Run scripts      │                   │  Arm + gripper    │
+│  Monitor camera   │  ◄── Video feed  │  Camera + sonar   │
+│  Debug + iterate  │                   │  Batteries        │
+└──────────────────┘                   └──────────────────┘
+     At your desk                          On the field
+```
+
+**You sit at the Pi 500.** The robot drives on the field. Every command goes over SSH.
+
+### First-Time Setup
+
+If your Pi 500 and robot aren't set up yet:
+1. [A1: Pi 500 OS Build](docs/setup/A1_PI500_OS_BUILD.md) — Image the SD card
+2. [A2: Robot Pi OS Build](docs/setup/A1_ROBOT_PI_OS_BUILD.md) — Image the robot SD card
+3. [C1: Pi 500 Setup](docs/setup/C1_PI500_SETUP.md) — Connect monitor, WiFi
+4. [C2: Connect and Test](docs/setup/C2_CONNECT_AND_TEST.md) — SSH to robot, verify hardware
+
+### Already Set Up? Connect Now
+
+```bash
+# From your Pi 500 terminal:
+ssh robot@<ROBOT_IP>
+# Password: (provided by facilitator)
+```
+
+---
+
 ## Before You Start
 
 ### What You Need
-- Raspberry Pi 4 robot with mecanum wheels, arm, camera, and sonar
+- **Pi 500** (your control hub) — connected to monitor, WiFi
+- **Robot** (Pi 4) with mecanum wheels, arm, camera, and sonar
 - 2× 18650 batteries (charged to 8.0V+)
-- Computer on same network (for web interface)
 - Colored blocks (red, blue, yellow — ~1.2 inch / 30mm)
 - Lime green tape (for line following)
 - AprilTags printed (tag36h11, IDs 578-585, 10" size) — optional for navigation
 
 ### Check Your Robot
+
+**From your Pi 500**, SSH into the robot and check battery:
 ```bash
-# SSH into robot or open terminal
-cd PathfinderV2
+ssh robot@<ROBOT_IP>
+cd /home/robot/pathfinder
 
 # Check battery (do this FIRST every time!)
-python3 scripts/tools/check_battery.py
-# Need: >7.0V for Pi 4, >8.2V for Pi 5
-
-# Quick hardware test
-python3 scripts/testing/test_hardware.py
+python3 -c "
+from lib.board import get_board
+import time
+board = get_board()
+time.sleep(2)
+mv = board.get_battery()
+if mv and 5000 < mv < 20000:
+    print('Battery: %.2fV' % (mv/1000.0))
+"
+# Need: >7.0V for Pi 4
 ```
 
 ---
