@@ -113,8 +113,13 @@ Two images needed per team: one for the Pi 500 (control hub), one for the Robot 
 2. **Boot and install robot dependencies:**
    ```bash
    sudo apt update && sudo apt upgrade -y
-   sudo apt install -y python3-opencv python3-pip python3-smbus i2c-tools
+   sudo apt install -y python3-opencv python3-pip python3-smbus i2c-tools code
    pip3 install pupil-apriltags numpy smbus2 flask --break-system-packages
+   ```
+
+3. **Install VS Code Python extension:**
+   ```bash
+   code --install-extension ms-python.python
    ```
 
 3. **Enable I2C:**
@@ -155,6 +160,7 @@ Two images needed per team: one for the Pi 500 (control hub), one for the Robot 
 |------|---------|
 | Raspberry Pi OS | Robot OS |
 | Python 3 + OpenCV + Flask | Vision + web control |
+| VS Code + Python extension | Local editing (via VNC) |
 | I2C + smbus2 | Motor/servo communication |
 | pupil-apriltags | Navigation |
 | PathfinderV2 code | All skills + scripts |
