@@ -115,6 +115,14 @@ Teams of 3 self-organize:
 - **Operator/Strategist** — Driving, deciding what to target
 - (In practice, everyone does everything)
 
+### House Coaches
+Each house has **1-2 coaches** — experienced facilitators who:
+- Help teams get unstuck (assembly, SSH, code issues)
+- Answer questions about rules and scoring
+- Provide hints when teams are frustrated (vague nudges, not solutions)
+- Run the competition timer and field judging
+- Do NOT write code for teams or touch robots during matches
+
 ---
 
 ## Match Format

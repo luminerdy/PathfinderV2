@@ -106,7 +106,7 @@ Each **house** = 7 teams competing together on one field.
 | Small screwdriver sets | 7 | One per house |
 | USB cables (various) | 14+ | 2 per house |
 | Timer (phone/tablet) | 7 | One per house |
-| Facilitator/judge per house | 2-3 | 1 lead + 1-2 helpers |
+| Coaches per house | 1-2 | Help teams, run matches, judge |
 
 ### Optional
 
