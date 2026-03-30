@@ -1,0 +1,13 @@
+# Gamepad Drive Configuration (D6)
+
+gamepad:
+  max_speed: 50        # Motor duty cycle limit (0-100)
+  turn_speed: 40       # In-place turn speed
+  deadzone: 0.15       # Stick deadzone (ignore small drift)
+  poll_rate: 50        # Hz (20ms per loop)
+  mode: "xinput"       # Back switch must be set to X
+
+# Tuning tips:
+# - Reduce max_speed for beginners (30 = gentle)
+# - Increase deadzone if robot creeps when sticks centered (0.15 -> 0.25)
+# - Reduce turn_speed if spins too aggressive
