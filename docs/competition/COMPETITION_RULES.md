@@ -2,7 +2,36 @@
 
 ## "Supply Chain Scramble" 🏭
 
-Your team runs a logistics operation. Colored packages (blocks) must be sorted and delivered to the correct shipping containers (baskets). Navigate obstacles, manage your robot fleet, and outscore the competition.
+### The Story
+
+**Year 2035. The last mile went autonomous.**
+
+Your company just won a contract to run the new automated sorting facility at the regional distribution center. Problem: you have 6 hours to get your fleet operational before the first shipment arrives.
+
+**The facility:**
+- A 10×10 foot warehouse floor
+- Three color-coded shipping containers along the loading dock
+- Navigation beacons on every wall
+- Narrow aisles between shelving
+- One main conveyor corridor
+
+**The shipment:**
+- 9 packages in three categories:
+  - 🔴 **Red** = Priority Express
+  - 🟡 **Yellow** = Standard Delivery
+  - 🔵 **Blue** = Economy
+
+**Your job:** Sort every package into the correct shipping container. Priority Express to red. Standard to yellow. Economy to blue. Wrong container? The customer gets the wrong order. That costs you.
+
+**The catch:** You're not alone. Competing logistics companies share the same warehouse floor. Same packages. Same containers. First come, first served. Your fleet of 6-7 robots needs to outperform the competition.
+
+**Your advantage:** You have an AI partner. Use it to write sorting algorithms, optimize routes, and debug your fleet in real-time. The companies that leverage AI effectively will sort faster, smarter, and win the contract.
+
+**The clock is ticking. The shipment arrives in 10 minutes.**
+
+*Sort it. Ship it. Score it.*
+
+---
 
 ---
 
