@@ -38,8 +38,8 @@ TAG_SEQUENCE = [578, 579, 580, 581, 580, 579]  # Sweep left to right and back
 
 # Navigation parameters
 CENTER_TOL = 80             # Pixels from center to count as "facing"
-TARGET_TAG_AREA = 2500      # Tag area to count as "reached"
-NAV_TIMEOUT = 30            # Seconds max per tag navigation
+TARGET_TAG_AREA = 5000      # Tag area to count as "reached" (must drive toward tag, not just see it)
+NAV_TIMEOUT = 45            # Seconds max per tag navigation (longer for actual driving)
 
 # Log file
 LOG_FILE = "/home/robot/pathfinder/battery_endurance_log.csv"
@@ -145,10 +145,10 @@ def navigate_to_tag(board, camera, target_tag_id, timeout=NAV_TIMEOUT):
             time.sleep(rot_time)
             stop(board)
         else:
-            # Drive toward tag
+            # Drive toward tag — longer bursts to actually cover ground
             board.set_motor_duty([(1, DRIVE_POWER), (2, DRIVE_POWER),
                                   (3, DRIVE_POWER), (4, DRIVE_POWER)])
-            time.sleep(0.12)
+            time.sleep(0.25)
 
     stop(board)
     return False
