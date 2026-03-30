@@ -166,24 +166,26 @@ scp robot@10.10.10.142:/home/robot/pathfinder/test_frame.jpg ~/
 
 ## Editing Code
 
-**Option A: Edit on Pi 500, copy to robot**
+**Option A: VS Code + Remote SSH (Recommended!)**
+1. Open VS Code on Pi 500
+2. `Ctrl+Shift+P` → "Remote-SSH: Connect to Host" → `robot@<ROBOT_IP>`
+3. Open folder: `/home/robot/pathfinder`
+4. Edit files directly on the robot with full IDE features
+5. Use VS Code's built-in terminal to run scripts
+(See [C1 Pi 500 Setup](C1_PI500_SETUP.md) for VS Code install)
+
+**Option B: Edit on Pi 500, copy to robot**
 ```bash
 # On Pi 500
 nano ~/PathfinderV2/skills/my_script.py
 # Then copy
-scp ~/PathfinderV2/skills/my_script.py robot@10.10.10.142:/home/robot/pathfinder/skills/
+scp ~/PathfinderV2/skills/my_script.py robot@<ROBOT_IP>:/home/robot/pathfinder/skills/
 ```
 
-**Option B: Edit directly on robot via SSH**
+**Option C: Edit directly on robot via SSH terminal**
 ```bash
 # While SSH'd into robot
 nano /home/robot/pathfinder/skills/my_script.py
-```
-
-**Option C: Use VNC for full remote desktop**
-```bash
-# From Pi 500 browser or VNC viewer
-# Connect to robot-ip:5900
 ```
 
 ---

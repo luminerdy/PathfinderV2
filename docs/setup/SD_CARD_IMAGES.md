@@ -40,8 +40,14 @@ Two images needed per team: one for the Pi 500 (control hub), one for the Robot 
 2. **Boot and install dependencies:**
    ```bash
    sudo apt update && sudo apt upgrade -y
-   sudo apt install -y python3-opencv python3-pip python3-pygame sshpass joystick
+   sudo apt install -y python3-opencv python3-pip python3-pygame sshpass joystick code
    pip3 install pupil-apriltags numpy --break-system-packages
+   ```
+
+3. **Install VS Code extensions:**
+   ```bash
+   code --install-extension ms-python.python
+   code --install-extension ms-vscode-remote.remote-ssh
    ```
 
 3. **Clone workshop repo:**
@@ -80,6 +86,7 @@ Two images needed per team: one for the Pi 500 (control hub), one for the Robot 
 |------|---------|
 | Raspberry Pi OS Desktop | Visual interface |
 | Python 3 + OpenCV + pygame | Run scripts + gamepad |
+| VS Code + Remote SSH | Edit robot code with full IDE |
 | SSH + sshpass | Connect to robot |
 | pupil-apriltags | AprilTag detection (for testing) |
 | PathfinderV2 repo | All skills, docs, competition rules |

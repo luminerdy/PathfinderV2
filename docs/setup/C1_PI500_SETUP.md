@@ -49,7 +49,33 @@ You'll use the terminal for everything in this workshop:
 
 Practice opening a terminal now. You'll be using it constantly.
 
-## Step 5: Verify Workshop Repo
+## Step 5: Install VS Code (Recommended)
+
+VS Code gives you a real code editor with syntax highlighting, file browser, and built-in terminal — much better than editing in nano.
+
+1. **Install:** Pi Menu → **Preferences** → **Recommended Software** → check **Visual Studio Code** → Apply
+2. **Or from terminal:**
+   ```bash
+   sudo apt install -y code
+   ```
+3. **Add extensions** (open VS Code, click Extensions icon on left):
+   - **Python** (Microsoft) — syntax highlighting, linting
+   - **Remote - SSH** (Microsoft) — edit files directly on the robot!
+
+### Remote SSH Setup (edit robot files from Pi 500)
+
+1. Open VS Code
+2. Press `Ctrl+Shift+P` → type "Remote-SSH: Connect to Host"
+3. Enter: `robot@<ROBOT_IP>`
+4. Enter password when prompted
+5. You're now editing files **on the robot** from your Pi 500!
+6. Open folder: `/home/robot/pathfinder`
+
+**This is the recommended workflow:** Edit code in VS Code on Pi 500, it saves directly to the robot. Open VS Code's built-in terminal to run scripts. No `scp` needed.
+
+---
+
+## Step 6: Verify Workshop Repo
 
 ```bash
 cd ~/PathfinderV2
