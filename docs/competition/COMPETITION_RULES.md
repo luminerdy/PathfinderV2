@@ -23,7 +23,7 @@ Your company just won a contract to run the new automated sorting facility at th
 
 **Your job:** Sort every package into the correct shipping container. Priority Express to red. Standard to yellow. Economy to blue. Wrong container? The customer gets the wrong order. That costs you.
 
-**The catch:** You're not alone. Competing logistics companies share the same warehouse floor. Same packages. Same containers. First come, first served. Your fleet of 6-7 robots needs to outperform the competition.
+**The catch:** You're not alone. Six other logistics companies share the same warehouse floor. Same packages. Same containers. First come, first served. Only 3 robots can operate at a time — manage your fleet wisely.
 
 **Your advantage:** You have an AI partner. Use it to write sorting algorithms, optimize routes, and debug your fleet in real-time. The companies that leverage AI effectively will sort faster, smarter, and win the contract.
 
@@ -89,18 +89,31 @@ ft  │  ╚═══╝     └────┘       │  (~14" wide)
 
 ---
 
-## Teams
+## Structure
 
-### Team Size
-- **6-7 members** per team
-- **6-7 robots** per team
+### Participants
+- **147 participants** total
+- **49 teams** of 3 people (randomly assigned)
+- **7 houses** of 7 teams each
 
-### Roles (Flexible)
-Teams self-organize. Common roles:
-- **Pit Crew** — Battery swaps, robot modifications, charging
-- **Coders** — Writing/modifying scripts on Pi 500
-- **Operators** — Running robots from Pi 500 via SSH
-- **Strategist** — Deciding which blocks to target, when to swap
+### What's a Team?
+- **3 people** + **1 robot** + **1 Pi 500**
+- Your team builds, programs, and operates your robot
+- All 3 members work together — no rigid roles
+
+### What's a House?
+- **7 teams** competing together on **one field**
+- Each house has its own competition field + practice field
+- **3 robots on the field** at a time (from any 3 teams in the house)
+- **4 robots in the pit** (charging, coding, modifying)
+- Teams tag-team swap robots on and off the field
+
+### Roles (Flexible Within Team)
+Teams of 3 self-organize:
+- **Builder/Modifier** — Robot assembly, physical modifications
+- **Coder** — Writing/modifying scripts on Pi 500
+- **Operator/Strategist** — Driving, deciding what to target
+- (In practice, everyone does everything)
 
 ---
 
@@ -110,8 +123,9 @@ Teams self-organize. Common roles:
 - **10 minutes** per match
 
 ### Robots on Field
-- **Maximum 3 robots** on field per team at any time
-- Remaining robots stay in the **pit area** (off-field)
+- **Maximum 3 robots** on field at any time (from any teams in the house)
+- Remaining robots stay in the **pit area** (charging, coding, modifying)
+- Any team can have their robot on the field — first come, first served
 
 ### Match Flow
 

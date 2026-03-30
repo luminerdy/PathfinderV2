@@ -4,6 +4,8 @@
 
 Two images needed per team: one for the Pi 500 (control hub), one for the Robot (Pi 4).
 
+**Scale:** 49 teams = 49 robot SD cards + 49 Pi 500 SD cards = **98 cards total.**
+
 ---
 
 ## Why Pre-Build?
@@ -155,13 +157,16 @@ Two images needed per team: one for the Pi 500 (control hub), one for the Robot 
 
 ## Naming Convention
 
-| Team | Pi 500 Hostname | Robot Hostname | Robot IP (example) |
-|------|----------------|----------------|-------------------|
-| Team 1 | pi500-team1 | robot-team1 | 10.10.10.101 |
-| Team 2 | pi500-team2 | robot-team2 | 10.10.10.102 |
-| Team 3 | pi500-team3 | robot-team3 | 10.10.10.103 |
+| House | Team | Pi 500 Hostname | Robot Hostname |
+|-------|------|----------------|----------------|
+| 1 | 1 | pi500-h1t1 | robot-h1t1 |
+| 1 | 2 | pi500-h1t2 | robot-h1t2 |
+| ... | ... | ... | ... |
+| 7 | 49 | pi500-h7t7 | robot-h7t7 |
 
-**Static IPs recommended** — configure in `/etc/dhcpcd.conf` or via router DHCP reservations.
+**Naming:** `h1t1` = House 1, Team 1. Each house has its own WiFi network or VLAN to avoid cross-house interference.
+
+**Static IPs recommended** — each house gets its own subnet (e.g., House 1 = 10.1.x.x, House 2 = 10.2.x.x).
 
 ---
 

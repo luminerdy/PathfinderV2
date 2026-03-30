@@ -9,7 +9,7 @@
 ### 2 Weeks Before
 - [ ] Order materials (blocks, baskets, foam tiles, tape, barriers)
 - [ ] Print AprilTags (tag36h11, IDs 578-585, 10"×10", 8 copies)
-- [ ] Confirm participant count and team assignments (3-4 per team)
+- [ ] Confirm participant count (147 → 49 teams of 3 → 7 houses of 7)
 - [ ] Confirm room setup (power outlets, tables, WiFi)
 - [ ] Test WiFi bandwidth (all devices connecting simultaneously)
 
@@ -26,7 +26,8 @@
 - [ ] Build competition field (see [Field Layout](FIELD_LAYOUT.md)) — 30-45 min
 - [ ] Place all AprilTags, verify visibility from all angles
 - [ ] Test one robot on the field (drive, sonar, camera, arm)
-- [ ] Set up team tables (Pi 500, monitor, mouse, power strip per team)
+- [ ] Set up team tables (Pi 500, monitor, mouse, power strip per team — 7 per house)
+- [ ] Set up practice fields (1 per house — smaller 6×6 or 8×8 for testing)
 - [ ] Place modification materials on each table
 - [ ] Print and place competition rules/quick reference at each station
 - [ ] Charge spare batteries
