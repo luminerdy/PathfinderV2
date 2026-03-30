@@ -27,7 +27,7 @@ Each **house** = 7 teams competing together on one field.
 | Hiwonder MasterPi robot kit | 1 | Chassis, mecanum wheels, arm, servos, camera |
 | Raspberry Pi 4 (4GB) | 1 | Robot brain |
 | microSD card — robot (32GB+) | 1 | Pre-imaged with robot OS |
-| 18650 batteries (pair) | 2-3 sets | 1 in robot + spares for swap |
+| 18650 batteries (pair) | 2 sets | 1 in robot + 1 spare (provided per team) |
 | Raspberry Pi 500 | 1 | Team control hub |
 | microSD card — Pi 500 (32GB+) | 1 | Pre-imaged with Pi 500 OS |
 | Portable monitor | 1 | HDMI for Pi 500 |
@@ -130,7 +130,7 @@ Each **house** = 7 teams competing together on one field.
 | Gamepad | 1 | 49 | — | — | **49** |
 | SD cards (robot) | 1 | 49 | — | — | **49** |
 | SD cards (Pi 500) | 1 | 49 | — | — | **49** |
-| 18650 pairs | 2-3 | 98-147 | — | — | **98-147** |
+| 18650 pairs | 2 | 98 | — | — | **98** |
 | Battery chargers | — | — | 3-4 | 21-28 | **21-28** |
 | Competition fields | — | — | 1 | 7 | **7** |
 | Practice fields | — | — | 1 | 7 | **7** |
@@ -150,7 +150,7 @@ Each **house** = 7 teams competing together on one field.
 | Portable monitor | $60-120 | 49 | $2,940-5,880 |
 | Logitech F710 | $35-50 | 49 | $1,715-2,450 |
 | microSD cards (32GB) | $8-12 | 98 | $784-1,176 |
-| 18650 batteries (pair) | $5-10 | 120 | $600-1,200 |
+| 18650 batteries (pair) | $5-10 | 98 | $490-980 |
 | Battery chargers | $10-20 | 25 | $250-500 |
 | **Equipment subtotal** | | | **$19,764-30,071** |
 | | | | |
