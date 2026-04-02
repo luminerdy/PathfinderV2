@@ -5,6 +5,9 @@ Gamepad Remote Control (D6)
 Drive robot with Logitech F710 wireless gamepad.
 Tank-style sticks + mecanum strafing + trigger speed + arm actions.
 
+Arm sequences ported from PathfinderBot V1 (pf_mecanum_gamepad_drive.py)
+with vendor-tested servo positions for reliable pickup/drop.
+
 Prerequisites:
   - F710 USB receiver plugged into Robot Pi
   - Gamepad on, back switch set to X (XInput)
@@ -14,19 +17,24 @@ Usage:
     python3 gamepad_drive.py
 
 Controls:
-  Left stick Y:   Tank drive (left side)
-  Right stick Y:  Tank drive (right side)
+  Left stick Y:   Tank drive (right side — swapped to match wiring)
+  Right stick Y:  Tank drive (left side — swapped to match wiring)
   Both sticks X:  Strafe left/right
-  Right trigger:  Forward (analog)
-  Left trigger:   Backward (analog)
-  Right bumper:   Turn right
-  Left bumper:    Turn left
-  D-pad Up:       Pickup block
-  D-pad Down:     Drop block
-  A:              Camera forward
-  B:              Camera down
+  Right trigger:  Forward (analog speed)
+  Left trigger:   Backward (analog speed)
+  Right bumper:   Turn right in place
+  Left bumper:    Turn left in place
+
+  D-pad Up:       Pickup block (front)
+  D-pad Down:     Backward drop block (into rear bin)
+  D-pad Left:     Left side pickup
+  D-pad Right:    Right side pickup
+
+  A:              Look forward (reset arm)
+  B:              Look sad
   Y:              Nod yes
   X:              Shake no
+
   Back:           EMERGENCY STOP
   Start:          Quit
 """
@@ -51,14 +59,207 @@ TURN_SPEED = 40         # In-place turn speed
 DEADZONE = 0.15         # Ignore stick values below this
 POLL_RATE = 50          # Hz (20ms per loop)
 
-# Arm positions
-POS_FORWARD = [(1, 2500), (3, 590), (4, 2450), (5, 700), (6, 1500)]
-POS_DOWN    = [(1, 2500), (3, 590), (4, 2450), (5, 1214), (6, 1500)]
-POS_PICKUP  = [(1, 2500), (3, 830), (4, 2170), (5, 2410), (6, 1500)]
-POS_GRAB    = [(1, 1475), (3, 830), (4, 2170), (5, 2410), (6, 1500)]
-POS_LIFT    = [(1, 1475), (3, 590), (4, 2450), (5, 700), (6, 1500)]
-POS_DROP    = [(1, 2500), (3, 830), (4, 2170), (5, 2410), (6, 1500)]
 
+# === ARM SEQUENCES (from V1 vendor-tested positions) ===
+# These use Board.set_servo_position(duration_ms, [(servo_id, pulse), ...])
+# Servo IDs: 1=gripper, 3=shoulder, 4=elbow, 5=wrist, 6=base rotation
+# Pulse range: 500-2500 (1500=center for rotation servos)
+
+def move_arm(board, position, duration_ms=800):
+    """Move arm to position and wait for completion."""
+    board.set_servo_position(duration_ms, position)
+    time.sleep(duration_ms / 1000.0 + 0.1)
+
+
+def look_forward(board):
+    """Reset arm to standard forward-looking pose."""
+    board.set_servo_position(500, [(1, 1500)])     # Gripper neutral
+    board.set_servo_position(1000, [(3, 700)])     # Shoulder
+    board.set_servo_position(1000, [(4, 2425)])    # Elbow
+    board.set_servo_position(1000, [(5, 790)])     # Wrist
+    board.set_servo_position(1000, [(6, 1500)])    # Base center
+    time.sleep(1)
+
+
+def look_sad(board):
+    """Sad expression — arm droops down."""
+    board.set_servo_position(1000, [(3, 800)])
+    board.set_servo_position(1000, [(4, 2500)])
+    board.set_servo_position(1000, [(5, 1900)])
+    board.set_servo_position(1000, [(6, 1500)])
+    time.sleep(0.5)
+    board.set_servo_position(1000, [(3, 600)])
+
+
+def say_yes(board):
+    """Nod the arm up and down."""
+    board.set_servo_position(1000, [(4, 2425)])
+    board.set_servo_position(1000, [(5, 790)])
+    board.set_servo_position(2000, [(3, 590)])
+    time.sleep(0.2)
+    for _ in range(3):
+        board.set_servo_position(200, [(3, 500)])
+        time.sleep(0.2)
+        board.set_servo_position(200, [(3, 900)])
+        time.sleep(0.2)
+    board.set_servo_position(200, [(3, 700)])
+
+
+def say_no(board):
+    """Shake the arm side to side."""
+    board.set_servo_position(1000, [(4, 2425)])
+    board.set_servo_position(1000, [(5, 790)])
+    time.sleep(0.2)
+    for _ in range(3):
+        board.set_servo_position(200, [(6, 1300)])
+        time.sleep(0.2)
+        board.set_servo_position(200, [(6, 1700)])
+        time.sleep(0.2)
+    board.set_servo_position(200, [(6, 1500)])
+    time.sleep(0.2)
+
+
+def pickup_block(board):
+    """Front pickup — reach down, grab block, lift.
+    
+    Vendor-tested sequence from PathfinderBot V1.
+    Robot must be positioned with block directly in front.
+    Keep people clear of arm during sequence!
+    """
+    print("  Pickup: Reaching down...")
+    # Start from forward pose with gripper neutral
+    board.set_servo_position(2000, [(1, 1500)])     # Gripper half-open
+    board.set_servo_position(2000, [(3, 590)])      # Shoulder up
+    board.set_servo_position(2000, [(4, 2500)])     # Elbow
+    board.set_servo_position(2000, [(5, 700)])      # Wrist
+    board.set_servo_position(2000, [(6, 1500)])     # Base center
+
+    # Lower wrist toward ground
+    board.set_servo_position(1000, [(5, 1818)])
+    time.sleep(1)
+
+    # Position for grab
+    board.set_servo_position(300, [(4, 2023)])
+    board.set_servo_position(300, [(5, 2091)])
+    time.sleep(0.3)
+
+    # Open gripper wide
+    board.set_servo_position(400, [(1, 1932)])
+    time.sleep(0.4)
+
+    # Lower shoulder, extend wrist to reach block
+    print("  Pickup: Grabbing...")
+    board.set_servo_position(800, [(3, 750)])
+    board.set_servo_position(800, [(5, 2364)])
+    time.sleep(0.8)
+
+    # Close gripper on block
+    board.set_servo_position(300, [(1, 1455)])
+    board.set_servo_position(300, [(5, 2318)])
+    time.sleep(0.3)
+
+    # Lift block
+    print("  Pickup: Lifting...")
+    board.set_servo_position(1000, [(5, 1841)])
+    time.sleep(1)
+
+    look_forward(board)
+    print("  Pickup complete!")
+
+
+def backward_drop_block(board):
+    """Drop block into rear-mounted bin.
+    
+    Folds arm backward over chassis using shoulder/elbow/wrist.
+    No base rotation — arm reaches over the top.
+    Vendor-tested sequence from PathfinderBot V1.
+    """
+    print("  Backward drop: Folding arm back...")
+    # Fold arm backward (gripper stays closed)
+    board.set_servo_position(2000, [(1, 1500)])     # Gripper closed
+    board.set_servo_position(2000, [(3, 2400)])     # Shoulder back
+    board.set_servo_position(2000, [(4, 700)])      # Elbow inverted
+    board.set_servo_position(2000, [(5, 1700)])     # Wrist adjusted
+    time.sleep(2)
+
+    # Open gripper to release block into bin
+    print("  Backward drop: Releasing...")
+    board.set_servo_position(2000, [(1, 2020)])
+    time.sleep(2.1)
+
+    look_forward(board)
+    print("  Backward drop complete!")
+
+
+def left_pickup_block(board):
+    """Pick up block from left side.
+    
+    Rotates base to left (servo 6=2500), reaches down, grabs.
+    Vendor-tested sequence from PathfinderBot V1.
+    """
+    print("  Left pickup: Reaching left...")
+    board.set_servo_position(1000, [(1, 2020)])     # Gripper open
+    board.set_servo_position(1000, [(3, 800)])      # Shoulder
+    board.set_servo_position(1000, [(4, 2020)])     # Elbow
+    board.set_servo_position(1000, [(5, 2091)])     # Wrist
+    board.set_servo_position(1000, [(6, 2500)])     # Base full left
+    time.sleep(1)
+
+    # Lower and grab
+    print("  Left pickup: Grabbing...")
+    board.set_servo_position(800, [(3, 900)])
+    board.set_servo_position(800, [(5, 2364)])
+    time.sleep(0.8)
+
+    # Close gripper
+    board.set_servo_position(500, [(1, 1455)])
+    board.set_servo_position(300, [(5, 2300)])
+    time.sleep(0.3)
+
+    # Lift
+    print("  Left pickup: Lifting...")
+    board.set_servo_position(1000, [(5, 1841)])
+    time.sleep(1)
+
+    look_forward(board)
+    print("  Left pickup complete!")
+
+
+def right_pickup_block(board):
+    """Pick up block from right side.
+    
+    Rotates base to right (servo 6=500), reaches down, grabs.
+    Vendor-tested sequence from PathfinderBot V1.
+    """
+    print("  Right pickup: Reaching right...")
+    board.set_servo_position(1000, [(1, 2020)])     # Gripper open
+    board.set_servo_position(1000, [(3, 800)])      # Shoulder
+    board.set_servo_position(1000, [(4, 1800)])     # Elbow (different from left!)
+    board.set_servo_position(1000, [(5, 2091)])     # Wrist
+    board.set_servo_position(1000, [(6, 500)])      # Base full right
+    time.sleep(1)
+
+    # Lower and grab
+    print("  Right pickup: Grabbing...")
+    board.set_servo_position(800, [(3, 800)])
+    board.set_servo_position(800, [(5, 2450)])
+    time.sleep(0.8)
+
+    # Close gripper
+    board.set_servo_position(500, [(1, 1455)])
+    board.set_servo_position(300, [(5, 2318)])
+    time.sleep(0.3)
+
+    # Lift
+    print("  Right pickup: Lifting...")
+    board.set_servo_position(1000, [(5, 1841)])
+    time.sleep(1)
+
+    look_forward(board)
+    print("  Right pickup complete!")
+
+
+# === DRIVE HELPERS ===
 
 def apply_deadzone(value):
     """Zero out small values (stick drift)."""
@@ -72,13 +273,18 @@ def clamp(value, min_val, max_val):
     return max(min_val, min(max_val, value))
 
 
+# === MAIN ===
+
 def main():
+    print("=" * 50)
+    print("GAMEPAD REMOTE CONTROL (D6)")
+    print("=" * 50)
+    print()
     print("Initializing robot hardware...")
     board = get_board()
 
     # Arm to forward position
-    board.set_servo_position(800, POS_FORWARD)
-    time.sleep(1)
+    look_forward(board)
 
     print("Initializing gamepad...")
     pygame.init()
@@ -96,8 +302,18 @@ def main():
     gamepad.init()
     print("Gamepad: %s" % gamepad.get_name())
     print()
-    print("Ready -- drive with sticks, triggers, bumpers!")
-    print("Back = STOP, Start = Quit")
+    print("Controls:")
+    print("  Sticks:     Tank drive + strafe")
+    print("  Triggers:   Forward/backward (analog)")
+    print("  Bumpers:    Turn in place")
+    print("  D-pad Up:   Pickup block (front)")
+    print("  D-pad Down: Drop into rear bin")
+    print("  D-pad Left: Left side pickup")
+    print("  D-pad Right:Right side pickup")
+    print("  A/B/X/Y:   Arm expressions")
+    print("  Back:       STOP  |  Start: Quit")
+    print()
+    print("Ready -- drive!")
     print()
 
     running = True
@@ -124,63 +340,58 @@ def main():
                         print("Quit")
                         running = False
 
-                    # A = camera forward
+                    # A = look forward (reset arm)
                     elif button == 0:
-                        board.set_servo_position(800, POS_FORWARD)
-                        print("Camera forward")
+                        print("Look forward")
+                        look_forward(board)
 
-                    # B = camera down
+                    # B = look sad
                     elif button == 1:
-                        board.set_servo_position(800, POS_DOWN)
-                        print("Camera down")
+                        print("Sad")
+                        look_sad(board)
 
                     # Y = nod yes
                     elif button == 3:
-                        for _ in range(3):
-                            board.set_servo_position(200, [(5, 900)])
-                            time.sleep(0.3)
-                            board.set_servo_position(200, [(5, 700)])
-                            time.sleep(0.3)
                         print("Yes!")
+                        say_yes(board)
 
                     # X = shake no
                     elif button == 2:
-                        for _ in range(3):
-                            board.set_servo_position(200, [(6, 1300)])
-                            time.sleep(0.3)
-                            board.set_servo_position(200, [(6, 1700)])
-                            time.sleep(0.3)
-                        board.set_servo_position(200, [(6, 1500)])
                         print("No!")
+                        say_no(board)
 
                 # D-pad
                 elif event.type == pygame.JOYHATMOTION:
                     hat = event.value
-                    # D-pad up = pickup
-                    if hat == (0, 1):
-                        print("Pickup sequence...")
-                        board.set_servo_position(1000, POS_PICKUP)
-                        time.sleep(1.5)
-                        board.set_servo_position(400, POS_GRAB)
-                        time.sleep(0.8)
-                        board.set_servo_position(1000, POS_LIFT)
-                        time.sleep(1.5)
-                        print("Picked up!")
 
-                    # D-pad down = drop
+                    # D-pad Up = front pickup
+                    if hat == (0, 1):
+                        print("Front pickup sequence...")
+                        # Stop motors during arm movement
+                        board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
+                        pickup_block(board)
+
+                    # D-pad Down = backward drop into bin
                     elif hat == (0, -1):
-                        print("Drop sequence...")
-                        board.set_servo_position(1000, POS_DROP)
-                        time.sleep(1.5)
-                        board.set_servo_position(500, [(1, 2500)])
-                        time.sleep(0.5)
-                        board.set_servo_position(800, POS_FORWARD)
-                        time.sleep(1)
-                        print("Dropped!")
+                        print("Backward drop sequence...")
+                        board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
+                        backward_drop_block(board)
+
+                    # D-pad Left = left side pickup
+                    elif hat == (-1, 0):
+                        print("Left side pickup...")
+                        board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
+                        left_pickup_block(board)
+
+                    # D-pad Right = right side pickup
+                    elif hat == (1, 0):
+                        print("Right side pickup...")
+                        board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
+                        right_pickup_block(board)
 
             # --- Continuous control (sticks + triggers) ---
 
-            # Read axes
+            # Read axes (V1 note: left/right sticks are swapped to match motor wiring)
             left_y = apply_deadzone(gamepad.get_axis(1))    # Left stick Y
             right_y = apply_deadzone(gamepad.get_axis(3))   # Right stick Y
             left_x = apply_deadzone(gamepad.get_axis(0))    # Left stick X (strafe)
@@ -241,7 +452,7 @@ def main():
 
     finally:
         board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
-        board.set_servo_position(800, POS_FORWARD)
+        look_forward(board)
         pygame.quit()
         print("Motors stopped, gamepad released")
 

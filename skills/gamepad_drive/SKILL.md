@@ -94,23 +94,33 @@ Triggers override sticks when pressed. Great for smooth, controlled approach.
 | **Right bumper** | Turn right in place |
 | **Left bumper** | Turn left in place |
 
-### D-Pad — Arm Actions
+### D-Pad — Arm Sequences (One-Press Macros)
 
 | Control | Action |
 |---------|--------|
-| **D-pad Up** | Pickup block sequence |
-| **D-pad Down** | Drop block (backward) |
-| **D-pad Left** | Look left |
-| **D-pad Right** | Look right |
+| **D-pad Up** | **Front pickup** — reach down, grab block, lift |
+| **D-pad Down** | **Backward drop** — fold arm back, release into rear bin |
+| **D-pad Left** | **Left side pickup** — rotate arm left, grab, lift |
+| **D-pad Right** | **Right side pickup** — rotate arm right, grab, lift |
 
-### Face Buttons — Arm Poses
+⚠️ These are full sequences (2-4 seconds each). Motors stop automatically during arm movement. Keep people clear of the arm!
+
+**Competition workflow:**
+1. Drive to block → **D-pad Up** (grab it)
+2. Block in gripper → **D-pad Down** (drop into rear bin)
+3. Repeat until bin is full
+4. Drive to basket → dump bin manually or push blocks in
+
+**Side pickups** let you grab blocks that aren't directly in front — great when you can't line up perfectly.
+
+### Face Buttons — Arm Expressions
 
 | Button | Action |
 |--------|--------|
-| **A** | Camera forward (reset pose) |
-| **B** | Camera down (look at floor) |
-| **Y** | Nod yes |
-| **X** | Shake no |
+| **A** | Look forward (reset arm to default pose) |
+| **B** | Look sad (arm droops — fun for demos!) |
+| **Y** | Nod yes (arm bobs up/down) |
+| **X** | Shake no (arm swings side to side) |
 
 ### Safety
 
