@@ -16,10 +16,14 @@ Why this works:
   - Forward camera only (no camera-down transition needed!)
   - Works at any battery voltage
 
-Usage:
-    python3 bump_grab.py              # Any color
-    python3 bump_grab.py red          # Red only
-    python3 bump_grab.py yellow       # Yellow only
+Usage (new — with Robot):
+    from robot import Robot
+    from skills.bump_grab import bump_grab
+    robot = Robot()
+    bump_grab(robot, color='red')
+
+Usage (standalone — backward compat):
+    python3 bump_grab.py red
 """
 
 import sys
@@ -31,93 +35,102 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'
 
 from lib.board import get_board, PLATFORM
 from skills.block_detect import BlockDetector
-from sdk.common.sonar import Sonar
+from lib.arm_positions import (
+    Arm, POS_CAMERA_FORWARD, POS_PICKUP_DOWN, POS_PICKUP_GRAB,
+    POS_LIFT, POS_CARRY, POS_PLACE_DOWN, POS_PLACE_OPEN
+)
 
 # === CONFIG ===
 
 ROTATION_POWER = 35
-DRIVE_POWER = 35          # Enough to reach block, not too fast to overshoot
-CENTER_TOLERANCE = 80     # Pixels from center to count as "centered"
-VANISH_FRAMES = 4         # Frames without detection = "contact"
-BACKUP_TIME = 0.12        # Seconds to back up after contact (~5mm)
+DRIVE_POWER = 35
+CENTER_TOLERANCE = 80
+VANISH_FRAMES = 4
+BACKUP_TIME = 0.12
 BACKUP_POWER = 30
-
-# Delivery positions (reverse of pickup)
-POS_PLACE_DOWN = [(1, 1475), (3, 830), (4, 2170), (5, 2410), (6, 1500)]  # Lower with block
-POS_PLACE_OPEN = [(1, 2500), (3, 830), (4, 2170), (5, 2410), (6, 1500)]  # Open gripper gently
-
-BATTERY_MIN = 7.0 if PLATFORM == 'pi4' else 8.1
-
-# Arm positions
-POS_CAMERA_FORWARD = [(1, 2500), (3, 590), (4, 2450), (5, 700), (6, 1500)]
-POS_PICKUP_DOWN    = [(1, 2500), (3, 830), (4, 2170), (5, 2410), (6, 1500)]  # Gripper OPEN
-POS_PICKUP_GRAB    = [(1, 1475), (3, 830), (4, 2170), (5, 2410), (6, 1500)]  # Gripper CLOSED
-POS_LIFT           = [(1, 1475), (3, 590), (4, 2450), (5, 700), (6, 1500)]
-POS_CARRY          = [(1, 1475), (3, 569), (4, 2400), (5, 809), (6, 1500)]
-
 FRAME_CENTER_X = 320
 
 
 # === HELPERS ===
 
-def stop(board):
-    board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
+def _stop(robot):
+    """Stop motors — works with Robot or raw board."""
+    if hasattr(robot, 'stop'):
+        robot.stop()
+    else:
+        robot.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
 
 
-def move_arm(board, position, duration_ms=800):
+def _drive(robot, fl, fr, rl, rr):
+    """Set motors — works with Robot or raw board."""
+    if hasattr(robot, 'drive'):
+        robot.drive(fl, fr, rl, rr)
+    else:
+        robot.set_motor_duty([(1, fl), (2, fr), (3, rl), (4, rr)])
+
+
+def _get_board(robot):
+    """Get the raw board from Robot or return board directly."""
+    return robot.board if hasattr(robot, 'board') else robot
+
+
+def _move_arm(board, position, duration_ms=800):
+    """Move arm to position and wait."""
     board.set_servo_position(duration_ms, position)
     time.sleep(duration_ms / 1000.0 + 0.2)
 
 
-def gentle_place(board):
-    """Place block gently by reversing the pickup sequence.
-    Lower arm with block, open gripper at ground level, retract arm.
-    No bounce — block placed, not dropped.
-    """
-    print("  Placing block gently...")
-    
-    # Lower arm slowly with block still gripped
-    print("    Lowering...")
-    move_arm(board, POS_PLACE_DOWN, 1200)  # Slow descent
-    time.sleep(0.3)
-    
-    # Open gripper at ground level (block rests on floor)
-    print("    Releasing...")
-    move_arm(board, POS_PLACE_OPEN, 500)
-    time.sleep(0.3)
-    
-    # Retract arm (block stays on floor)
-    print("    Retracting arm...")
-    move_arm(board, POS_CAMERA_FORWARD, 1000)
-    
-    print("    PLACED!")
-
-
-def get_fresh_frame(camera, flush=3):
-    """Flush buffer and get clean frame."""
+def _get_fresh_frame(camera, flush=3):
+    """Flush buffer and get clean frame. Works with Camera or cv2.VideoCapture."""
+    if hasattr(camera, 'get_frame'):
+        return camera.get_frame(flush=flush)
+    # Raw cv2.VideoCapture
     for _ in range(flush):
         camera.read()
     ret, frame = camera.read()
     return frame if ret else None
 
 
-# === PHASE 1: SCAN - Find and face a block ===
-
-def scan_and_face(board, camera, detector, color=None):
+def gentle_place(robot):
+    """Place block gently on the floor.
+    
+    Args:
+        robot: Robot instance or raw board
     """
-    Rotate to find a block and face it (center in frame).
+    board = _get_board(robot)
+    print("  Placing block gently...")
+    _move_arm(board, POS_PLACE_DOWN, 1200)
+    time.sleep(0.3)
+    _move_arm(board, POS_PLACE_OPEN, 500)
+    time.sleep(0.3)
+    _move_arm(board, POS_CAMERA_FORWARD, 1000)
+    print("    PLACED!")
+
+
+# === PHASE 1: SCAN ===
+
+def scan_and_face(robot, camera, detector, color=None):
+    """
+    Rotate to find a block and face it.
+    
+    Args:
+        robot: Robot instance or raw board
+        camera: Camera instance or cv2.VideoCapture
+        detector: BlockDetector instance
+        color: Target color or None for any
     
     Returns:
         True if facing a block within CENTER_TOLERANCE.
     """
+    board = _get_board(robot)
     print("PHASE 1: Scan and face block")
     print("-" * 40)
     
-    move_arm(board, POS_CAMERA_FORWARD, 800)
+    _move_arm(board, POS_CAMERA_FORWARD, 800)
     time.sleep(0.5)
     
     for step in range(24):
-        frame = get_fresh_frame(camera)
+        frame = _get_fresh_frame(camera)
         if frame is None:
             continue
         
@@ -131,30 +144,23 @@ def scan_and_face(board, camera, detector, color=None):
             print("  Step %d: %s at %dcm, offset=%+dpx" % (
                 step, b.color, b.estimated_distance_mm / 10, offset))
             
-            # Centered enough?
             if abs(offset) < CENTER_TOLERANCE:
                 print("  FACING BLOCK")
                 return True
             
-            # Rotate toward block
-            if offset < 0:
-                board.set_motor_duty([(1, -ROTATION_POWER), (2, ROTATION_POWER),
-                                      (3, -ROTATION_POWER), (4, ROTATION_POWER)])
-            else:
-                board.set_motor_duty([(1, ROTATION_POWER), (2, -ROTATION_POWER),
-                                      (3, ROTATION_POWER), (4, -ROTATION_POWER)])
+            d = 1 if offset > 0 else -1
+            _drive(robot, ROTATION_POWER * d, -ROTATION_POWER * d,
+                   ROTATION_POWER * d, -ROTATION_POWER * d)
             
-            # Shorter rotation when close to centered
             duration = 0.08 if abs(offset) < 150 else 0.15
             time.sleep(duration)
-            stop(board)
+            _stop(robot)
             time.sleep(0.3)
         else:
-            # Blind rotate to search
-            board.set_motor_duty([(1, ROTATION_POWER), (2, -ROTATION_POWER),
-                                  (3, ROTATION_POWER), (4, -ROTATION_POWER)])
+            _drive(robot, ROTATION_POWER, -ROTATION_POWER,
+                   ROTATION_POWER, -ROTATION_POWER)
             time.sleep(0.25)
-            stop(board)
+            _stop(robot)
             time.sleep(0.3)
     
     print("  No block found")
@@ -163,97 +169,105 @@ def scan_and_face(board, camera, detector, color=None):
 
 # === PHASE 2: DRIVE TO CONTACT ===
 
-def drive_to_contact(board, camera, detector, color=None):
+def drive_to_contact(robot, camera, detector, color=None):
     """
-    Drive forward using sonar to measure distance traveled.
-    Steer to keep block centered using camera.
-    Stop when distance traveled >= estimated block distance.
+    Drive forward toward block using timed drive.
     
-    Sonar measures distance to WALL. 
-    distance_traveled = start_sonar - current_sonar.
+    Args:
+        robot: Robot instance or raw board
+        camera: Camera instance or cv2.VideoCapture
+        detector: BlockDetector
+        color: Target color or None
     
     Returns:
-        True if we've driven to the block position.
+        True if driven to estimated block position.
     """
+    board = _get_board(robot)
     print("PHASE 2: Drive to contact")
     print("-" * 40)
     
-    # Get starting sonar (distance to wall ahead)
-    sonar = Sonar()
-    time.sleep(0.3)
-    start_dist = sonar.getDistance()  # mm from wall
-    if not start_dist or start_dist > 5000:
-        start_dist = 2000  # Default 200cm if no reading
+    # Try sonar for starting distance
+    start_dist = 2000  # Default 200cm
+    try:
+        if hasattr(robot, 'sonar') and robot.sonar:
+            d = robot.sonar.get_distance()
+            if d and d < 5000:
+                start_dist = d
+        else:
+            from lib.sonar import Sonar
+            sonar = Sonar()
+            time.sleep(0.3)
+            d = sonar.get_distance()
+            if d and d < 5000:
+                start_dist = d
+    except Exception:
+        pass
     
-    start_cm = start_dist / 10.0
-    print("  Sonar start: %.0fcm from wall" % start_cm)
+    print("  Sonar start: %.0fcm from wall" % (start_dist / 10.0))
     
-    # Get estimated block distance from camera
-    frame = get_fresh_frame(camera)
-    target_travel = 30  # Default: drive 30cm
+    # Estimate block distance from camera
+    frame = _get_fresh_frame(camera)
+    target_travel = 30
     
     if frame is not None:
         colors = [color] if color else None
         blocks = detector.detect(frame, colors=colors)
         if blocks:
             est_dist = blocks[0].estimated_distance_mm / 10.0
-            # Drive to ~5cm past the estimated block position
-            # (block estimate is rough, overshoot slightly to ensure contact)
             target_travel = est_dist + 5
             print("  Block estimated at %.0fcm, target travel: %.0fcm" % (est_dist, target_travel))
     
-    # Simple approach: drive straight for estimated time.
-    # At DRIVE_POWER=35 and 8V battery, ~15cm/sec.
-    # Add 5cm overshoot to ensure we reach/bump the block.
-    drive_time = (target_travel + 5) / 15.0  # seconds
-    drive_time = max(0.5, min(drive_time, 5.0))  # Clamp 0.5-5s
+    drive_time = (target_travel + 5) / 15.0
+    drive_time = max(0.5, min(drive_time, 5.0))
     
-    # Robot drifts RIGHT when driving "straight" — compensate with left bias
-    # Left motors slightly slower = gentle left pull
-    DRIFT_COMPENSATION = 3  # Reduce right motors by this amount
-    print("  Driving straight %.1fs (est %.0fcm, drift comp=%d)..." % (drive_time, target_travel, DRIFT_COMPENSATION))
-    board.set_motor_duty([(1, DRIVE_POWER), (2, DRIVE_POWER - DRIFT_COMPENSATION),
-                          (3, DRIVE_POWER), (4, DRIVE_POWER - DRIFT_COMPENSATION)])
+    DRIFT_COMPENSATION = 3
+    print("  Driving straight %.1fs (est %.0fcm)..." % (drive_time, target_travel))
+    _drive(robot, DRIVE_POWER, DRIVE_POWER - DRIFT_COMPENSATION,
+           DRIVE_POWER, DRIVE_POWER - DRIFT_COMPENSATION)
     time.sleep(drive_time)
-    stop(board)
+    _stop(robot)
     print("  CONTACT (timed drive)")
     return True
 
 
 # === PHASE 3: BACKUP AND GRAB ===
 
-def backup_and_grab(board):
+def backup_and_grab(robot):
     """
-    Back up slightly (block was bumped/pushed into position),
-    then lower arm with gripper open, close, lift.
+    Back up slightly, then lower arm, close gripper, lift.
+    
+    Args:
+        robot: Robot instance or raw board
     """
+    board = _get_board(robot)
     print("PHASE 3: Backup and grab")
     print("-" * 40)
     
-    # Tiny backup — just enough for gripper clearance, not enough to lose the block
     print("  Tiny backup...")
-    board.set_motor_duty([(1, -BACKUP_POWER), (2, -BACKUP_POWER),
-                          (3, -BACKUP_POWER), (4, -BACKUP_POWER)])
-    time.sleep(0.12)  # Very short — ~5mm
-    stop(board)
+    _drive(robot, -BACKUP_POWER, -BACKUP_POWER, -BACKUP_POWER, -BACKUP_POWER)
+    time.sleep(0.12)
+    _stop(robot)
     time.sleep(0.3)
     
-    # Lower arm with gripper OPEN (learned: must be open to go around block)
     print("  Lowering arm (gripper open)...")
-    move_arm(board, POS_PICKUP_DOWN, 1000)
+    _move_arm(board, POS_PICKUP_DOWN, 1000)
     time.sleep(0.5)
     
-    # Visual alignment: the block appears ~290px right of gripper center
-    # in the pickup view. Rotate right to compensate before grabbing.
+    # Visual alignment
     print("  Visual alignment...")
-    cam = cv2.VideoCapture(0)
-    time.sleep(0.5)
+    # Use robot's camera if available, otherwise open new one
+    own_camera = False
+    if hasattr(robot, 'camera') and robot.camera and robot.camera.is_open():
+        cam = robot.camera
+    else:
+        cam = cv2.VideoCapture(0)
+        time.sleep(0.5)
+        own_camera = True
     
     detector = BlockDetector()
     for adjust in range(8):
-        for _ in range(3): cam.read()
-        ret, frame = cam.read()
-        if not ret:
+        frame = _get_fresh_frame(cam)
+        if frame is None:
             break
         
         blocks = detector.detect(frame)
@@ -266,52 +280,110 @@ def backup_and_grab(board):
                 print("    Aligned!")
                 break
             
-            # Rotate to center the block under gripper
             d = 1 if offset > 0 else -1
-            rot_time = min(0.15, abs(offset) / 2000.0)
-            rot_time = max(0.05, rot_time)
-            board.set_motor_duty([(1, 35 * d), (2, -35 * d),
-                                  (3, 35 * d), (4, -35 * d)])
+            rot_time = max(0.05, min(0.15, abs(offset) / 2000.0))
+            _drive(robot, 35 * d, -35 * d, 35 * d, -35 * d)
             time.sleep(rot_time)
-            board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
+            _stop(robot)
             time.sleep(0.3)
         else:
             print("    No block visible")
             break
     
-    cam.release()
+    if own_camera:
+        cam.release()
     
-    # Close gripper around block
     print("  Grabbing...")
-    move_arm(board, POS_PICKUP_GRAB, 400)
+    _move_arm(board, POS_PICKUP_GRAB, 400)
     time.sleep(0.5)
     
-    # Lift
     print("  Lifting...")
-    move_arm(board, POS_LIFT, 1000)
+    _move_arm(board, POS_LIFT, 1000)
     time.sleep(0.5)
     
-    # Carry position
     print("  Carry position...")
-    move_arm(board, POS_CARRY, 800)
+    _move_arm(board, POS_CARRY, 800)
     
     print("  GRAB COMPLETE")
 
 
-# === MAIN ===
+# === MAIN ENTRY POINTS ===
 
-def bump_grab(color=None):
+def bump_grab(robot_or_color=None, color=None):
     """
     Full bump-and-grab pickup cycle.
     
-    Args:
-        color: 'red', 'blue', 'yellow', or None for any
-        
+    Accepts either:
+        bump_grab(robot, color='red')   # New Robot-based API
+        bump_grab(color='red')          # Legacy standalone
+        bump_grab('red')                # Legacy positional
+    
     Returns:
-        True if block grabbed (probable), False if failed
+        True if block grabbed, False if failed.
     """
+    # Detect calling convention
+    from robot import Robot as RobotClass
+    
+    if isinstance(robot_or_color, RobotClass):
+        return _bump_grab_robot(robot_or_color, color)
+    elif isinstance(robot_or_color, str):
+        return _bump_grab_standalone(robot_or_color)
+    else:
+        return _bump_grab_standalone(color)
+
+
+def _bump_grab_robot(robot, color=None):
+    """Bump-and-grab using Robot instance (no internal hardware creation)."""
     print("=" * 60)
     print("BUMP AND GRAB")
+    print("Platform: %s" % robot.platform)
+    print("Target: %s" % (color or "any color"))
+    print("=" * 60)
+    print()
+    
+    if not robot.battery_ok:
+        print("BATTERY TOO LOW")
+        return False
+    print("Battery: %.2fV" % robot.battery)
+    print()
+    
+    detector = BlockDetector()
+    
+    try:
+        if not scan_and_face(robot, robot.camera, detector, color):
+            print("\nFAILED: No block found")
+            return False
+        print()
+        
+        if not drive_to_contact(robot, robot.camera, detector, color):
+            print("\nFAILED: Could not reach block")
+            return False
+        print()
+        
+        backup_and_grab(robot)
+        
+        print()
+        print("=" * 60)
+        print("SUCCESS - Check if robot is holding a block!")
+        print("=" * 60)
+        return True
+    
+    except KeyboardInterrupt:
+        print("\nInterrupted")
+        return False
+    except Exception as e:
+        print("\nERROR: %s" % e)
+        import traceback
+        traceback.print_exc()
+        return False
+    finally:
+        _stop(robot)
+
+
+def _bump_grab_standalone(color=None):
+    """Legacy standalone bump-and-grab (creates own hardware)."""
+    print("=" * 60)
+    print("BUMP AND GRAB (standalone)")
     print("Platform: %s" % PLATFORM)
     print("Target: %s" % (color or "any color"))
     print("=" * 60)
@@ -319,13 +391,13 @@ def bump_grab(color=None):
     
     board = get_board()
     
-    # Battery check
     time.sleep(1)
     mv = board.get_battery()
     if mv and 5000 < mv < 20000:
         v = mv / 1000.0
         print("Battery: %.2fV" % v)
-        if v < BATTERY_MIN:
+        battery_min = 7.0 if PLATFORM == 'pi4' else 8.1
+        if v < battery_min:
             print("BATTERY TOO LOW")
             return False
     print()
@@ -338,20 +410,17 @@ def bump_grab(color=None):
     detector = BlockDetector()
     
     try:
-        # Phase 1: Find and face block
         if not scan_and_face(board, camera, detector, color):
             print("\nFAILED: No block found")
             return False
         print()
         
-        # Phase 2: Drive to contact (forward camera, block vanish = contact)
         if not drive_to_contact(board, camera, detector, color):
             print("\nFAILED: Could not reach block")
             return False
         print()
         
-        # Phase 3: Backup and grab
-        camera.release()  # Release before arm movement
+        camera.release()
         backup_and_grab(board)
         
         print()
@@ -363,15 +432,13 @@ def bump_grab(color=None):
     except KeyboardInterrupt:
         print("\nInterrupted")
         return False
-    
     except Exception as e:
         print("\nERROR: %s" % e)
         import traceback
         traceback.print_exc()
         return False
-    
     finally:
-        stop(board)
+        board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
         try:
             camera.release()
         except:

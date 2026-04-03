@@ -52,211 +52,13 @@ except ImportError:
     sys.exit(1)
 
 from lib.board import get_board
+from lib.arm_positions import Arm
 
 # === CONFIG ===
 MAX_SPEED = 50          # Maximum motor duty cycle (0-100)
 TURN_SPEED = 40         # In-place turn speed
 DEADZONE = 0.15         # Ignore stick values below this
 POLL_RATE = 50          # Hz (20ms per loop)
-
-
-# === ARM SEQUENCES (from V1 vendor-tested positions) ===
-# These use Board.set_servo_position(duration_ms, [(servo_id, pulse), ...])
-# Servo IDs: 1=gripper, 3=shoulder, 4=elbow, 5=wrist, 6=base rotation
-# Pulse range: 500-2500 (1500=center for rotation servos)
-
-def move_arm(board, position, duration_ms=800):
-    """Move arm to position and wait for completion."""
-    board.set_servo_position(duration_ms, position)
-    time.sleep(duration_ms / 1000.0 + 0.1)
-
-
-def look_forward(board):
-    """Reset arm to standard forward-looking pose."""
-    board.set_servo_position(500, [(1, 1500)])     # Gripper neutral
-    board.set_servo_position(1000, [(3, 700)])     # Shoulder
-    board.set_servo_position(1000, [(4, 2425)])    # Elbow
-    board.set_servo_position(1000, [(5, 790)])     # Wrist
-    board.set_servo_position(1000, [(6, 1500)])    # Base center
-    time.sleep(1)
-
-
-def look_sad(board):
-    """Sad expression — arm droops down."""
-    board.set_servo_position(1000, [(3, 800)])
-    board.set_servo_position(1000, [(4, 2500)])
-    board.set_servo_position(1000, [(5, 1900)])
-    board.set_servo_position(1000, [(6, 1500)])
-    time.sleep(0.5)
-    board.set_servo_position(1000, [(3, 600)])
-
-
-def say_yes(board):
-    """Nod the arm up and down."""
-    board.set_servo_position(1000, [(4, 2425)])
-    board.set_servo_position(1000, [(5, 790)])
-    board.set_servo_position(2000, [(3, 590)])
-    time.sleep(0.2)
-    for _ in range(3):
-        board.set_servo_position(200, [(3, 500)])
-        time.sleep(0.2)
-        board.set_servo_position(200, [(3, 900)])
-        time.sleep(0.2)
-    board.set_servo_position(200, [(3, 700)])
-
-
-def say_no(board):
-    """Shake the arm side to side."""
-    board.set_servo_position(1000, [(4, 2425)])
-    board.set_servo_position(1000, [(5, 790)])
-    time.sleep(0.2)
-    for _ in range(3):
-        board.set_servo_position(200, [(6, 1300)])
-        time.sleep(0.2)
-        board.set_servo_position(200, [(6, 1700)])
-        time.sleep(0.2)
-    board.set_servo_position(200, [(6, 1500)])
-    time.sleep(0.2)
-
-
-def pickup_block(board):
-    """Front pickup — reach down, grab block, lift.
-    
-    Vendor-tested sequence from PathfinderBot V1.
-    Robot must be positioned with block directly in front.
-    Keep people clear of arm during sequence!
-    """
-    print("  Pickup: Reaching down...")
-    # Start from forward pose with gripper neutral
-    board.set_servo_position(2000, [(1, 1500)])     # Gripper half-open
-    board.set_servo_position(2000, [(3, 590)])      # Shoulder up
-    board.set_servo_position(2000, [(4, 2500)])     # Elbow
-    board.set_servo_position(2000, [(5, 700)])      # Wrist
-    board.set_servo_position(2000, [(6, 1500)])     # Base center
-
-    # Lower wrist toward ground
-    board.set_servo_position(1000, [(5, 1818)])
-    time.sleep(1)
-
-    # Position for grab
-    board.set_servo_position(300, [(4, 2023)])
-    board.set_servo_position(300, [(5, 2091)])
-    time.sleep(0.3)
-
-    # Open gripper wide
-    board.set_servo_position(400, [(1, 1932)])
-    time.sleep(0.4)
-
-    # Lower shoulder, extend wrist to reach block
-    print("  Pickup: Grabbing...")
-    board.set_servo_position(800, [(3, 750)])
-    board.set_servo_position(800, [(5, 2364)])
-    time.sleep(0.8)
-
-    # Close gripper on block
-    board.set_servo_position(300, [(1, 1455)])
-    board.set_servo_position(300, [(5, 2318)])
-    time.sleep(0.3)
-
-    # Lift block
-    print("  Pickup: Lifting...")
-    board.set_servo_position(1000, [(5, 1841)])
-    time.sleep(1)
-
-    look_forward(board)
-    print("  Pickup complete!")
-
-
-def backward_drop_block(board):
-    """Drop block into rear-mounted bin.
-    
-    Folds arm backward over chassis using shoulder/elbow/wrist.
-    No base rotation — arm reaches over the top.
-    Vendor-tested sequence from PathfinderBot V1.
-    """
-    print("  Backward drop: Folding arm back...")
-    # Fold arm backward (gripper stays closed)
-    board.set_servo_position(2000, [(1, 1500)])     # Gripper closed
-    board.set_servo_position(2000, [(3, 2400)])     # Shoulder back
-    board.set_servo_position(2000, [(4, 700)])      # Elbow inverted
-    board.set_servo_position(2000, [(5, 1700)])     # Wrist adjusted
-    time.sleep(2)
-
-    # Open gripper to release block into bin
-    print("  Backward drop: Releasing...")
-    board.set_servo_position(2000, [(1, 2020)])
-    time.sleep(2.1)
-
-    look_forward(board)
-    print("  Backward drop complete!")
-
-
-def left_pickup_block(board):
-    """Pick up block from left side.
-    
-    Rotates base to left (servo 6=2500), reaches down, grabs.
-    Vendor-tested sequence from PathfinderBot V1.
-    """
-    print("  Left pickup: Reaching left...")
-    board.set_servo_position(1000, [(1, 2020)])     # Gripper open
-    board.set_servo_position(1000, [(3, 800)])      # Shoulder
-    board.set_servo_position(1000, [(4, 2020)])     # Elbow
-    board.set_servo_position(1000, [(5, 2091)])     # Wrist
-    board.set_servo_position(1000, [(6, 2500)])     # Base full left
-    time.sleep(1)
-
-    # Lower and grab
-    print("  Left pickup: Grabbing...")
-    board.set_servo_position(800, [(3, 900)])
-    board.set_servo_position(800, [(5, 2364)])
-    time.sleep(0.8)
-
-    # Close gripper
-    board.set_servo_position(500, [(1, 1455)])
-    board.set_servo_position(300, [(5, 2300)])
-    time.sleep(0.3)
-
-    # Lift
-    print("  Left pickup: Lifting...")
-    board.set_servo_position(1000, [(5, 1841)])
-    time.sleep(1)
-
-    look_forward(board)
-    print("  Left pickup complete!")
-
-
-def right_pickup_block(board):
-    """Pick up block from right side.
-    
-    Rotates base to right (servo 6=500), reaches down, grabs.
-    Vendor-tested sequence from PathfinderBot V1.
-    """
-    print("  Right pickup: Reaching right...")
-    board.set_servo_position(1000, [(1, 2020)])     # Gripper open
-    board.set_servo_position(1000, [(3, 800)])      # Shoulder
-    board.set_servo_position(1000, [(4, 1800)])     # Elbow (different from left!)
-    board.set_servo_position(1000, [(5, 2091)])     # Wrist
-    board.set_servo_position(1000, [(6, 500)])      # Base full right
-    time.sleep(1)
-
-    # Lower and grab
-    print("  Right pickup: Grabbing...")
-    board.set_servo_position(800, [(3, 800)])
-    board.set_servo_position(800, [(5, 2450)])
-    time.sleep(0.8)
-
-    # Close gripper
-    board.set_servo_position(500, [(1, 1455)])
-    board.set_servo_position(300, [(5, 2318)])
-    time.sleep(0.3)
-
-    # Lift
-    print("  Right pickup: Lifting...")
-    board.set_servo_position(1000, [(5, 1841)])
-    time.sleep(1)
-
-    look_forward(board)
-    print("  Right pickup complete!")
 
 
 # === DRIVE HELPERS ===
@@ -282,9 +84,10 @@ def main():
     print()
     print("Initializing robot hardware...")
     board = get_board()
+    arm = Arm(board)
 
     # Arm to forward position
-    look_forward(board)
+    arm.look_forward()
 
     print("Initializing gamepad...")
     pygame.init()
@@ -343,22 +146,22 @@ def main():
                     # A = look forward (reset arm)
                     elif button == 0:
                         print("Look forward")
-                        look_forward(board)
+                        arm.look_forward()
 
                     # B = look sad
                     elif button == 1:
                         print("Sad")
-                        look_sad(board)
+                        arm.look_sad()
 
                     # Y = nod yes
                     elif button == 3:
                         print("Yes!")
-                        say_yes(board)
+                        arm.say_yes()
 
                     # X = shake no
                     elif button == 2:
                         print("No!")
-                        say_no(board)
+                        arm.say_no()
 
                 # D-pad
                 elif event.type == pygame.JOYHATMOTION:
@@ -367,27 +170,26 @@ def main():
                     # D-pad Up = front pickup
                     if hat == (0, 1):
                         print("Front pickup sequence...")
-                        # Stop motors during arm movement
                         board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
-                        pickup_block(board)
+                        arm.pickup_front()
 
                     # D-pad Down = backward drop into bin
                     elif hat == (0, -1):
                         print("Backward drop sequence...")
                         board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
-                        backward_drop_block(board)
+                        arm.backward_drop()
 
                     # D-pad Left = left side pickup
                     elif hat == (-1, 0):
                         print("Left side pickup...")
                         board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
-                        left_pickup_block(board)
+                        arm.pickup_left()
 
                     # D-pad Right = right side pickup
                     elif hat == (1, 0):
                         print("Right side pickup...")
                         board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
-                        right_pickup_block(board)
+                        arm.pickup_right()
 
             # --- Continuous control (sticks + triggers) ---
 
@@ -452,7 +254,7 @@ def main():
 
     finally:
         board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
-        look_forward(board)
+        arm.look_forward()
         pygame.quit()
         print("Motors stopped, gamepad released")
 
