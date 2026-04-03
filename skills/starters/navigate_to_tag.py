@@ -33,7 +33,7 @@ import time
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../..'))
 
 from lib.board import get_board
-from sdk.common.sonar import Sonar
+from lib.sonar import Sonar
 import pupil_apriltags as apriltag
 
 # ============================================================

@@ -30,7 +30,7 @@ import time
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
 from lib.board import get_board
-from hardware.sonar import Sonar
+from lib.sonar import Sonar
 
 def main():
     print("=" * 60)
