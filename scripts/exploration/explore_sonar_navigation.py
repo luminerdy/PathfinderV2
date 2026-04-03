@@ -7,7 +7,7 @@ Let me figure out how to integrate it for obstacle avoidance and safety.
 """
 
 import time
-from hardware.sonar import Sonar
+from lib.sonar import Sonar
 from lib.board import get_board as BoardController
 
 print("="*70)

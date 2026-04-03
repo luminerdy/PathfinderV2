@@ -7,9 +7,9 @@ Determines optimal angles for navigation vs block detection
 import sys
 import sys; from pathlib import Path; sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from hardware.arm import Arm
-from hardware.camera import Camera
-from capabilities.vision import Vision
+from lib.arm_positions import Arm
+from lib.camera import Camera
+from skills.block_detect import BlockDetector  # was: capabilities.vision.Vision
 import cv2
 import time
 

@@ -1,86 +1,76 @@
 #!/usr/bin/env python3
 """
 Start Robot - Initialize and verify robot is ready
-Similar to PathfinderBot's pf_start_robot.py
+
+Usage:
+    python3 start_robot.py
 """
 
 import sys
+import os
 import time
-import yaml
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from hardware import Board, Arm
-
-# Load config
-with open(Path(__file__).parent / 'config.yaml', 'r') as f:
-    config = yaml.safe_load(f)
+from lib.board import get_board, PLATFORM
+from lib.arm_positions import Arm
 
 
 def main():
-    """Initialize robot to starting position"""
-    print("\n" + "="*50)
+    """Initialize robot to starting position."""
+    print()
+    print("=" * 50)
     print("  PATHFINDER ROBOT - STARTUP")
-    print("="*50)
-    
+    print("=" * 50)
+
     try:
-        # Initialize board
         print("\n1. Connecting to board...")
-        hw_config = config['hardware']
-        board = Board(
-            device=hw_config['board']['serial_port'],
-            baudrate=hw_config['board']['baud_rate']
-        )
-        print("   OK Board connected")
-        
-        # Check battery
-        voltage = board.get_battery_voltage()
-        if voltage:
-            print(f"   Battery: {voltage:.2f}V", end="")
-            if voltage < 6.8:
-                print(" WARN LOW!")
-            elif voltage < 7.0:
-                print(" (caution)")
-            else:
-                print(" (good)")
-        
-        # Startup beep
-        print("\n2. Running startup sequence...")
-        board.beep(0.1)
-        time.sleep(0.2)
-        board.beep(0.1)
-        
-        # Initialize arm
+        board = get_board()
+        print("   Platform: %s" % PLATFORM)
+
+        time.sleep(1)
+        mv = board.get_battery()
+        if mv and 5000 < mv < 20000:
+            v = mv / 1000.0
+            status = "good" if v >= 7.5 else ("caution" if v >= 7.0 else "LOW!")
+            print("   Battery: %.2fV (%s)" % (v, status))
+
+        print("\n2. Startup beep...")
+        try:
+            board.set_buzzer(1)
+            time.sleep(0.1)
+            board.set_buzzer(0)
+            time.sleep(0.2)
+            board.set_buzzer(1)
+            time.sleep(0.1)
+            board.set_buzzer(0)
+        except Exception:
+            pass
+
         print("\n3. Initializing arm...")
         arm = Arm(board)
-        
-        print("   Moving to home position...")
-        arm.home(duration=2.5)
-        
-        print("   Opening gripper...")
-        arm.open_gripper(duration=1.0)
-        time.sleep(1)
-        
-        # Ready signal
+        arm.camera_forward()
+        arm.gripper_open()
+        time.sleep(0.5)
+
         print("\n4. Robot ready!")
-        board.set_rgb(0, 255, 0)  # Green = ready
-        board.beep(0.05)
-        time.sleep(0.1)
-        board.beep(0.05)
-        time.sleep(2)
-        board.rgb_off()
-        
-        board.close()
-        
-        print("\n" + "="*50)
-        print("  OK STARTUP COMPLETE")
-        print("="*50)
-        print("\nRobot is initialized and ready for operation.")
-        print("Arm is in home position with gripper open.\n")
-        
+        try:
+            from lib.sonar import Sonar
+            sonar = Sonar()
+            sonar.set_led_color(0, 255, 0)  # Green = ready
+            time.sleep(2)
+            sonar.off()
+        except Exception:
+            pass
+
+        print()
+        print("=" * 50)
+        print("  STARTUP COMPLETE")
+        print("=" * 50)
+        print()
+
     except Exception as e:
-        print(f"\nFAIL Startup failed: {e}")
+        print("\nFAIL: %s" % e)
         import traceback
         traceback.print_exc()
         sys.exit(1)

@@ -7,7 +7,7 @@ Shows what blocks robot can see
 import cv2
 import time
 import yaml
-from capabilities.vision import VisionSystem
+from skills.block_detect import BlockDetector  # was: capabilities.vision
 
 def main():
     print("=" * 60)

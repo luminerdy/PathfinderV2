@@ -13,7 +13,7 @@ import cv2
 import time
 import math
 from lib.board import get_board as BoardController
-from hardware.sonar import Sonar
+from lib.sonar import Sonar
 from pupil_apriltags import Detector
 
 print("="*70)

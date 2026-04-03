@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+# DEPRECATED: This was the Day 0 aspirational entry point.
+# It references hardware modules that were never built.
+# Use robot.py instead:
+#
+#   from robot import Robot
+#   with Robot() as robot:
+#       robot.status()
+#
 """
 Pathfinder Robot - Main Entry Point
 A clean, modular framework for educational mobile robots

@@ -9,7 +9,7 @@ import time
 import json
 from lib.board import get_board as BoardController
 from pupil_apriltags import Detector
-from hardware.sonar import Sonar
+from lib.sonar import Sonar
 
 print("=" * 60)
 print("APRILTAG DISTANCE CALIBRATION")

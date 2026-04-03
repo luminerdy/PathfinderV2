@@ -95,7 +95,7 @@ def main():
     if args.battery_check:
         print("Checking battery...")
         try:
-            from hardware import Board
+            from lib.board import get_board  # was: from hardware import Board
             board = Board()
             import time
             time.sleep(0.5)

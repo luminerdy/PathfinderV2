@@ -7,7 +7,7 @@ Determines how close robot needs to be to pickup blocks
 import sys
 import sys; from pathlib import Path; sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from hardware.arm import Arm
+from lib.arm_positions import Arm
 from lib.arm_inverse_kinematics import ArmIK
 import time
 import json

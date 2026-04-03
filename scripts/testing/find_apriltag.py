@@ -24,7 +24,7 @@ USAGE:
 import cv2
 import time
 from lib.board import get_board as BoardController
-from capabilities.vision import VisionSystem
+from skills.block_detect import BlockDetector  # was: capabilities.vision
 import yaml
 
 class AprilTagFinder:

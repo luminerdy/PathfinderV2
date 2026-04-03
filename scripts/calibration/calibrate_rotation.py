@@ -21,7 +21,7 @@ import time
 import math
 from pupil_apriltags import Detector
 from lib.board import get_board as BoardController
-from hardware.sonar import Sonar
+from lib.sonar import Sonar
 
 print("="*70)
 print("ROTATION CALIBRATION")

@@ -9,7 +9,7 @@ of all walls, then moves toward the most open space (center).
 import time
 import math
 from lib.board import get_board as BoardController
-from hardware.sonar import Sonar
+from lib.sonar import Sonar
 
 print("="*70)
 print("GO TO CENTER - 360° Scan Method")

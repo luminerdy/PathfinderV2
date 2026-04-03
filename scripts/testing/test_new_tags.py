@@ -7,7 +7,7 @@ Tests detection quality and range with larger tags
 import sys
 import sys; from pathlib import Path; sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from hardware.camera import Camera
+from lib.camera import Camera
 from pupil_apriltags import Detector
 import cv2
 import time

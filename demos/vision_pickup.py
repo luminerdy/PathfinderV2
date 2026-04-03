@@ -18,7 +18,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from pathfinder import Pathfinder
-from capabilities.pickup import VisualPickupController
+# DEPRECATED: from capabilities.pickup import VisualPickupController
 
 logging.basicConfig(
     level=logging.INFO,

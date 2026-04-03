@@ -17,7 +17,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from hardware import Board, Chassis
+from lib.board import get_board  # was: from hardware import Board, Chassis
 
 
 def test_minimum_speed(chassis: Chassis):
