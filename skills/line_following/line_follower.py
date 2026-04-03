@@ -80,25 +80,60 @@ class LineFollower:
     # Arm position for camera down
     ARM_CAMERA_DOWN = [(1, 2500), (3, 590), (4, 2450), (5, 1214), (6, 1500)]
     
-    def __init__(self, board=None):
-        self.board = board or get_board()
+    def __init__(self, robot=None, board=None):
+        """
+        Initialize line follower.
+        
+        Args:
+            robot: Robot instance (preferred) — shares camera
+            board: Raw board (legacy) — creates own camera
+        """
+        self._robot = robot
+        self._own_camera = False
+        
+        if robot and hasattr(robot, 'board'):
+            self.board = robot.board
+        elif board:
+            self.board = board
+        else:
+            self.board = get_board()
+        
         self.camera = None
         self.kernel = np.ones((self.KERNEL_SIZE, self.KERNEL_SIZE), np.uint8)
     
     def _open_camera(self):
-        if self.camera is None or not self.camera.isOpened():
+        # Use robot's camera if available (don't create a second one)
+        if self._robot and hasattr(self._robot, 'camera') and self._robot.camera:
+            self.camera = self._robot.camera
+            return
+        
+        if self.camera is None or (hasattr(self.camera, 'isOpened') and not self.camera.isOpened()):
             self.camera = cv2.VideoCapture(0)
             self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, self.FRAME_W)
             self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.FRAME_H)
             time.sleep(1.0)
+            self._own_camera = True
     
     def _close_camera(self):
-        if self.camera and self.camera.isOpened():
+        # Only release camera if we created it
+        if self._own_camera and self.camera and hasattr(self.camera, 'release'):
             self.camera.release()
             self.camera = None
     
+    def _get_frame(self):
+        """Get frame from whichever camera source we have."""
+        if hasattr(self.camera, 'get_raw_frame'):
+            return self.camera.get_raw_frame()
+        if self.camera:
+            ret, frame = self.camera.read()
+            return frame if ret else None
+        return None
+    
     def _stop(self):
-        self.board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
+        if self._robot and hasattr(self._robot, 'stop'):
+            self._robot.stop()
+        else:
+            self.board.set_motor_duty([(1, 0), (2, 0), (3, 0), (4, 0)])
     
     def _drive(self, forward, steer):
         """
@@ -249,8 +284,8 @@ class LineFollower:
         """
         for step in range(max_rotations):
             # Capture and check
-            ret, frame = self.camera.read()
-            if not ret:
+            frame = self._get_frame()
+            if frame is None:
                 continue
             
             detection = self.detect_line(frame)
@@ -300,8 +335,8 @@ class LineFollower:
         
         try:
             while time.time() - start < timeout:
-                ret, frame = self.camera.read()
-                if not ret:
+                frame = self._get_frame()
+                if frame is None:
                     continue
                 
                 frames += 1
