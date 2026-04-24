@@ -56,16 +56,15 @@ Each **house** = 7 teams competing together on one field.
 | Item | Qty | Notes |
 |------|-----|-------|
 | Interlocking foam tiles (2'×2') | 25 | 10×10 ft field |
-| Foam board wall panels (18-24" tall) | 8-12 | Field borders |
+| Black landscape edging (49ft + spikes) | 1 roll | Outer perimeter boundary — ⚠️ test Apr 25 ([Amazon](https://a.co/d/078fNmPe)) |
 | Printed AprilTags (10"×10") | 8 | tag36h11, IDs 578-585 |
-| Colored baskets — Red | 1 | Shopping basket/bin |
-| Colored baskets — Yellow | 1 | |
-| Colored baskets — Blue | 1 | |
-| Colored blocks — Red (~1.2") | 3 | Wood or plastic cubes |
-| Colored blocks — Yellow (~1.2") | 3 | |
-| Colored blocks — Blue (~1.2") | 3 | |
-| Fixed barriers (heavy boxes) | 1-2 | 18"L × 6"W × 12"H |
-| Pushable barriers (light boxes) | 1-2 | 12"L × 4"W × 8"H |
+| 6"×6" unfinished wooden boxes | 3 | Delivery zones — paint/tape Red, Yellow, Blue ([Amazon](https://a.co/d/0aKvlW4K)) |
+| Self-adhesive caster wheels | 1 set (24pc) | Optional rollers for wooden boxes ([Amazon](https://a.co/d/00kaBTgh)) |
+| Colored blocks — Red (~1.2") | many | Wood or plastic cubes |
+| Colored blocks — Yellow (~1.2") | many | |
+| Colored blocks — Blue (~1.2") | many | |
+| Fixed barriers (cardboard boxes) | 1-2 | 12"×4"×3", taped to floor ([Amazon](https://a.co/d/05WVl2Vm)) |
+| Foam pit cubes (pushable barriers) | several | 5"×5"×5", sonar-absorbing! ([Amazon](https://a.co/d/0cYsjSSX)) |
 | Lime green tape (fluorescent) | 1 roll | Line following passage |
 | Colored tape (start zones) | 1 roll | Mark start/swap zones |
 
@@ -134,7 +133,7 @@ Each **house** = 7 teams competing together on one field.
 | Battery chargers | — | — | 3-4 | 21-28 | **21-28** |
 | Competition fields | — | — | 1 | 7 | **7** |
 | Practice fields | — | — | 1 | 7 | **7** |
-| Basket sets (3) | — | — | 1 | 7 | **21** |
+| Wooden box sets (3) + rollers | — | — | 1 | 7 | **21 boxes + 7 roller sets** |
 | Block sets (9) | — | — | 1 | 7 | **63** |
 | AprilTag sets (8) | — | — | 1+practice | 7+7 | **~96** |
 

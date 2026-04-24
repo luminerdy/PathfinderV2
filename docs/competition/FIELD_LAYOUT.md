@@ -8,7 +8,8 @@
 
 - **Size:** 10 × 10 feet (3m × 3m)
 - **Surface:** Interlocking foam tiles (dark gray/black)
-- **Walls:** Foam board, cardboard, or PVC panels — 18-24" tall
+- **Perimeter:** Flexible black landscape edging (49ft roll + 75 spikes), 4" tall
+  - ⚠️ *Testing needed Apr 25: verify rigidity and robot boundary detection*
 
 ---
 
@@ -20,8 +21,8 @@
     │                             │
     │  ╔═══════════════════════╗  │  NORTH WALL
     │  ║  SCORING / DELIVERY   ║  │  Tags 578, 579
-    │  ║  🧺B    🧺Y    🧺R   ║  │
-    │  ║  578    579    580    ║  │  Baskets under tags
+    │  ║  📦B    📦Y    📦R   ║  │
+    │  ║  578    579    580    ║  │  Boxes under tags
     │  ╚═══════════════════════╝  │
     │                             │
   W │     ┌──────┐    ┌──────┐    │ E
@@ -35,7 +36,7 @@
   L │         (green tape)        │ L
     │                             │
     │   🔴 🟡 🔵                  │  BLOCK ZONE
-    │      🔴 🟡 🔵              │  9 blocks scattered
+    │      🔴 🟡 🔵              │  many blocks (3 colors)
     │         🔴 🟡 🔵           │
     │                             │
     │  ┌─────┐┌─────┐┌─────┐     │  SOUTH WALL
@@ -60,7 +61,7 @@
 
 | Wall | Tag IDs | Position |
 |------|---------|----------|
-| North | 578, 579 | Evenly spaced, above baskets |
+| North | 578, 579 | Evenly spaced, above delivery boxes |
 | East | 580, 581 | Evenly spaced |
 | South | 582, 583 | Above start zones |
 | West | 584, 585 | Evenly spaced |
@@ -77,29 +78,35 @@
 
 ---
 
-## Baskets
+## Delivery Boxes *(replaces baskets)*
 
 ### Specifications
+- **Type:** 6"×6" unfinished wooden boxes
+  - [Amazon: 8-pack ~$22.99](https://a.co/d/0aKvlW4K)
 - **Quantity:** 3 (one per color)
-- **Type:** Small plastic shopping baskets or bins
-- **Colors:** Red, Yellow, Blue
-  - Use colored baskets, or white baskets with colored tape/paper
-- **Size:** ~12" × 8" × 6" (large enough for 3+ blocks)
+- **Color coding:** Paint or tape exterior — Red, Yellow, Blue
+- **Optional rollers:** Self-adhesive 360° caster wheels on underside
+  - [Amazon: 24pc caster set](https://a.co/d/00kaBTgh)
+  - Allows box to be pushed/rolled to destination as alternate strategy
+
+### Mechanics
+- Blocks are loaded into the box or pushed up to it
+- With rollers: robot can push the box itself as a strategy
+- Simpler than baskets — no color-matching required at drop, just get block to matching box
 
 ### Placement
 - Along **north wall** (delivery zone)
 - Centered under AprilTags:
-  - Tag 578 → Blue basket (left)
-  - Tag 579 → Yellow basket (center)
-  - Tag 580 → Red basket (right)
-- Baskets touching the wall (robot drives up and drops)
+  - Tag 578 → Blue box (left)
+  - Tag 579 → Yellow box (center)
+  - Tag 580 → Red box (right)
 
 ---
 
 ## Blocks
 
 ### Specifications
-- **Quantity:** 9 total (3 red, 3 yellow, 3 blue)
+- **Quantity:** Many — multiple of each color (red, yellow, blue)
 - **Size:** ~1.2" (30mm) cubes
 - **Material:** Wood or plastic blocks
 
@@ -114,16 +121,19 @@
 ## Barriers
 
 ### Fixed Barrier (cannot be moved)
-- **Size:** ~18" long × 6" wide × 12" tall
-- **Material:** Heavy box filled with books/sand, or clamped foam board
+- **Material:** Corrugated cardboard boxes, 12"×4"×3"
+  - [Amazon: 25-pack](https://a.co/d/05WVl2Vm)
+- **Mounting:** Taped to floor — no pushing
 - **Quantity:** 1-2
-- **Purpose:** Forces path planning — robot must go around
+- **Purpose:** Fixed obstacles, forces path planning
 
-### Pushable Barrier (can be bulldozed)
-- **Size:** ~12" long × 4" wide × 8" tall
-- **Material:** Lightweight cardboard box (empty or lightly filled)
-- **Quantity:** 1-2
+### Pushable Barrier (foam pit cubes)
+- **Material:** 5"×5"×5" foam pit blocks (light grey/black)
+  - [Amazon: WINTECY 24pc set](https://a.co/d/0cYsjSSX)
+- **Quantity:** Several
 - **Purpose:** Strategic choice — push aside or navigate around?
+- **⚠️ Sonar warning:** Foam absorbs sonar signal — do NOT rely on distance sensing near these. Use vision or AprilTags instead.
+- **Note:** Provides some resistance when pushed — robot needs meaningful drive force
 
 ### Placement
 - Middle zone of field (between baskets and blocks)
@@ -184,12 +194,13 @@ Good lighting is critical for camera performance:
 | Item | Qty | Notes |
 |------|-----|-------|
 | Foam floor tiles | ~25 (2'×2') | 10×10 ft coverage |
-| Wall panels | 8-12 | Foam board or cardboard, 18-24" tall |
+| Black landscape edging (49ft) | 1 roll | Outer perimeter + spikes — ⚠️ test Apr 25 |
 | AprilTags (printed) | 8 | tag36h11, IDs 578-585, 10"×10" |
-| Colored baskets | 3 | Red, yellow, blue |
-| Colored blocks | 9 | 3 red, 3 yellow, 3 blue (~1.2" cubes) |
-| Fixed barriers | 1-2 | Heavy boxes, 12" tall |
-| Pushable barriers | 1-2 | Light cardboard, 8" tall |
+| 6"×6" wooden boxes | 3 | Delivery zones — paint/tape Red, Yellow, Blue |
+| Self-adhesive caster wheels | 1 set (24pc) | Optional: attach to boxes for rollability |
+| Colored blocks | many | Multiple red, yellow, blue (~1.2" cubes) |
+| Fixed barriers (cardboard boxes) | 1-2 | 12"×4"×3", taped to floor |
+| Foam pit cubes (5"×5"×5") | several | Pushable — ⚠️ sonar-absorbing! |
 | Lime green tape | 1 roll | For passage line + start zones |
 | Regular tape | 2 rolls | Mounting tags, securing walls |
 | Overhead lighting | — | Even, no shadows |
@@ -200,9 +211,9 @@ Good lighting is critical for camera performance:
 
 **Allow 30-45 minutes** for field setup:
 1. Lay foam tiles (10 min)
-2. Set up walls (10 min)
+2. Set up perimeter edging + spikes (10 min)
 3. Mount AprilTags (5 min)
-4. Place baskets (2 min)
+4. Place delivery boxes (2 min)
 5. Lay green tape passage (5 min)
 6. Mark start zones (3 min)
 7. Place barriers (3 min)

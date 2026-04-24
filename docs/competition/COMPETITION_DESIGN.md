@@ -1,7 +1,7 @@
 # PathfinderV2 Team Competition — Draft Design
 
 **Status:** DRAFT — Work in progress
-**Last Updated:** March 25, 2026
+**Last Updated:** April 24, 2026
 
 ---
 
@@ -64,10 +64,10 @@ Three robots per team. 7 teams. 5-minute rounds. Indoor, 12×12 ft field with ba
 - Each zone has 3 blocks (1 of each color)
 - Robots can move between zones through passageways
 
-**Scoring zones:**
-- Located in accessible area
-- Marked with AprilTags
-- Where blocks must be delivered for points
+**Delivery boxes (replaces baskets):**
+- 6"×6" wooden boxes, color-coded Red/Yellow/Blue, optionally on caster wheels
+- Located in north delivery zone, marked with AprilTags
+- Blocks must be delivered to the matching color box
 
 ---
 
@@ -76,7 +76,7 @@ Three robots per team. 7 teams. 5-minute rounds. Indoor, 12×12 ft field with ba
 ### Specifications
 - **Size:** 1.2 inches (~30mm) cubes
 - **Colors:** Red, Blue, Yellow
-- **Quantity:** 9 per round (3 per zone, 1 of each color)
+- **Quantity:** Many — multiple of each color per round
 - **Material:** Wood or foam (must be grippable)
 
 ### Detection Challenge
@@ -241,13 +241,15 @@ robot.auto_cycle()            # Find block → pickup → deliver → repeat
 
 | Item | Quantity | Est. Cost |
 |------|----------|-----------|
-| PVC pipes or tape for boundaries | 48 ft | $20-40 |
-| Foam board barriers (12" tall) | ~20 ft total | $15-25 |
-| Cardboard boxes (obstacles) | 4-6 | $5-10 |
+| Black landscape edging (49ft + spikes) | 1 roll | $15-20 |
+| 6"×6" unfinished wooden boxes | 3/field | ~$9 (from 8-pack) |
+| Self-adhesive caster wheels (optional) | 1 set | ~$10 |
+| Foam pit cubes 5"×5"×5" (pushable barriers) | 1 set (24pc) | ~$30 |
+| Cardboard boxes 12"×4"×3" (fixed barriers) | 1-2 | ~$5 |
 | Printed AprilTags (card stock) | ~20 tags | $5 |
-| Wooden/foam blocks (1.2" cubes, 3 colors) | 9+ spares | $10-20 |
-| Tape for scoring zones and block positions | 1 roll | $5 |
-| **Total** | | **$60-105** |
+| Colored blocks (1.2" cubes, 3 colors) | many | $10-20 |
+| Tape for start zones and block positions | 1 roll | $5 |
+| **Total** | | **$79-124** |
 
 ### AprilTag Placement
 - 2 tags per wall (8 total on field boundary)
