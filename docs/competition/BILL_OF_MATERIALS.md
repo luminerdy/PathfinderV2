@@ -1,10 +1,12 @@
-# Bill of Materials — Supply Chain Scramble Workshop
+# Bill of Materials — Supply Chain Scramble Competition
 
-**Last Updated:** April 24, 2026
+**Last Updated:** April 25, 2026  
 **Event:** PathfinderV2 Workshop + Competition  
 **Duration:** 6 hours  
 **Participants:** 147 (49 teams of 3)  
 **Houses:** 7 (7 teams per house, competing on one field)
+
+Robot and Pi 500 setup materials are now in [../setup/BILL_OF_MATERIALS.md](../setup/BILL_OF_MATERIALS.md).
 
 ---
 
@@ -16,43 +18,11 @@
     → 7 Houses (7 teams per house, 1 field + 1 practice field each)
 ```
 
-Each **team** = 3 people + 1 robot + 1 Pi 500.  
 Each **house** = 7 teams competing together on one field.
 
 ---
 
-## Per Team (× 49)
-
-| Item | Qty | Notes |
-|------|-----|-------|
-| Hiwonder MasterPi robot kit | 1 | Chassis, mecanum wheels, arm, servos, camera |
-| Raspberry Pi 4 (4GB) | 1 | Robot brain |
-| microSD card — robot (32GB+) | 1 | Pre-imaged with robot OS |
-| 18650 batteries (pair) | 2 sets | 1 in robot + 1 spare (provided per team) |
-| Raspberry Pi 500 | 1 | Team control hub |
-| microSD card — Pi 500 (32GB+) | 1 | Pre-imaged with Pi 500 OS |
-| Portable monitor | 1 | HDMI for Pi 500 |
-| Micro HDMI to HDMI adapter | 1 | Pi 500 → monitor |
-| USB mouse | 1 | Pi 500 (keyboard built-in) |
-| Logitech F710 gamepad | 1 | Manual drive option |
-| AA batteries for gamepad | 2 | |
-
-### Modification Materials (× 1 set per team)
-
-| Item | Qty | Notes |
-|------|-----|-------|
-| Cardboard sheets | 2-3 | Building mods |
-| Foam board | 1 sheet | Sturdier mods |
-| Masking tape | 1 roll (shared per house) | |
-| Zip ties (assorted) | 10 | Structural |
-| Rubber bands | 10 | Flexible attachments |
-| Scissors | 1 pair (shared per house) | |
-
----
-
-## Per House (× 7)
-
-### Competition Field
+## Per House Competition Field
 
 | Item | Qty | Notes |
 |------|-----|-------|
@@ -66,7 +36,7 @@ Each **house** = 7 teams competing together on one field.
 | Colored blocks — Blue (~1.2") | many | |
 | Fixed barriers (cardboard boxes) | 1-2 | 12"×4"×3", taped to floor ([Amazon](https://a.co/d/05WVl2Vm)) |
 | Foam pit cubes (pushable barriers) | several | 5"×5"×5", sonar-absorbing! ([Amazon](https://a.co/d/0cYsjSSX)) |
-| Lime green tape (fluorescent) | 1 roll | Line following + guidance through foam barrier zones (sonar-dead areas) |
+| Lime green tape (fluorescent) | 1 roll | Line following + guidance through foam barrier zones |
 | White tape | 1 roll | Mark delivery zones and field areas |
 | Colored tape (start zones) | 1 roll | Mark start/swap zones |
 
@@ -80,12 +50,14 @@ Each **house** = 7 teams competing together on one field.
 | Spare blocks (any color) | 3-6 | Pickup practice |
 | Lime green tape | Shared with comp field | Short test line |
 
-### House Infrastructure
+---
+
+## House Infrastructure
 
 | Item | Qty | Notes |
 |------|-----|-------|
 | 18650 battery charger | 3-4 | Charging station for the house |
-| Power strips | 8-10 | 1 per team + charging station |
+| Power strips | 8-10 | Robot/Pi 500 charging and tables |
 | Extension cords | 2-3 | Reach all tables |
 | Folding tables | 7-8 | 1 per team + 1 for charging/mods |
 | Chairs | 21 | 3 per team |
@@ -93,7 +65,7 @@ Each **house** = 7 teams competing together on one field.
 
 ---
 
-## Shared / Facilitator Equipment (× 1)
+## Shared / Facilitator Equipment
 
 | Item | Qty | Notes |
 |------|-----|-------|
@@ -122,46 +94,15 @@ Each **house** = 7 teams competing together on one field.
 
 ## Totals Summary
 
-| Item | Per Team | × 49 Teams | Per House | × 7 Houses | **Grand Total** |
-|------|----------|-----------|-----------|-----------|----------------|
-| Robot kit | 1 | 49 | — | — | **49** |
-| Pi 4 | 1 | 49 | — | — | **49** |
-| Pi 500 | 1 | 49 | — | — | **49** |
-| Monitor | 1 | 49 | — | — | **49** |
-| Gamepad | 1 | 49 | — | — | **49** |
-| SD cards (robot) | 1 | 49 | — | — | **49** |
-| SD cards (Pi 500) | 1 | 49 | — | — | **49** |
-| 18650 pairs | 2 | 98 | — | — | **98** |
-| Battery chargers | — | — | 3-4 | 21-28 | **21-28** |
-| Competition fields | — | — | 1 | 7 | **7** |
-| Practice fields | — | — | 1 | 7 | **7** |
-| Wooden box sets (3) + rollers | — | — | 1 | 7 | **21 boxes + 7 roller sets** |
-| Block sets (9) | — | — | 1 | 7 | **63** |
-| AprilTag sets (8) | — | — | 1+practice | 7+7 | **~96** |
-
----
-
-## Budget Estimate
-
-| Category | Unit Cost | Qty | Subtotal |
-|----------|-----------|-----|----------|
-| MasterPi robot kit | $150-200 | 49 | $7,350-9,800 |
-| Raspberry Pi 4 (4GB) | $35-55 | 49 | $1,715-2,695 |
-| Raspberry Pi 500 kit | $90-130 | 49 | $4,410-6,370 |
-| Portable monitor | $60-120 | 49 | $2,940-5,880 |
-| Logitech F710 | $35-50 | 49 | $1,715-2,450 |
-| microSD cards (32GB) | $8-12 | 98 | $784-1,176 |
-| 18650 batteries (pair) | $5-10 | 98 | $490-980 |
-| Battery chargers | $10-20 | 25 | $250-500 |
-| **Equipment subtotal** | | | **$19,764-30,071** |
-| | | | |
-| Field materials (×7) | $100-170 | 7 | $700-1,190 |
-| Practice field (×7) | $50-80 | 7 | $350-560 |
-| Modification materials | $5-10 | 49 | $245-490 |
-| Printing/supplies | — | — | $100-200 |
-| **Materials subtotal** | | | **$1,395-2,440** |
-| | | | |
-| **GRAND TOTAL** | | | **$21,159-32,511** |
+| Item | Per House | × 7 Houses | Grand Total |
+|------|-----------|-----------|-------------|
+| Competition fields | 1 | 7 | **7** |
+| Practice fields | 1 | 7 | **7** |
+| Wooden box sets (3) + rollers | 1 | 7 | **21 boxes + 7 roller sets** |
+| Block sets (9) | 1 | 7 | **63** |
+| AprilTag sets (8) | 1+practice | 7+7 | **~96** |
+| Battery chargers | 3-4 | 7 | **21-28** |
+| WiFi access points | 1 | 7 | **7** |
 
 ---
 
@@ -169,34 +110,13 @@ Each **house** = 7 teams competing together on one field.
 
 | Item | Lead Time | Source |
 |------|-----------|--------|
-| Hiwonder MasterPi | 1-3 weeks | Amazon, Hiwonder direct |
-| Raspberry Pi 4/500 | In stock - 2 weeks | Authorized resellers |
-| 18650 batteries | 3-5 days | Amazon |
-| Logitech F710 | In stock | Amazon, Best Buy |
+| Black landscape edging | 1-2 weeks | Amazon, hardware store |
 | Foam tiles | 3-5 days | Amazon, hardware store |
+| Wooden boxes / caster wheels | 3-5 days | Amazon |
 | Colored blocks/baskets | Same day - 3 days | Amazon, dollar store, craft store |
-| SD cards | 1-3 days | Amazon |
+| AprilTags | 1-3 days | Print in-house |
+| Tape / cardboard / zip ties | Same day | Office supply store |
 
-**Order 4-6 weeks before event.**  
-**Image all SD cards 1-2 weeks before.**  
-**Test all equipment 1 week before.**
-
----
-
-## Pre-Event Prep Timeline
-
-| When | Task |
-|------|------|
-| 6 weeks | Order all equipment |
-| 4 weeks | Receive and inventory everything |
-| 3 weeks | Assemble 1 robot, test full workflow |
-| 2 weeks | Image all SD cards (98 cards) |
-| 1 week | Test SSH on every Pi 500 → Robot pair |
-| 1 week | Charge all batteries |
-| 1 week | Print all materials (rules, quick ref, scoring) |
-| Night before | Build 7 competition fields + 7 practice fields |
-| Morning of | Verify WiFi, place batteries, set up tables |
-
----
-
-*Order early. Test everything. Have spares. Label everything.*
+**Order field materials 4-6 weeks before event.**  
+**Test field layout 1 week before.**  
+**Build all competition fields the night before.**

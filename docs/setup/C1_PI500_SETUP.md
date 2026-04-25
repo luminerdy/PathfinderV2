@@ -8,6 +8,7 @@ The Pi 500 is a keyboard computer — the keyboard IS the computer. You just nee
 
 ## Materials Needed
 
+- Full setup BOM: [BILL_OF_MATERIALS.md](BILL_OF_MATERIALS.md)
 - Raspberry Pi 500 (with SD card already imaged — see [A1](A1_PI500_OS_BUILD.md))
 - Portable monitor
 - Micro HDMI to HDMI adapter

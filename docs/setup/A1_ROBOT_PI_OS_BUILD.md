@@ -11,6 +11,8 @@
 
 After completing these steps you will have an SD card that can be cloned for all competition robots. Each robot gets an identical image — only WiFi credentials and hostname change per robot.
 
+**Materials:** see [BILL_OF_MATERIALS.md](BILL_OF_MATERIALS.md) in this folder for the robot/setup BOM.
+
 ---
 
 ## Step 1: Flash Base OS

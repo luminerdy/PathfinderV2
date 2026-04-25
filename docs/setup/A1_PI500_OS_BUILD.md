@@ -8,6 +8,7 @@ The Pi 500 is your **command center** — you'll use it to write code, SSH into 
 
 ## Materials Needed
 
+- Full setup BOM: [BILL_OF_MATERIALS.md](BILL_OF_MATERIALS.md)
 - Raspberry Pi 500 kit (keyboard computer)
 - microSD card (32GB+ recommended)
 - USB mouse
