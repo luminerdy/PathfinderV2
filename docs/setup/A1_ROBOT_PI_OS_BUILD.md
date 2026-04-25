@@ -475,7 +475,7 @@ sudo nmcli dev wifi connect "SSID" password "PASSWORD"
 ### No battery reading
 - Check motor board power switch (must be ON)
 - Check battery voltage (needs >7.0V)
-- Try: `sudo i2cdetect -y 1` — should show `77` (sonar) and `7A` (board)
+- Try: `sudo i2cdetect -y 1` — should show `77` (sonar). **Note:** The motor board (`0x7A`) does NOT appear in `i2cdetect` output — it uses a non-standard probe response. Presence of `77` confirms I2C wiring is good; use the Python battery test to confirm the motor board is responding.
 
 ### Motors don't move
 - Battery must be >7.0V
