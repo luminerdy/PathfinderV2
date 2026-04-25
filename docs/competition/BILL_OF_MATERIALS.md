@@ -65,7 +65,8 @@ Each **house** = 7 teams competing together on one field.
 | Colored blocks — Blue (~1.2") | many | |
 | Fixed barriers (cardboard boxes) | 1-2 | 12"×4"×3", taped to floor ([Amazon](https://a.co/d/05WVl2Vm)) |
 | Foam pit cubes (pushable barriers) | several | 5"×5"×5", sonar-absorbing! ([Amazon](https://a.co/d/0cYsjSSX)) |
-| Lime green tape (fluorescent) | 1 roll | Line following passage |
+| Lime green tape (fluorescent) | 1 roll | Line following + guidance through foam barrier zones (sonar-dead areas) |
+| White tape | 1 roll | Mark delivery zones and field areas |
 | Colored tape (start zones) | 1 roll | Mark start/swap zones |
 
 ### Practice Field (smaller, for team testing)

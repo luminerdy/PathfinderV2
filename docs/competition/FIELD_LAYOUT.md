@@ -78,28 +78,28 @@
 
 ---
 
-## Delivery Boxes *(replaces baskets)*
+## Delivery Boxes
 
 ### Specifications
-- **Type:** 6"×6" unfinished wooden boxes
+- **Type:** 6"×6" unfinished wooden boxes (no paint/color coding)
   - [Amazon: 8-pack ~$22.99](https://a.co/d/0aKvlW4K)
-- **Quantity:** 3 (one per color)
-- **Color coding:** Paint or tape exterior — Red, Yellow, Blue
+- **Quantity:** 3 (one per zone/area)
+- **Zone marking:** White tape on floor marks delivery areas — not the boxes themselves
 - **Optional rollers:** Self-adhesive 360° caster wheels on underside
   - [Amazon: 24pc caster set](https://a.co/d/00kaBTgh)
-  - Allows box to be pushed/rolled to destination as alternate strategy
 
 ### Mechanics
-- Blocks are loaded into the box or pushed up to it
-- With rollers: robot can push the box itself as a strategy
-- Simpler than baskets — no color-matching required at drop, just get block to matching box
+- Boxes are plain containers — zone identity comes from floor tape and AprilTags, not box color
+- Blocks are loaded into or pushed up to the box
+- With rollers: robot can push the box as a strategy
 
 ### Placement
 - Along **north wall** (delivery zone)
 - Centered under AprilTags:
-  - Tag 578 → Blue box (left)
-  - Tag 579 → Yellow box (center)
-  - Tag 580 → Red box (right)
+  - Tag 578 → Box (left zone)
+  - Tag 579 → Box (center zone)
+  - Tag 580 → Box (right zone)
+- White tape on floor marks each zone boundary
 
 ---
 
@@ -161,6 +161,7 @@
 - Zero HSV overlap with red, blue, or yellow blocks
 - High contrast on dark foam floor
 - Robot's line follower is tuned for H=40-75
+- **Dual purpose near foam barriers:** Since foam pit cubes absorb sonar, green tape laid through those areas gives robots a vision-based guidance path as an alternative to distance sensing
 
 ---
 
@@ -196,8 +197,9 @@ Good lighting is critical for camera performance:
 | Foam floor tiles | ~25 (2'×2') | 10×10 ft coverage |
 | Black landscape edging (49ft) | 1 roll | Outer perimeter + spikes — ⚠️ test Apr 25 |
 | AprilTags (printed) | 8 | tag36h11, IDs 578-585, 10"×10" |
-| 6"×6" wooden boxes | 3 | Delivery zones — paint/tape Red, Yellow, Blue |
+| 6"×6" unfinished wooden boxes | 3 | Delivery containers — left unfinished, no color coding |
 | Self-adhesive caster wheels | 1 set (24pc) | Optional: attach to boxes for rollability |
+| White tape | 1 roll | Mark delivery zones and field areas |
 | Colored blocks | many | Multiple red, yellow, blue (~1.2" cubes) |
 | Fixed barriers (cardboard boxes) | 1-2 | 12"×4"×3", taped to floor |
 | Foam pit cubes (5"×5"×5") | several | Pushable — ⚠️ sonar-absorbing! |
