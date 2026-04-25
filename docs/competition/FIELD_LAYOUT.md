@@ -1,6 +1,7 @@
 # Field Layout Guide
 
 **Purpose:** How to build the competition field for Supply Chain Scramble
+**Last Updated:** April 24, 2026
 
 ---
 

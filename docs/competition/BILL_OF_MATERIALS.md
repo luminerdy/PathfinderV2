@@ -1,5 +1,6 @@
 # Bill of Materials — Supply Chain Scramble Workshop
 
+**Last Updated:** April 24, 2026
 **Event:** PathfinderV2 Workshop + Competition  
 **Duration:** 6 hours  
 **Participants:** 147 (49 teams of 3)  
