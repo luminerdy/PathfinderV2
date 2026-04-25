@@ -31,9 +31,9 @@ Each **house** = 7 teams competing together on one field.
 | Printed AprilTags (10"×10") | 8 | tag36h11, IDs 578-585 |
 | 6"×6" unfinished wooden boxes | 3 | Delivery zones — paint/tape Red, Yellow, Blue ([Amazon](https://a.co/d/0aKvlW4K)) |
 | Self-adhesive caster wheels | 1 set (24pc) | Optional rollers for wooden boxes ([Amazon](https://a.co/d/00kaBTgh)) |
-| Colored blocks — Red (~1.2") | many | Wood or plastic cubes |
-| Colored blocks — Yellow (~1.2") | many | |
-| Colored blocks — Blue (~1.2") | many | |
+| Wooden blocks — Red (~1.2") | many | Sort from Libima 100pc rainbow set ([Amazon](https://a.co/d/05gFTMsu)) |
+| Wooden blocks — Yellow (~1.2") | many | Same set |
+| Wooden blocks — Blue (~1.2") | many | Same set — use red, yellow, blue only |
 | Fixed barriers (cardboard boxes) | 1-2 | 12"×4"×3", taped to floor ([Amazon](https://a.co/d/05WVl2Vm)) |
 | Foam pit cubes (pushable barriers) | several | 5"×5"×5", sonar-absorbing! ([Amazon](https://a.co/d/0cYsjSSX)) |
 | Lime green tape (fluorescent) | 1 roll | Line following + guidance through foam barrier zones |
@@ -113,7 +113,7 @@ Each **house** = 7 teams competing together on one field.
 | Black landscape edging | 1-2 weeks | Amazon, hardware store |
 | Foam tiles | 3-5 days | Amazon, hardware store |
 | Wooden boxes / caster wheels | 3-5 days | Amazon |
-| Colored blocks/baskets | Same day - 3 days | Amazon, dollar store, craft store |
+| Wooden blocks | Same day - 3 days | Amazon — Libima 100pc rainbow set |
 | AprilTags | 1-3 days | Print in-house |
 | Tape / cardboard / zip ties | Same day | Office supply store |
 
