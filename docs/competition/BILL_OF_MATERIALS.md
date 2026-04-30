@@ -27,7 +27,7 @@ Each **house** = 7 teams competing together on one field.
 | Item | Qty | Notes |
 |------|-----|-------|
 | Interlocking foam tiles (2'× 2') | 36 | 12×12 ft field |
-| Black landscape edging (48ft ) | 4 12 ft section | Outer perimeter boundary — ⚠️ test Apr 25 ([Amazon](https://a.co/d/078fNmPe)) |
+| Black landscape edging (48ft ) | 4 x 12 ft section | Outer perimeter boundary — ⚠️ test Apr 25 ([Amazon](https://a.co/d/078fNmPe)) |
 | Printed AprilTags (10"×10") | 8 | tag36h11, IDs 578-585 |
 | Box for AprilTags (cardboard boxes 8" X 12") | 8 | using some of the 12x4x3  |
 | 6"× 6" unfinished wooden boxes | 8 | Delivery containers — ([Amazon](https://a.co/d/0aKvlW4K)) |
