@@ -1,7 +1,7 @@
 # PathfinderV2 Team Competition — Draft Design
 
 **Status:** DRAFT — Work in progress
-**Last Updated:** April 24, 2026
+**Last Updated:** April 29, 2026
 
 ---
 
@@ -18,7 +18,7 @@ Three robots per team. 7 teams. 5-minute rounds. Indoor, 12×12 ft field with ba
 - **Barriers:** ~12 inches tall (must block robot camera line-of-sight)
 - **Passageways:** 18 inches wide (fits one robot)
 - **Blocks:** 1.2 inch cubes, 3 colors (red, blue, yellow)
-- **AprilTags:** tag36h11 family, on walls, barriers, and scoring zones
+- **AprilTags:** tag36h11 family, on display boxes
 
 ### Zone Design
 
@@ -52,11 +52,6 @@ Three robots per team. 7 teams. 5-minute rounds. Indoor, 12×12 ft field with ba
 
 ### Key Design Decisions
 
-**Tall barriers (12"):**
-- Blocks camera line-of-sight between zones
-- Prevents tag confusion (robot only sees tags in its own zone)
-- Forces use of passageways for zone-to-zone movement
-- Creates the "transfer" mechanic — blocks must be lifted over
 
 **3 isolated zones:**
 - Each robot starts in its own zone
