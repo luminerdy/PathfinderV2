@@ -109,6 +109,18 @@ sudo systemctl disable hciuart bluetooth
 sudo systemctl stop bluetooth
 ```
 
+### Disable Serial Console on ttyAMA0
+
+By default, the kernel and systemd both attach a serial console to `ttyAMA0`. This conflicts with the motor board — the port must be completely free for 1Mbaud communication.
+
+```bash
+# Remove the serial console from kernel boot parameters
+sudo sed -i 's/console=serial0,[0-9]* //' /boot/firmware/cmdline.txt
+
+# Disable the serial login prompt (getty)
+sudo systemctl disable serial-getty@ttyAMA0.service
+```
+
 ### Reboot
 ```bash
 sudo reboot
@@ -131,6 +143,14 @@ ls /dev/i2c-1
 # Bluetooth inactive
 systemctl is-active bluetooth
 # Should show: inactive
+
+# Serial console removed from ttyAMA0
+systemctl is-active serial-getty@ttyAMA0
+# Should show: inactive
+
+# ttyAMA0 not held by any process
+fuser /dev/ttyAMA0
+# Should return nothing (no output)
 ```
 
 > **Note:** Before adding `dtoverlay=disable-bt`, `/dev/serial0` points to `ttyS0`. After adding it and rebooting, it correctly points to `ttyAMA0`. The motor board requires `ttyAMA0`.
@@ -398,7 +418,7 @@ After=network.target
 Type=oneshot
 User=robot
 WorkingDirectory=/home/robot/pathfinder
-ExecStart=/usr/bin/python3 /home/robot/pathfinder/robot_startup.py
+ExecStart=/usr/bin/python3 /home/robot/pathfinder/start_robot.py
 RemainAfterExit=yes
 
 [Install]
@@ -494,6 +514,23 @@ sudo nmcli dev wifi connect "SSID" password "PASSWORD"
 - Must reboot after config change
 - After fix: `ls -la /dev/serial0` should show `-> ttyAMA0`
 
+### Motor board not responding / ttyAMA0 held at boot
+Even after disabling Bluetooth, the serial console may still hold `ttyAMA0`. This is a separate issue — the kernel attaches a console to the port and systemd starts a login prompt on it.
+
+Check:
+```bash
+fuser /dev/ttyAMA0                          # shows PID if port is held
+systemctl is-active serial-getty@ttyAMA0   # should be inactive
+grep 'serial0' /boot/firmware/cmdline.txt  # should return nothing
+```
+
+Fix:
+```bash
+sudo sed -i 's/console=serial0,[0-9]* //' /boot/firmware/cmdline.txt
+sudo systemctl disable --now serial-getty@ttyAMA0.service
+sudo reboot
+```
+
 ### Permission denied on I2C
 - User must be in `i2c` group: `groups robot`
 - Fix: `sudo usermod -a -G i2c robot` then logout/login
@@ -510,5 +547,5 @@ sudo nmcli dev wifi connect "SSID" password "PASSWORD"
 ---
 
 *Created: March 26, 2026*  
-*Updated: April 25, 2026 — Updated for Debian 13 Trixie; added locale fix, GStreamer note, WiFi via nmcli, verified versions*  
+*Updated: May 3, 2026 — Added serial console disable steps (Step 4 + troubleshooting); fixed startup service script name (`start_robot.py`)*  
 *Tested on: Raspberry Pi 4 Model B, Debian 13.4 Trixie 64-bit, kernel 6.12.75, Python 3.13.5*
