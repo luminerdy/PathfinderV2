@@ -68,6 +68,8 @@ Click **Write** and wait for completion.
    ssh robot@<IP_ADDRESS>
    ```
 
+> **Remote development:** With SSH enabled here, the Pi 500 can connect to this robot using VSCode Remote SSH — no additional robot-side setup needed. See [A1_PI500_OS_BUILD.md](A1_PI500_OS_BUILD.md) for Pi 500 configuration.
+
 ---
 
 ## Step 3: System Updates

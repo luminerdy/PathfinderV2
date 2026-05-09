@@ -88,6 +88,39 @@ hostname -I
 
 Write this down — other teams don't need it, but you'll use it for troubleshooting.
 
+## Step 6: Install Visual Studio Code
+
+1. From the Pi 500 desktop, open **Raspberry Pi menu → Preferences → Recommended Software**
+2. Scroll down, check **Visual Studio Code**
+3. Click **Apply** and wait for installation to complete
+
+Or install via terminal:
+```bash
+sudo apt install -y code
+```
+
+## Step 7: Configure VSCode Remote SSH to Robot
+
+VSCode Remote SSH lets you write and run robot code directly on the robot from the Pi 500 — no need to install a code editor on the robot.
+
+**Install extensions:**
+1. Open Visual Studio Code
+2. Press `Ctrl+Shift+X` to open Extensions
+3. Search for and install:
+   - **Remote - SSH** (Microsoft)
+   - **Python** (Microsoft)
+
+**Connect to your robot:**
+1. Press `F1` → type `Remote-SSH: Connect to Host` → select it
+2. Enter: `robot@pathfinder-01.local` (use your robot's hostname)
+3. Enter the robot password when prompted
+4. VSCode installs its server component on the robot automatically (first time only, ~1 minute)
+5. Select **Open Folder** → navigate to `/home/robot/pathfinder`
+
+You can now edit, run, and debug robot code directly from the Pi 500.
+
+> **Robot hostname:** Each team's robot is `robot@pathfinder-XX.local` where XX is the team number. If `.local` doesn't resolve, use the robot's IP address instead (see Step 5).
+
 ---
 
 ## What's on the Pi 500
@@ -99,6 +132,7 @@ After setup, your Pi 500 has:
 | Raspberry Pi OS Desktop | Visual interface for coding and monitoring |
 | Python 3 + OpenCV | Run and edit workshop scripts |
 | SSH client | Connect to robot remotely |
+| Visual Studio Code + Remote SSH | Write and run robot code directly on the robot |
 | PathfinderV2 repo | All workshop skills, guides, and code |
 | Terminal | Command line for SSH, git, python |
 
