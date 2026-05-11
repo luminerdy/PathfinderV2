@@ -81,9 +81,7 @@ def main():
 
     # Startup beep
     try:
-        board.set_buzzer(1)
-        time.sleep(0.1)
-        board.set_buzzer(0)
+        board.set_buzzer(1000, 0.1, 0.1, 1)
     except Exception:
         pass
 
@@ -155,11 +153,7 @@ def main():
     if all_ok:
         # 2 quick beeps + green LEDs for 5 sec then off
         try:
-            for _ in range(2):
-                board.set_buzzer(1)
-                time.sleep(0.1)
-                board.set_buzzer(0)
-                time.sleep(0.15)
+            board.set_buzzer(1000, 0.1, 0.15, 2)
         except Exception:
             pass
         try:
@@ -172,11 +166,7 @@ def main():
     else:
         # 5 slow beeps + red LEDs stay on -- robot needs attention
         try:
-            for _ in range(5):
-                board.set_buzzer(1)
-                time.sleep(0.3)
-                board.set_buzzer(0)
-                time.sleep(0.3)
+            board.set_buzzer(1000, 0.3, 0.3, 5)
         except Exception:
             pass
         try:
