@@ -147,8 +147,10 @@ Access via `robot.camera`. Initializes lazily when `enable_camera=True`.
   },
   "specs": {
     "resolution": "640x480",
+    "fps": 30,
     "device": "/dev/video0",
-    "center": {"x": 320, "y": 240}
+    "center": {"x": 320, "y": 240},
+    "apriltag_family": "tag36h11"
   },
   "warnings": [
     "CRITICAL: fx=500 is a hardcoded estimate — AprilTag distance calculations are ~50% inaccurate without a real .npz calibration file",
@@ -207,6 +209,7 @@ Access via `robot.sonar`.
     "7.0-7.5V": "Motors slow, behavior inconsistent",
     "7.86V":    "Drive power 40 required for reliable navigation",
     "runtime_light_min":   80,
+    "runtime_competition_min": "30-45",
     "matches_per_charge":  "7-8",
     "recharge_time_hr":    1
   }
@@ -462,6 +465,7 @@ with Robot(enable_camera=False, enable_sonar=False) as robot:
     "min_voltage_v":      7.0,
     "swap_threshold_v":   7.5,
     "runtime_light_min":  80,
+    "runtime_competition_min": "30-45",
     "matches_per_charge": "7-8"
   }
 }
