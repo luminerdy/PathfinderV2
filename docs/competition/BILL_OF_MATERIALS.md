@@ -1,6 +1,6 @@
 # Bill of Materials — Supply Chain Scramble Competition
 
-**Last Updated:** April 29, 2026  
+**Last Updated:** June 2, 2026  
 **Event:** PathfinderV2 Workshop + Competition  
 **Duration:** 6 hours  
 **Participants:** 147 (49 teams of 3)  
@@ -26,17 +26,16 @@ Each **house** = 7 teams competing together on one field.
 
 | Item | Qty | Notes |
 |------|-----|-------|
-| Interlocking foam tiles (2'× 2') | 36 | 12×12 ft field |
-| Black landscape edging (48ft ) | 4 x 12 ft section | Outer perimeter boundary — ⚠️ test Apr 25 ([Amazon](https://a.co/d/078fNmPe)) |
+| BalanceFrom interlocking foam tiles | 1 set | 12×12 ft field floor ([Amazon](https://www.amazon.com/gp/product/B072MLTVS4)) |
+| Landscape edging 4" (49 ft) | 1 pack | Outer perimeter boundary — sonar-visible ([Amazon](https://www.amazon.com/dp/B0DN17NMP6)) |
 | Printed AprilTags (10"×10") | 8 | tag36h11, IDs 578-585 |
-| Box for AprilTags (cardboard boxes 8" X 12") | 8 | using some of the 12x4x3  |
-| 6"× 6" unfinished wooden boxes | 8 | Delivery containers — ([Amazon](https://a.co/d/0aKvlW4K)) |
-| Self-adhesive caster wheels | 1 set (24pc) | Optional rollers for wooden boxes ([Amazon](https://a.co/d/00kaBTgh)) |
-| Wooden blocks — Red, Yellow and Blue (~1.2") | many | Sort from Libima 100pc rainbow set ([Amazon](https://a.co/d/05gFTMsu)) |
-| Wooden blocks — other colors - maybe use a waste (~1.2") | many | Same set |
-| Fixed barriers (cardboard boxes) | 32 | 12"×4"×3", taped to floor ([Amazon](https://a.co/d/05WVl2Vm)) |
-| Foam pit cubes (pushable barriers) | 24 | 5"×5"×5", sonar-absorbing! ([Amazon](https://a.co/d/0cYsjSSX)) |
-| Lime green tape (fluorescent) | 1 roll | Line following + guidance through foam barrier zones |
-| White tape | 1 roll | Mark delivery zones and field areas |
+| Box for AprilTags (cardboard boxes 8"×12") | 8 | Using some of the 12x4x3 boxes |
+| Wooden blocks — Red, Yellow, Blue (~1.2") | many | Sort targets — from Libima 100pc rainbow set ([Amazon](https://www.amazon.com/Libima-Building-Stacking-Colorful-Educational/dp/B0C777NTSX)) |
+| Fixed barriers (cardboard boxes 12"×4"×3") | 32 | Immovable, taped to floor — sonar-visible ([Amazon](https://www.amazon.com/Hoikwo-Shipping-Corrugated-Cardboard-Packaging/dp/B0CZDMHYJN)) |
+| Foam pit cubes (5"×5"×5") | 24 | Movable obstacles — **sonar-invisible** (foam absorbs ultrasound) ([Amazon](https://www.amazon.com/WINTECY-Stacking-Trampolines-Gymnastics-Parkour/dp/B0FLXMBP9H)) |
+| ProTapes Pro Gaff 1" fluorescent green | 1 roll | Line following tape ([Amazon](https://www.amazon.com/ProTapes-Pro-Premium-Adhesive-Fluorescent/dp/B00DVCQF94)) |
+| Lockport White Gaffers Tape 2"×30 yds | 1 roll | Field area/zone markings ([Amazon](https://www.amazon.com/gp/aw/d/B0C6F9RD3K)) |
+
+> **Delivery containers:** No pre-built containers on the field. Teams engineer their own ad-hoc robot-mounted containers (e.g. pickup bed, dump bucket). This keeps setup simple and rewards creative design.
 
 
