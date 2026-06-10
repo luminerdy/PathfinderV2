@@ -436,6 +436,12 @@ class StrafeNavigator:
                 if callback:
                     callback(tag_id, dist, angle, 'FOUND at %.2fm' % dist)
                 self._face_tag(tag_id)
+                # Verify tag still visible after facing before navigating
+                check_frame = self._get_frame()
+                if check_frame is not None:
+                    check_id, _, _, _, _, _ = self._detect_tags(check_frame, tag_id)
+                    if check_id is None:
+                        continue  # lost during facing — re-search
                 return self.navigate_to_tag(
                     target_id=tag_id, timeout=nav_timeout, callback=callback
                 )
