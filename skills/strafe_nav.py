@@ -380,7 +380,7 @@ class StrafeNavigator:
         if sonar_dist and 0 < sonar_dist < self.SONAR_BACKUP:
             if callback:
                 callback(0, 0, 0, 'BACKUP (sonar %.0fcm)' % sonar_dist)
-            self.board.set_motor_duty([(1, -30), (2, -30), (3, -30), (4, -30)])
+            self.board.set_motor_duty([(1, -40), (2, -40), (3, -40), (4, -40)])
             time.sleep(1.0)
             self._stop()
             time.sleep(0.3)
@@ -402,7 +402,7 @@ class StrafeNavigator:
                     target_id=tag_id, timeout=nav_timeout, callback=callback
                 )
 
-            self.board.set_motor_duty([(1, 30), (2, -30), (3, 30), (4, -30)])
+            self.board.set_motor_duty([(1, 40), (2, -40), (3, 40), (4, -40)])
             time.sleep(0.15)
             self._stop()
             time.sleep(0.1)
