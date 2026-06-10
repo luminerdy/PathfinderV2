@@ -89,7 +89,13 @@ class Robot:
         """Initialize camera."""
         try:
             from lib.camera import Camera
-            self._camera = Camera(calibration_path=self._calibration_path)
+            cal_path = self._calibration_path
+            if cal_path is None:
+                import os
+                default = os.path.join(os.path.dirname(__file__), 'lib', 'camera_calibration.npz')
+                if os.path.exists(default):
+                    cal_path = default
+            self._camera = Camera(calibration_path=cal_path)
             self._camera.open()
         except Exception as e:
             print("Camera init failed: %s" % e)
